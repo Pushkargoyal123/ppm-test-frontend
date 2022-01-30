@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Luxurious+Roman&display=swap');
+body{
+  background-color: white !important;
+}
+*{
+	font-family: 'Luxurious Roman', cursive;
+}
+.red{
+	background-color: red;
+}
+.MuiTableCell-root{
+  padding: 5px!important;
+}
+  tbody tr:hover {
+  /*background-color:  #4834d4;*/
+  /*color: white;*/
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
+}
+
+.tableShadow{
+	 box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
+}
+.links{
+  color: #3498db;
+  font-weight: bold;
+}
+.links:hover{
+  text-decoration: underline;
+  text-decoration-color: black;
+  cursor: pointer;
+}
+.flexBox{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.onhover:hover{
+  color: blue !important;
+}
+.ParentFlex{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+}
+.preloader{
+  width: 20%;
+  height: 20%;
+}
