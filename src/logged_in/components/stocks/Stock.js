@@ -12,6 +12,7 @@ import WatchLaterIcon from '@material-ui/icons/WatchLater';
 import StockData from "./StockData"
 import CircularProgress from '@material-ui/core/CircularProgress';
 import AddIcon from '@material-ui/icons/AddCircle';
+import { getData} from "../../../service/service";
 
 const StyledMenu = withStyles({
   paper: {
@@ -82,8 +83,8 @@ export default function Stock(props){
   };
 
   const fetchAllStocks=async()=>{
-    const response = await fetch("http://localhost:7080/api/stock/getallstockdetails");
-    const result = await response.json();
+    const result = await getData("stock/getallstockdetails");
+    console.log(result);
     setStockEvaluation(result);
   }
 

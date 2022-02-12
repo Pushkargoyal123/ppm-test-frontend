@@ -15,6 +15,7 @@ import Stock from "./stocks/Stock";
 import AboutUs from "../../shared/components/AboutUs";
 import Portfolio from "./stocks/Portfolio";
 import LeaderBoard from "./stocks/LeaderBoard";
+import CriticalAnalysis from "./stocks/CriticalAnalysis";
 
 const styles = (theme) => ({
   main: {
@@ -324,7 +325,7 @@ function Main(props) {
     fetchRandomPosts,
   ]);
 
-    function SetComponent(link, element){
+  function SetComponent(link, element){
     if(link==="/aboutus"){
       setComponent(<AboutUs/>)
     }
@@ -340,14 +341,14 @@ function Main(props) {
     else if(link==="/leaderboard"){
       setComponent(<LeaderBoard/>)
     }
-    else if(link==="/c/dashboard"){
+    else if(link==="/c/dashboard" || link==="/"){
       setComponent(<Home/>)
     }
-    else if(link==="/"){
-      setComponent(<Home/>)
-    }
-    else{
+    else if(link==="stock"){
       setComponent(<Stock setComponent={setComponent}/>)
+    }
+    else if(link==="critical analysis"){
+      setComponent(<CriticalAnalysis />)
     }
     setUnderlinedButton(element.name);
   }

@@ -66,19 +66,19 @@ export default function StockData(props) {
     const [body, setBody]= React.useState(false);
     const [virtualAmount, setVirtualAmount]= useState('');
     const [buyPrice, setBuyPrice]= useState("");
-    const [sellPrice, setSellPrice]= useState("");
+    const [sellPrice, setSellPrice]= useState(""); 
     const [stockBuy, setStockBuy]= useState("");
     const [stockSell, setStockSell]= useState("");
     const [comment, setComment]= useState("");
     const [displayBuyButton, setDisplayBuyButton]= useState(false);
     const [displaySellButton, setDisplaySellButton]= useState(false);
-    const [stockPortfolio, setStockPortfolio]= useState([]);
     const [stockAvailable, setStockAvailable]= useState("");
     const [buttonColor, setButtonColor]= useState("ALL");
     const [minMax, setMinMax]= useState([]);
 
     const user= useSelector(state=>state.user)
     const userId= Object.values(user)[0].id
+    const ppmGroupId= Object.values(user)[0].groupId
 
     useEffect(function(){
         const fetchCompanyData=async()=>{
@@ -105,6 +105,7 @@ export default function StockData(props) {
 
     const fetchVirtualAmount=async()=>{
       const result = await getData("group/findbyuserid?UserId="+userId);
+      console.log(result);
       if(result.success)
         setVirtualAmount(result.data.virtualAmount.toFixed(2));
     }
@@ -115,7 +116,7 @@ export default function StockData(props) {
 
       const result = await postData("stock/fetchportfolio", body);
       if(result){
-        setStockPortfolio(result);
+       
         const stockBuyed= result.reduce(function(total,item){
           return (total+item.buyStock);
         }, 0)
@@ -144,43 +145,22 @@ export default function StockData(props) {
   };
 
   const setBuyingPrice=(value)=>{
-    if(value===""){
-      setStockBuy("");
-      setBuyPrice(value*data[0].currentPrice.toFixed(2));
-      setDisplayBuyButton(false);
-    }
-    else{
       setStockBuy(parseInt(value));
       setBuyPrice((parseInt(value)*data[0].currentPrice).toFixed(2));
       setDisplayBuyButton(true);
-    }
   }
 
   const setSellingPrice=(value)=>{
-     if(value===""){
-      setStockSell("")
-      setSellPrice((value*data[0].currentPrice).toFixed(2));
-      setDisplaySellButton(false);
-    }else{
       setStockSell(parseInt(value))
       setSellPrice((parseInt(value)*data[0].currentPrice).toFixed(2));
       setDisplaySellButton(true);
-    }
   }
 
-  const handleBuy=async()=>{
-    var body={ companyCode:props.data.CompanyCode, companyName:props.data.CompanyName, currentPrice:buyPrice, buyStock:stockBuy, totalBuyPrice:buyPrice, sellStock:stockSell, totalSellPrice:sellPrice, comment:comment, virtualAmount:virtualAmount, UserId: userId }
+  const handleBuySell=async()=>{
+    var body={ companyCode:props.data.CompanyCode, companyName:props.data.CompanyName, currentPrice:data[0] ? data[0].currentPrice : 0, buyStock:stockBuy, totalBuyPrice:buyPrice, sellStock:stockSell, totalSellPrice:sellPrice, comment:comment, virtualAmount:virtualAmount, UserId: userId, ppmGroupId:ppmGroupId }
     const result = await postData("stock/insertportfolio", body);
     if(result.success){
       props.setComponent(<Portfolio setComponent={props.setComponent} companyCode={props.data.companyCode}/>)
-    } 
-  }
-
-  const handleSell= async()=>{
-    var body={ companyCode:props.data.CompanyCode, companyName:props.data.CompanyName, currentPrice:sellPrice, buyStock:stockBuy, totalBuyPrice:buyPrice, sellStock:stockSell, totalSellPrice:sellPrice, comment:comment, virtualAmount:virtualAmount, UserId:userId }
-    const result= await postData("stock/insertportfolio", body);
-    if(result.success){
-      props.setComponent(<Portfolio setComponent={props.setComponent} data={stockPortfolio}/>)
     } 
   }
 
@@ -222,7 +202,7 @@ export default function StockData(props) {
           </div>
           { displayBuyButton ? <> { virtualAmount > (parseInt(stockBuy)*data[0].currentPrice) ?<>
           <textarea onChange={(event)=>setComment(event.target.value)} style={{margin:20, width:"90%", height:100}} placeholder={"Please tell us why are you buying "+props.data.CompanyName+" stocks"}/>
-          <Button onClick={()=>handleBuy()} variant="contained" style={{backgroundColor:"green", color:"white", marginBottom:"30px"}}>BUY</Button>
+          <Button onClick={handleBuySell} variant="contained" style={{backgroundColor:"green", color:"white", marginBottom:"30px"}}>BUY</Button>
           </> :
           <div style={{color:"red", fontSize:"1.1rem", marginTop:20, fontWeight:500}}>You have an insufficient balance...</div>}
            </> :<></> }
@@ -243,7 +223,7 @@ export default function StockData(props) {
           </div>
           { displaySellButton ? <> { stockAvailable >= stockSell ? <>
           <textarea onChange={(event)=>setComment(event.target.value)} style={{margin:20, width:"90%", height:100}} placeholder={"Please tell us why are you seling "+props.data.CompanyName+" stock..."}/>
-          <Button onClick={handleSell} variant="contained" style={{backgroundColor:"red", color:"white", marginBottom:"30px"}}>SELL</Button>
+          <Button onClick={handleBuySell} variant="contained" style={{backgroundColor:"red", color:"white", marginBottom:"30px"}}>SELL</Button>
           </> : 
           <div style={{color:"red", fontSize:"1.1rem", marginTop:20, fontWeight:500}}>You have insufficient stocks</div> }
           </> :<></> }

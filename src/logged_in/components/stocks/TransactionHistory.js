@@ -76,12 +76,6 @@ export default function TransactionHistory(props) {
                      searchFieldStyle: {
                         backgroundColor:"#D1D1D8",
                       },
-                      //   rowStyle: (rowData, index) => {
-                      //     if(index%2 === 0 ) {
-                      //       return {backgroundColor: '#c7ecee'};
-                      //     }
-                      //   return {backgroundColor: '#ecf0f1'};
-                      // },
                   }}
                 />
             }

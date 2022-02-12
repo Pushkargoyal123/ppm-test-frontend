@@ -3,7 +3,8 @@ body{
   background-color: white !important;
 }
 *{
-	font-family: 'Luxurious Roman', cursive;
+	/*font-family: 'Luxurious Roman', cursive;*/
+  font-family: calibri;
 }
 .red{
 	background-color: red;

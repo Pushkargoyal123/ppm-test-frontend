@@ -84,7 +84,6 @@ function getModalStyle() {
   };
 }
 
-
 function NavBar(props) {
 
   const {
@@ -97,19 +96,19 @@ function NavBar(props) {
 
   const history = useHistory();
 
-   const [name, setName] = React.useState("");
-    const [gender, setGender] = React.useState("");
-    const [email, setEmail] = React.useState("");
-    const [loginEmail, setLoginEmail] = React.useState("");
-    const [whatsappNumber, setWhatsappNumber] = React.useState("");
-    const [password, setPassword]= React.useState("");
-    const [confirmPassword, setConfirmPassword]= useState("");
-    const [showPassword, setShowPassword]= React.useState(false);
-    const [showConfirmPassword, setShowConfirmPassword]= useState(false);
-    const [selectedDate, setSelectedDate] = React.useState(null);
-    const [loginPassword, setLoginPassword]= useState("");
-    const [serialNumber, setSerialNumber]= useState("");
-   const [modalStyle] = React.useState(getModalStyle);
+  const [name, setName] = React.useState("");
+  const [gender, setGender] = React.useState("");
+  const [email, setEmail] = React.useState("");
+  const [loginEmail, setLoginEmail] = React.useState("");
+  const [whatsappNumber, setWhatsappNumber] = React.useState("");
+  const [password, setPassword]= React.useState("");
+  const [confirmPassword, setConfirmPassword]= useState("");
+  const [showPassword, setShowPassword]= React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword]= useState(false);
+  const [selectedDate, setSelectedDate] = React.useState(null);
+  const [loginPassword, setLoginPassword]= useState("");
+  const [serialNumber, setSerialNumber]= useState("");
+  const [modalStyle] = React.useState(getModalStyle);
   const [open, setOpen] = React.useState(false);
   const [openModal, setOpenModal]= React.useState(false);
   const [body, setBody]= React.useState(false);
@@ -130,57 +129,66 @@ function NavBar(props) {
 
             if(name.trim()===""){
               err=true;
-              setNameError(true)
+              setNameError("*name should be provided")
             }
             else{
-              setNameError(false)
+              setNameError(null)
+            }
+
+              if(gender===""){
+              err=true;
+              setGenderError("*gender should be provided")
+            }
+            else{
+              setGenderError(null)
             }
 
             if(email.trim()===""){
               err=true;
-              setEmailError(true)
+              setEmailError("*email should be provided")
             }
             else{
-              setEmailError(false)
+              setEmailError(null)
             }
 
               if(whatsappNumber.trim()===""){
               err=true;
-              setWhatsappNumberError(true)
+              setWhatsappNumberError("*Whatsapp number should be provided");
             }
             else{
-              setWhatsappNumberError(false)
+              setWhatsappNumberError(null)
             }
 
             if(!selectedDate){
               err=true;
-              setSelectedDateError(true)
+              setSelectedDateError("*date of birth should be provided")
             }
             else{
-              setSelectedDateError(false)
+              setSelectedDateError(null)
             }
+
+             if(confirmPassword.trim() === ""){
+              err=true;
+              setConfirmPasswordError("*confirmPassowrd can not be blank");
+            }
+            else if(confirmPassword.trim()!== password.trim()){
+              err=true;
+              setConfirmPasswordError("Password and Confirm Password are not matching");
+            }
+            else{
+              setConfirmPasswordError(null);
+            }
+
             if(password.trim()===""){
               err=true;
-              setPasswordError(true)
+              setPasswordError("*Password can't be empty");
             }
-            else{
-              setPasswordError(false)
-            }
-
-            if(password.trim()!== confirmPassword.trim() || confirmPassword.trim()===""){
+            else if(password.length < 8){
               err=true;
-              setConfirmPasswordError(true)
+              setPasswordError("*Password Length should be atleast 8 characters long");
             }
             else{
-              setConfirmPasswordError(false)
-            }
-
-            if(gender===""){
-              err=true;
-              setGenderError(true)
-            }
-            else{
-              setGenderError(false)
+              setPasswordError(null);
             }
 
             const birthDate= new Date(selectedDate)
@@ -297,7 +305,7 @@ function NavBar(props) {
         <i style={{fontSize:25, cursor:"pointer"}} onClick={()=>setOpen(false)} class="fas fa-times"></i>
       </div>
        <div style={{ margin: 10 }}>
-        <TextField value={name} error={nameError} helperText={nameError ? "*Name Should be Provided": ""}  onChange={(event) => setName(event.target.value)} id="outlined-basic" placeholder="ex. Pushkar Goyal" label="Name" variant="outlined" style={{ width: 350 }} />
+        <TextField value={name} error={nameError} helperText={nameError}  onChange={(event) => setName(event.target.value)} id="outlined-basic" placeholder="ex. Pushkar Goyal" label="Name" variant="outlined" style={{ width: 350 }} />
       </div>
         
           <FormControl style={{ width: 350 }} component="fieldset">
@@ -306,23 +314,23 @@ function NavBar(props) {
                     <FormControlLabel onChange={(event) => { setGender(event.target.value) }} value="female" control={<Radio />} label="Female" checked={gender==="female"} />
                     <FormControlLabel onChange={(event) => { setGender(event.target.value) }} value="male" control={<Radio />} label="Male" checked={gender==="male"}/>
                 </RadioGroup>
-                {genderError ? <div className={classes.error}> *Gender Should be Provided</div> : <div></div>}
+                <div className={classes.error}>{genderError}</div>
             </FormControl>
 
             <div style={{ margin: 10 }}>
-              <TextField value={email} error={emailError} helperText={emailError ? "*Email should be provided" : ""} onChange={(event) => { setEmail(event.target.value) }} placeholder="ex. pushkargoyal36@gmail.com" id="outlined-ba" label="Email" type="email" variant="outlined" style={{ width: 350 }} />
+              <TextField value={email} error={emailError} helperText={emailError} onChange={(event) => { setEmail(event.target.value) }} placeholder="ex. pushkargoyal36@gmail.com" id="outlined-ba" label="Email" type="email" variant="outlined" style={{ width: 350 }} />
             </div>
              <div style={{ margin: 10 }}>
-              <TextField value={whatsappNumber} error={whatsappNumberError} helperText={whatsappNumberError ? "*Whatsapp Number should be provided" : ""} onChange={(event) => { setWhatsappNumber(event.target.value) }} placeholder="ex. 7024649556" id="outlined-basi" label="Whatsapp Number" variant="outlined" style={{ width: 350 }} />
+              <TextField value={whatsappNumber} error={whatsappNumberError} helperText={whatsappNumberError} onChange={(event) => { setWhatsappNumber(event.target.value) }} placeholder="ex. 7024649556" id="outlined-basi" label="Whatsapp Number" variant="outlined" style={{ width: 350 }} />
             </div>
 
               <MuiPickersUtilsProvider style={{margin:10}} utils={DateFnsUtils}>
              <KeyboardDatePicker
           disableToolbar
           variant="inline"
-          format="MM/dd/yyyy"
+          format="dd/MM/yyyy"
           error={selectedDateError}
-          helperText={selectedDateError ? "*Date Of Birth Should be Provided" :"date format MM/DD/YYYY"}
+          helperText={selectedDateError}
           id="date-picker-inline"
           label="Date of birth"
           value={selectedDate}
@@ -352,7 +360,7 @@ function NavBar(props) {
               </InputAdornment>
             }
           />
-          {passwordError ? <div className={classes.error}> *Password should be provided </div> :<div></div>}
+        <div className={classes.error}>{passwordError}</div>
         </FormControl>
 
          <FormControl style={{width:350}}>
@@ -374,7 +382,7 @@ function NavBar(props) {
               </InputAdornment>
             }
           />
-          {confirmPasswordError ? <div className={classes.error}> *Password and confirm Password are not matching </div> :<div></div>}
+          <div className={classes.error}>{confirmPasswordError}</div>
         </FormControl>
 
         <div onClick={()=>setBody(true)} className="links" style={{marginTop:10}}> Login now if already Registered ?</div>

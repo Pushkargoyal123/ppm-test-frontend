@@ -10,7 +10,8 @@ import {
     ContactSupport,
     PortraitSharp,
     PostAdd,
-    ExitToApp
+    ExitToApp,
+    BrandingWatermark
   } from "@material-ui/icons";
 
 
@@ -64,7 +65,7 @@ const portfolioHistoryColumns=[
               title: 'Status', 
               field: 'buyStock', 
               customFilterAndSearch: (term, rowData) =>term.toUpperCase()==="BUY" ? rowData.buyStock : rowData.sellStock,
-              render: rowData=> rowData.buyStock > 0 ? <span>BUY</span> : <span>SELL</span>,
+              render: rowData=> rowData.buyStock > 0 ? <span style={{color: "green", fontWeight:600}}>BUY</span> : <span style={{color: "red", fontWeight:600}}>SELL</span>,
           },
           { 
               title: 'Stocks', 
@@ -153,7 +154,7 @@ const portfolioHistoryColumns=[
     {
       link:"/leaderboard",
       name: "Leader Board",
-      icon: <PortraitSharp className="text-white" />
+      icon: <BrandingWatermark className="text-white" />
     },
     {
       link: "/post",

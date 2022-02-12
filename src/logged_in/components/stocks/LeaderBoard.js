@@ -1,6 +1,5 @@
 import classNames from "classnames";
 import { 
-    Divider, 
     Box, 
     makeStyles,
     CircularProgress,
@@ -8,7 +7,7 @@ import {
 import MaterialTable from 'material-table';
 import {useEffect, useState} from "react";
 import { getData} from "../../../service/service";
-
+import { useSelector } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
     blogContentWrapper: {
@@ -37,9 +36,12 @@ export default function LeaderBoard() {
         fetchUsers();
     }, [])
 
+    const user= useSelector(state=>state.user)
+    const userId= Object.values(user)[0].id
+
     async function fetchUsers(){
-         const usersList = await getData("user/fetchusersvirtualamount");
-         console.log(usersList);
+         const usersList = await getData("user/fetchleaderboarddata");
+         console.log("hello",usersList);
          if(usersList.success){
             setData(usersList.data);
         }
@@ -53,8 +55,6 @@ export default function LeaderBoard() {
         >
             <div className={classes.blogContentWrapper}>
                 <div style={{ fontSize: 40, textAlign: "center" }}><u>Leader Board</u></div>
-                <Divider style={{ margin: 20 }} />
-
 
                    {
             data.length===0 ? <div className="ParentFlex">
@@ -75,44 +75,57 @@ export default function LeaderBoard() {
                         title: 'Name',
                         field:'userName', 
                         cellStyle: { color:"blue", fontWeight:"600"}, 
-                        render: rowData=>rowData.User.userName 
+                        render: rowData=>rowData.userName 
+                    },
+                    { 
+                        title: 'Current Investment(Rs)', 
+                        field: 'current_investment',
+                        render: rowData=>"₹"+rowData.current_investment
+                    },
+                    { 
+                        title: 'Profit/Loss (Rs)', 
+                        field: 'totalCurrentPrice',
+                        cellStyle: {color: "orange", fontWeight: 700},
+                        render: rowData=> "₹" +(rowData.current_investment - rowData.totalCurrentPrice)
+                    },
+                    { 
+                        title: 'Profit/Loss per Day(Rs)', 
+                        cellStyle: {color: "orange", fontWeight: 700},
+                        render: rowData=>"₹" +  (rowData.current_investment - rowData.totalCurrentPrice)  / Math.round( (new Date() - new Date(rowData.dateOfRegistration) ) / (24 * 60 * 60 * 1000) ).toFixed(2)
+                    },
+                    { 
+                        title: 'Brokrage Amount(Rs)',
+                        field: "number", 
+                        cellStyle: { fontWeight:"600"} ,
+                        render: rowData=>rowData.number* 10
                     },
                     { 
                         title: "Praedico's Virtual Amount(Rs)", 
-                        field: 'totalBuyPrice' ,
-                        render: rowData=> "₹ "+rowData.virtualAmount
+                        field: 'virtualAmount' ,
+                        render: rowData=> "₹ "+rowData.ppm_userGroups[0].virtualAmount.toFixed(2)
                     },
-                    // { 
-                    //     title: 'Total Buying Price', 
-                    //     field: 'totalBuyPrice' ,
-                    //     render: rowData=>"₹"+(rowData.totalBuyPrice / rowData.buyStock * (rowData.buyStock- rowData.sellStock)).toFixed(2) 
-                    // },
-                    // { 
-                    //     title: 'Stock Left', 
-                    //     field: 'buyStock', 
-                    //     cellStyle: { fontWeight:"600"} ,
-                    //     render: rowData=>rowData.buyStock-rowData.sellStock 
-                    // },
-                    // { 
-                    //     title: 'Current Price', 
-                    //     field: 'currentPrice' ,
-                    //     render: rowData=>"₹"+rowData.current.toFixed(2) 
-                    // },
-                    // { 
-                    //     title: 'Total Current Price', 
-                    //     field: 'currentPrice' ,
-                    //     render: rowData=>"₹"+ (rowData.current * (rowData.buyStock - rowData.sellStock)).toFixed(2) 
-                    // },
+                    { 
+                        title: 'Net Amount(Rs)', 
+                        field: 'netAmount' ,
+                        render: rowData=>"₹"+rowData.ppm_userGroups[0].netAmount.toFixed(2) 
+                    },
                     { 
                         title: 'Starting Date', 
                         field: 'dateOfRegistration' ,
-                        render: rowData=>rowData.User.dateOfRegistration
+                        render: rowData=>rowData.dateOfRegistration
                     },
                   ]
 }
                   data={data}  
                  
                   options={{
+                    rowStyle: (rowData) => {
+                        if(rowData.UserId === userId)
+                            return {
+                              fontWeight: 900,
+                              backgroundColor: "#c8d6e5"
+                            };
+                    },
                     paging:false,
                       headerStyle: {
                       fontSize: "1.1rem",
@@ -123,12 +136,6 @@ export default function LeaderBoard() {
                      searchFieldStyle: {
                         backgroundColor:"#D1D1D8",
                       },
-                      //   rowStyle: (rowData, index) => {
-                      //     if(index%2 === 0 ) {
-                      //       return {backgroundColor: '#c7ecee'};
-                      //     }
-                      //   return {backgroundColor: '#ecf0f1'};
-                      // },
                   }}    
                 />
             }

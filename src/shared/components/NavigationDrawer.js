@@ -337,9 +337,12 @@ function NavigationDrawer(props) {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleSelect = (element) => {
+  const handleSelect = (name,element) => {
     setAnchorEl(null);
-    props.setComponent("stock", element);
+    if(name==="stocks")
+      props.setComponent("stock", element);
+    else if(name==="critical analysis")
+      props.setComponent("critical analysis", element);
     props.onClose();
   };
 
@@ -568,14 +571,14 @@ function NavigationDrawer(props) {
                         open={Boolean(anchorEl)}
                         onClose={()=>setAnchorEl(null)}
                       >
-                        <StyledMenuItem onClick={()=>handleSelect(element)}>
+                        <StyledMenuItem onClick={()=>handleSelect("stocks",element)}>
                           <ListItemIcon>
                             <SendIcon fontSize="small" />
                           </ListItemIcon>
                           <ListItemText primary="Nifty Stocks" />
                         </StyledMenuItem>
 
-                        <StyledMenuItem>
+                        <StyledMenuItem onClick={()=>handleSelect("critical analysis",element)}>
                           <ListItemIcon>
                             <DraftsIcon fontSize="small" />
                           </ListItemIcon>

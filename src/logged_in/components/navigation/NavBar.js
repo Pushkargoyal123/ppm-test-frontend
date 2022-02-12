@@ -19,6 +19,7 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import DraftsIcon from '@material-ui/icons/Drafts';
 import SendIcon from '@material-ui/icons/Send';
 import Stock from "../stocks/Stock";
+import CriticalAnalysis from "../stocks/CriticalAnalysis";
 import {loggedIn_menuItems} from "../../../config"
 import { useDispatch, useSelector } from "react-redux";
 
@@ -89,6 +90,8 @@ function NavBar(props) {
   var dispatch=useDispatch();
   const user=useSelector(state=>state.user);
 
+  console.log(Object.values(user));
+
   if(!Object.values(user).length){
     history.replace({pathname:"/"});
   }
@@ -100,9 +103,12 @@ function NavBar(props) {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleSelect = () => {
+  const handleSelect = (page) => {
     setAnchorEl(null);
-    props.setComponent(<Stock setComponent={props.setComponent}/>)
+    if(page==="stocks")
+      props.setComponent(<Stock setComponent={props.setComponent}/>)
+    else if(page==="critical analysis")
+       props.setComponent(<CriticalAnalysis setComponent={props.setComponent}/>)
     props.setUnderlinedButton("Stocks");
   };
 
@@ -174,18 +180,18 @@ function NavBar(props) {
                         open={Boolean(anchorEl)}
                         onClose={()=>setAnchorEl(null)}
                       >
-                        <StyledMenuItem onClick={handleSelect}>
+                        <StyledMenuItem onClick={()=>handleSelect("stocks")}>
                           <ListItemIcon>
                             <SendIcon fontSize="small" />
                           </ListItemIcon>
                           <ListItemText primary="Nifty Stocks" />
                         </StyledMenuItem>
 
-                        <StyledMenuItem>
+                        <StyledMenuItem onClick={()=>handleSelect("critical analysis")}>
                           <ListItemIcon>
                             <DraftsIcon fontSize="small" />
                           </ListItemIcon>
-                          <ListItemText primary="Drafts" />
+                          <ListItemText primary="Critical Analysis" />
                         </StyledMenuItem>
                         
                         <StyledMenuItem>

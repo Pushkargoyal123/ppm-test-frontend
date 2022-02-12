@@ -37,14 +37,13 @@ export default function Portfolio(props) {
     const [totalPL, setTotalPL]= useState(0);
 
     const user= useSelector(state=>state.user)
-    const userId= Object.values(user)[0].id
+    const userData= Object.values(user)[0];
+    const userId= userData.id
 
     useEffect(function(){
 
          const fetchPortfolioHistory=async()=>{
         const resultgroup = await getData("stock/fetchallstockbuysell?UserId="+userId);
-
-        console.log("resultgroup",resultgroup);
 
         const resultportfolio = await getData("stock/fetchportfoliohistory?UserId="+userId);
 
@@ -72,7 +71,6 @@ export default function Portfolio(props) {
                       if (existing) {
                         existing.buyStock += item.buyStock;
                         existing.sellStock += item.sellStock;
-                        existing.currentPrice += item.currentPrice;
                         existing.totalBuyPrice += item.totalBuyPrice;
                         existing.totalSellPrice += item.totalSellPrice;
                       } else {
@@ -115,7 +113,7 @@ export default function Portfolio(props) {
                     }
                   } 
                  else{
-                    PL = Math.round((item.current * (item.buyStock - item.sellStock) ) - (item.totalBuyPrice - item.totalSellPrice))
+                    PL = Math.round((item.currentPrice * (item.buyStock - item.sellStock) ) - (item.totalBuyPrice - item.totalSellPrice))
                     
                     if(PL === 0){
                         status = 'Neutral';
@@ -143,7 +141,7 @@ export default function Portfolio(props) {
             }, 0))
 
             setTotalCurrentPrice(finalData.reduce(function(total,item){
-                return total +(item.current * (item.buyStock - item.sellStock));
+                return total + (item.currentPrice * (item.buyStock - item.sellStock));
             }, 0))
             setCount(count);
             setData(finalData);
@@ -209,12 +207,12 @@ export default function Portfolio(props) {
                     { 
                         title: 'Current Price', 
                         field: 'currentPrice' ,
-                        render: rowData=>"₹"+rowData.current.toFixed(2) 
+                        render: rowData=>"₹"+rowData.currentPrice.toFixed(2) 
                     },
                     { 
                         title: 'Total Current Price', 
                         field: 'currentPrice' ,
-                        render: rowData=>"₹"+ (rowData.current * (rowData.buyStock - rowData.sellStock)).toFixed(2) 
+                        render: rowData=>"₹"+ (rowData.currentPrice * (rowData.buyStock - rowData.sellStock)).toFixed(2) 
                     },
                     { 
                         title: 'Profit/Loss', 
@@ -246,6 +244,7 @@ export default function Portfolio(props) {
                                     <div style={{margin:10}}>Amount left in your bucket for buying stocks : <span style={{color:"red"}}>₹{virtualAmount}</span></div>
                                     <div style={{margin:10}}>Net Amount : <span style={{color:"red"}}>₹{ parseInt( virtualAmount + totalBuyPrice + totalPL ).toFixed(2) }</span></div>
                                     <Divider style={{ margin: 20 }} /> 
+                                    <div style={{margin:10, color: totalPL > 0 ? "green" : "red" }}>{userData.userName} is in {totalPL > 0 ? "Profit" : "Loss"} of ₹{totalPL.toFixed(2)}</div>
                                 </TableCell>
                             </TableRow>
                           </TableFooter>
@@ -263,12 +262,6 @@ export default function Portfolio(props) {
                      searchFieldStyle: {
                         backgroundColor:"#D1D1D8",
                       },
-                      //   rowStyle: (rowData, index) => {
-                      //     if(index%2 === 0 ) {
-                      //       return {backgroundColor: '#c7ecee'};
-                      //     }
-                      //   return {backgroundColor: '#ecf0f1'};
-                      // },
                   }}    
                 />
             }

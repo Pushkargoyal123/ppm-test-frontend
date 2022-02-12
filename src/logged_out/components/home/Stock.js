@@ -3,6 +3,7 @@ import { Box, makeStyles } from "@material-ui/core";
 import MaterialTable from 'material-table';
 import {useEffect, useState} from "react";
 import CircularProgress from '@material-ui/core/CircularProgress';
+import { getData} from "../../../service/service";
 
 const useStyles = makeStyles((theme) => ({
     blogContentWrapper: {
@@ -33,9 +34,10 @@ export default function Stock(){
   const [stockEvaluation, setStockEvaluation]= useState([]);
 
   const fetchAllStocks=async()=>{
-    const response = await fetch("http://localhost:7080/api/stock/getallstockdetails");
-    const result = await response.json();
-    setStockEvaluation(result);
+    const result = await getData("stock/getallstockdetails");
+    console.log(result);
+    if(result)
+      setStockEvaluation(result);
   }
 
 	return (
