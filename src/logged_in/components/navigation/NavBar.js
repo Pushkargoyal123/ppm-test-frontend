@@ -90,8 +90,6 @@ function NavBar(props) {
   var dispatch=useDispatch();
   const user=useSelector(state=>state.user);
 
-  console.log(Object.values(user));
-
   if(!Object.values(user).length){
     history.replace({pathname:"/"});
   }

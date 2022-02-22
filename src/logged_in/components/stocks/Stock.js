@@ -84,7 +84,6 @@ export default function Stock(props){
 
   const fetchAllStocks=async()=>{
     const result = await getData("stock/getallstockdetails");
-    console.log(result);
     setStockEvaluation(result);
   }
 
@@ -196,13 +195,6 @@ export default function Stock(props){
          searchFieldStyle: {
             backgroundColor:"#D1D1D8",
           },
-
-         // rowStyle: (rowData, index) => {
-         //      if(index%2 === 0 ) {
-         //        return {backgroundColor: '#dcdde1'};
-         //      }
-         //    return {backgroundColor: '#ecf0f1'};
-         //  }
       }}
     />
 

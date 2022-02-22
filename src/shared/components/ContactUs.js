@@ -15,6 +15,22 @@ const useStyles = makeStyles((theme) => ({
     wrapper: {
         minHeight: "60vh",
     },
+    contactUsBox:{ 
+        minHeight: 250, 
+        minWidth: "60%", 
+        boxShadow: "rgba(0, 0, 0, 0.56) 0px 22px 70px 4px", 
+        marginBottom: 50 
+    },
+    containerGrid:{ padding: "20px" },
+    itemGrid: { 
+        fontSize: 22,
+        marginBottom:20 
+    },
+    address:{ 
+        fontSize: 30, 
+        color: "green", 
+        marginBottom: 15 
+    }
 }))
 
 export default function ContactUs() {
@@ -27,10 +43,10 @@ export default function ContactUs() {
             justifyContent="center"
         >
             <div className={classes.blogContentWrapper}>
-                <div style={{ minHeight: 250, minWidth: "60%", boxShadow: "rgba(0, 0, 0, 0.56) 0px 22px 70px 4px", marginBottom: 50 }}>
-                    <Grid style={{ padding: "20px" }} container>
-                        <Grid style={{ fontSize: 22,marginBottom:20 }} item sm={6}>
-                            <span style={{ fontSize: 30, color: "green", marginBottom: 15 }}>PGR-Delhi Office Address</span>
+                <div className= {classes.contactUsBox}>
+                    <Grid className={classes.containerGrid} container>
+                        <Grid className={classes.itemGrid} item sm={6}>
+                            <span className={classes.address}>PGR-Delhi Office Address</span>
                             <div>Praedico Global Research.Pvt.Ltd Udyog Vihar, Phase 4,</div>
                             <div>Gurgaon-122015</div>
                             <div> <i class="fas fa-phone"></i>  +91-9009054508, +91-9999703728</div>
@@ -42,10 +58,10 @@ export default function ContactUs() {
                         </Grid>
                     </Grid>
                 </div>
-                <div style={{ minHeight: 250, minWidth: "65%", boxShadow: "rgba(0, 0, 0, 0.56) 0px 22px 70px 4px", marginTop: 50 }}>
-                    <Grid style={{ padding: "20px" }} container>
-                        <Grid style={{ fontSize: 22,marginBottom:20 }} item sm={6}>
-                            <div style={{ fontSize: 30, color: "green", marginBottom: 15 }}>PGR-Delhi Office Address</div>
+                <div className= {classes.contactUsBox}>
+                    <Grid className={classes.containerGrid}  container>
+                        <Grid className= {classes.itemGrid} item sm={6}>
+                            <div className={classes.address}>PGR-Delhi Office Address</div>
                             <div>First Floor, Garima Arcade,</div>
                             <div>Gwalior-474001</div>
                             <div> <i class="fas fa-phone"></i> +91-9009054508, +91-9999703728</div>

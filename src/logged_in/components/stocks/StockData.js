@@ -145,19 +145,43 @@ export default function StockData(props) {
   };
 
   const setBuyingPrice=(value)=>{
+     if(value===""){
+      setStockBuy("");
+      setBuyPrice(value*data[0].currentPrice.toFixed(2));
+      setDisplayBuyButton(false);
+    }else{
       setStockBuy(parseInt(value));
       setBuyPrice((parseInt(value)*data[0].currentPrice).toFixed(2));
       setDisplayBuyButton(true);
+    }
   }
 
   const setSellingPrice=(value)=>{
+    if(value===""){
+      setStockSell("")
+      setSellPrice((value*data[0].currentPrice).toFixed(2));
+      setDisplaySellButton(false);
+    }else{
       setStockSell(parseInt(value))
       setSellPrice((parseInt(value)*data[0].currentPrice).toFixed(2));
       setDisplaySellButton(true);
+    }
   }
 
   const handleBuySell=async()=>{
-    var body={ companyCode:props.data.CompanyCode, companyName:props.data.CompanyName, currentPrice:data[0] ? data[0].currentPrice : 0, buyStock:stockBuy, totalBuyPrice:buyPrice, sellStock:stockSell, totalSellPrice:sellPrice, comment:comment, virtualAmount:virtualAmount, UserId: userId, ppmGroupId:ppmGroupId }
+    var body={ 
+      companyCode:props.data.CompanyCode, 
+      companyName:props.data.CompanyName, 
+      currentPrice:data[0] ? data[0].currentPrice : 0, 
+      buyStock:stockBuy,
+      totalBuyPrice:buyPrice, 
+      sellStock:stockSell, 
+      totalSellPrice:sellPrice, 
+      comment:comment, 
+      virtualAmount:virtualAmount, 
+      UserId: userId, 
+      ppmGroupId:ppmGroupId 
+    }
     const result = await postData("stock/insertportfolio", body);
     if(result.success){
       props.setComponent(<Portfolio setComponent={props.setComponent} companyCode={props.data.companyCode}/>)
@@ -189,11 +213,21 @@ export default function StockData(props) {
     setButtonColor(item.time)
   }
 
+  const handleSetBody=(value)=>{
+    setDisplaySellButton(false)
+    setDisplayBuyButton(false);
+    setBuyPrice("");
+    setSellPrice("");
+    setStockBuy("")
+    setStockSell("")
+    setBody(value);
+  }
+
   const body1=(<div style={modalStyle}>
       <div>
       <div style={{display:"flex"}}>
           <div style={{width:"90%", margin:"auto", border:"4px grey solid", borderBottom:"" , fontSize:40, backgroundColor:"#9EFD38", color:"white"}}>BUY</div>
-          <div onClick={()=>setBody(true)} style={{width:"90%", margin:"auto", cursor:"pointer", fontSize:40, borderBottom:"4px solid grey", backgroundColor:"red", color:"white"}}>Sell</div>
+          <div onClick={()=>handleSetBody(true)} style={{width:"90%", margin:"auto", cursor:"pointer", fontSize:40, borderBottom:"4px solid grey", backgroundColor:"red", color:"white"}}>Sell</div>
         </div>
           <div style={{margin:"20px", fontSize:22, fontWeight:"700"}}>Your Praedico virtual amount left is : <span style={{color:"green"}}>₹{virtualAmount}</span></div>
           <div style={{display:"flex", justifyContent:"space-evenly"}}>
@@ -212,7 +246,7 @@ export default function StockData(props) {
     const body2=(<div style={modalStyle}>
         <div>
           <div style={{display:"flex"}}>
-            <div onClick={()=>setBody(false)} style={{width:"90%", margin:"auto", cursor:"pointer", borderBottom:"4px solid grey", fontSize:40, backgroundColor:"green", color:"white"}}>BUY</div>
+            <div onClick={()=>handleSetBody(false)} style={{width:"90%", margin:"auto", cursor:"pointer", borderBottom:"4px solid grey", fontSize:40, backgroundColor:"green", color:"white"}}>BUY</div>
             <div  style={{width:"90%", margin:"auto", fontSize:40, border:"4px grey solid", borderBottom:"", backgroundColor:"#ff7675", color:"white"}}>Sell</div>
           </div>
           <div style={{marginTop:"20px", fontSize:22, fontWeight:"700"}}>Total Stock Available : <span style={{color:"green"}}>{stockAvailable}</span></div>
