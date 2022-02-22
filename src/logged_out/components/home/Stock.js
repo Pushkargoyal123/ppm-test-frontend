@@ -35,7 +35,6 @@ export default function Stock(){
 
   const fetchAllStocks=async()=>{
     const result = await getData("stock/getallstockdetails");
-    console.log(result);
     if(result)
       setStockEvaluation(result);
   }

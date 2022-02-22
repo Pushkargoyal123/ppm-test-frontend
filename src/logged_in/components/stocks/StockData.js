@@ -105,7 +105,6 @@ export default function StockData(props) {
 
     const fetchVirtualAmount=async()=>{
       const result = await getData("group/findbyuserid?UserId="+userId);
-      console.log(result);
       if(result.success)
         setVirtualAmount(result.data.virtualAmount.toFixed(2));
     }
