@@ -6,7 +6,7 @@ import {
 } from "@material-ui/core";
 import MaterialTable from 'material-table';
 import { useEffect, useState } from "react";
-import { getData } from "../../../service/service";
+import { getData, postData } from "../../../service/service";
 import { useSelector } from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
@@ -48,6 +48,12 @@ export default function LeaderBoard() {
         const usersList = await getData("user/fetchleaderboarddata");
         if (usersList.success) {
             setMessage(1)
+            usersList.data.forEach(async function(item){
+                item.virtualAmount = item.ppm_userGroups[0].virtualAmount;
+                item.netAmount = (item.ppm_userGroups[0].virtualAmount + item.current_investment + item.totalCurrentPrice - item.current_investment )
+                item.profitLoss = item.totalCurrentPrice - item.current_investment
+                await postData("user/setnetamount", { netAmount : item.netAmount, id : item.ppm_userGroups[0].id })
+            })
             setData(usersList.data);
         }
         setMessage(2);
@@ -86,20 +92,20 @@ export default function LeaderBoard() {
                                 {
                                     title: 'Current Investment(Rs)',
                                     field: 'current_investment',
-                                    render: rowData => "₹" + rowData.current_investment
+                                    render: rowData => "₹" + rowData.current_investment.toFixed(2)
                                 },
                                 {
                                     title: 'Profit/Loss (Rs)',
                                     field: 'totalCurrentPrice',
                                     cellStyle: { fontWeight: 700 },
-                                    render: rowData => (rowData.current_investment - rowData.totalCurrentPrice) >= 0 ?
-                                        <span style={{ color: "green" }}> {"₹" + (rowData.current_investment - rowData.totalCurrentPrice).toFixed(2)}</span> :
-                                        <span style={{ color: "red" }}>{"₹" + (rowData.current_investment - rowData.totalCurrentPrice).toFixed(2)}</span>
+                                    render: rowData => (rowData.profitLoss) >= 0 ?
+                                        <span style={{ color: "green" }}> {"₹" + (rowData.profitLoss).toFixed(2)}</span> :
+                                        <span style={{ color: "red" }}>{"₹" + (rowData.profitLoss).toFixed(2)}</span>
                                 },
                                 {
                                     title: 'Profit/Loss per Day(Rs)',
                                     cellStyle: { color: "orange", fontWeight: 700 },
-                                    render: rowData => "₹" + ((rowData.current_investment - rowData.totalCurrentPrice) / Math.round((new Date() - new Date(rowData.dateOfRegistration)) / (24 * 60 * 60 * 1000))).toFixed(2)
+                                    render: rowData => "₹" + ((rowData.profitLoss) / Math.round((new Date() - new Date(rowData.dateOfRegistration)) / (24 * 60 * 60 * 1000))).toFixed(2)
                                 },
                                 {
                                     title: 'Brokrage Amount(Rs)',
@@ -110,12 +116,12 @@ export default function LeaderBoard() {
                                 {
                                     title: "Praedico's Virtual Amount(Rs)",
                                     field: 'virtualAmount',
-                                    render: rowData => "₹ " + rowData.ppm_userGroups[0].virtualAmount.toFixed(2)
+                                    render: rowData => "₹ " + rowData.virtualAmount.toFixed(2)
                                 },
                                 {
                                     title: 'Net Amount(Rs)',
                                     field: 'netAmount',
-                                    render: rowData => "₹" + rowData.ppm_userGroups[0].netAmount.toFixed(2)
+                                    render: rowData => "₹" + (rowData.netAmount ).toFixed(2)
                                 },
                                 {
                                     title: 'Starting Date',

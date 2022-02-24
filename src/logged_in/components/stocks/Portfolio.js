@@ -251,7 +251,7 @@ export default function Portfolio(props) {
                                         <div style={{ margin: 10 }}>Current Invested Amount : <span style={{ color: "red" }}>₹{totalBuyPrice.toFixed(2)}</span></div>
                                         <div style={{ margin: 10 }}>Total Brokerage Charge : <span style={{ color: "red" }}>₹{count * 10} </span></div>
                                         <div style={{ margin: 10 }}>Amount left in your bucket for buying stocks : <span style={{ color: "red" }}>₹{virtualAmount}</span></div>
-                                        <div style={{ margin: 10 }}>Net Amount : <span style={{ color: "red" }}>₹{parseInt(virtualAmount + totalBuyPrice + totalPL).toFixed(2)}</span></div>
+                                        <div style={{ margin: 10 }}>Net Amount : <span style={{ color: "red" }}>₹{(parseFloat(totalBuyPrice) + parseFloat(virtualAmount)+ totalPL ).toFixed(2)}</span></div>
                                         <Divider style={{ margin: 20 }} />
                                         <div style={{ margin: 10, color: totalPL > 0 ? "green" : "red" }}>{userData.userName} is in {totalPL > 0 ? "Profit" : "Loss"} of ₹{totalPL.toFixed(2)}</div>
                                     </TableCell>

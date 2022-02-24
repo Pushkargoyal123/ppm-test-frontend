@@ -104,9 +104,9 @@ function NavBar(props) {
   const handleSelect = (page) => {
     setAnchorEl(null);
     if(page==="stocks")
-      props.setComponent(<Stock setComponent={props.setComponent}/>)
+      props.setComponent(<Stock setComponent={props.setComponent} setUnderlinedButton= {props.setUnderlinedButton}/>)
     else if(page==="critical analysis")
-       props.setComponent(<CriticalAnalysis setComponent={props.setComponent}/>)
+       props.setComponent(<CriticalAnalysis setComponent={props.setComponent} setUnderlinedButton= {props.setUnderlinedButton}/>)
     props.setUnderlinedButton("Stocks");
   };
 

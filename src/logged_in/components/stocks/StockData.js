@@ -65,6 +65,7 @@ export default function StockData(props) {
     const [open, setOpen] = React.useState(false);
     const [body, setBody]= React.useState(false);
     const [virtualAmount, setVirtualAmount]= useState('');
+    const [netAmount, setNetAmount]= useState("");
     const [buyPrice, setBuyPrice]= useState("");
     const [sellPrice, setSellPrice]= useState(""); 
     const [stockBuy, setStockBuy]= useState("");
@@ -103,31 +104,29 @@ export default function StockData(props) {
       return(number);
     }
 
-    const fetchVirtualAmount=async()=>{
+    const fetchVirtualAmountAndNetAmount=async()=>{
       const result = await getData("group/findbyuserid?UserId="+userId);
-      if(result.success)
+      if(result.success){
         setVirtualAmount(result.data.virtualAmount.toFixed(2));
+        setNetAmount(result.data.netAmount.toFixed(2));
+      }
     }
 
     const fetchPortfolioStock=async()=>{
 
-      let body={companyName:props.data.CompanyName}
+      let body={
+        userId : userId,
+        companyName:props.data.CompanyName,
+      }
 
       const result = await postData("stock/fetchportfolio", body);
-      if(result){
-       
-        const stockBuyed= result.reduce(function(total,item){
-          return (total+item.buyStock);
-        }, 0)
-        const stockSelled= result.reduce(function(total,item){
-          return (total+item.sellStock);
-        }, 0)
-        setStockAvailable(stockBuyed - stockSelled );
+      if(result.status){
+        setStockAvailable(result.stockAvailable );
       }
     }
 
     const handleOpen = (name) => {
-      fetchVirtualAmount();
+      fetchVirtualAmountAndNetAmount();
       fetchPortfolioStock();
       setBody(false);
       setOpen(true);
@@ -178,12 +177,14 @@ export default function StockData(props) {
       totalSellPrice:sellPrice, 
       comment:comment, 
       virtualAmount:virtualAmount, 
+      netAmount : netAmount,
       UserId: userId, 
       ppmGroupId:ppmGroupId 
     }
     const result = await postData("stock/insertportfolio", body);
     if(result.success){
-      props.setComponent(<Portfolio setComponent={props.setComponent} companyCode={props.data.companyCode}/>)
+      props.setComponent(<Portfolio setComponent={props.setComponent} companyCode={props.data.companyCode} setUnderlinedButton = {props.setUnderlinedButton}/>)
+      props.setUnderlinedButton("Portfolio");
     } 
   }
 

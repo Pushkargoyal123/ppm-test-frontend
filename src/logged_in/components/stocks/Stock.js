@@ -63,7 +63,6 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 export default function Stock(props){
-
 	const classes = useStyles();
   useEffect(function(){
     fetchAllStocks();
@@ -101,7 +100,7 @@ export default function Stock(props){
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <StyledMenuItem onClick= {()=>props.setComponent(<StockData data={companyData} setComponent={props.setComponent}/>)}>
+        <StyledMenuItem onClick= {()=>props.setComponent(<StockData data={companyData} setComponent={props.setComponent} setUnderlinedButton = {props.setUnderlinedButton}/>)}>
           <ListItemIcon>
             <BusinessCenterIcon fontSize="small" />
           </ListItemIcon>
