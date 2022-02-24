@@ -1,6 +1,6 @@
 
-const ServerURL="http://localhost:7080/api/";
-// const ServerURL="https://test.praedicofinance.com/api/"
+// const ServerURL="http://localhost:7080/api/";
+const ServerURL="https://test.praedicofinance.com/api/"
 
 async function postData(url, body){
 	const response = await fetch(ServerURL + url , 
