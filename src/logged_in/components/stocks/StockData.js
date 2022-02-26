@@ -113,7 +113,6 @@ export default function StockData(props) {
     }
 
     const fetchPortfolioStock=async()=>{
-
       let body={
         userId : userId,
         companyName:props.data.CompanyName,

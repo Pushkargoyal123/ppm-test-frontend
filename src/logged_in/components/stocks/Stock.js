@@ -60,6 +60,10 @@ const useStyles = makeStyles((theme) => ({
     wrapper: {
         minHeight: "60vh",
     },
+    message: {
+      color: "red",
+      fontWeight: "600"
+    }
 }))
 
 export default function Stock(props){
@@ -71,6 +75,7 @@ export default function Stock(props){
   const [stockEvaluation, setStockEvaluation]= useState([]);
   const [anchorEl, setAnchorEl] = useState(null);
   const [companyData, setCompanyData]= useState([]);
+  const [message, setMessage] = useState(false);
 
   const handleClick = (event, rowData) => {
     setAnchorEl(event.currentTarget);
@@ -83,7 +88,11 @@ export default function Stock(props){
 
   const fetchAllStocks=async()=>{
     const result = await getData("stock/getallstockdetails");
-    setStockEvaluation(result);
+    if(result.length){
+      setMessage(1)
+      setStockEvaluation(result);
+    }
+    setMessage(2)
   }
 
 	return (
@@ -115,7 +124,7 @@ export default function Stock(props){
       </StyledMenu>
 
         {
-        stockEvaluation.length===0 ? <div className="ParentFlex">
+        !message ? <div className="ParentFlex">
             <CircularProgress color="secondary" className="preloader"/>
           </div>
       :      
@@ -172,6 +181,19 @@ export default function Stock(props){
             return { CompanyCode:item.companyCode, CompanyName: item.companyName, CurrentPrice: "₹"+item.currentPrice, HighPrice: "₹"+item.highPrice, LowPrice:"₹"+item.lowPrice, Variance:"₹"+item.variance, Signal:item.stockSignal }
           })
         }    
+        localization={{
+          body: message === 1 ?
+            stockEvaluation.length ? null : {
+              emptyDataSourceMessage: (
+                "You haven't Buy or Sell Any Stock"
+              ),
+            } :
+            {
+              emptyDataSourceMessage: (
+                <span className={classes.message}>!!OOPS Server Error</span>
+              ),
+            },
+        }}
         actions={[
         rowData => ({
           icon: ()=><AddIcon style={{color:"green", fontWeight:"800", fontSize:"1.7rem"}}/>,

@@ -45,13 +45,27 @@ export default function LeaderBoard() {
     const userId = Object.values(user)[0].id
 
     async function fetchUsers() {
+
         const usersList = await getData("user/fetchleaderboarddata");
-        if (usersList.success) {
+
+        const stockData = await getData("stock/fetchallstockdata");
+
+        if (usersList.success && stockData.success) {
             setMessage(1)
             usersList.data.forEach(async function(item){
                 item.virtualAmount = item.ppm_userGroups[0].virtualAmount;
                 item.netAmount = (item.ppm_userGroups[0].virtualAmount + item.current_investment + item.totalCurrentPrice - item.current_investment )
                 item.profitLoss = item.totalCurrentPrice - item.current_investment
+                var count=1;
+                stockData.data.forEach(function(stockItem){
+                    const dateArray=item.dateOfRegistration.split("-");
+                    dateArray[1] = dateArray[1] < 10 ? "0"+dateArray[1] : dateArray[1];
+                    const newDate= dateArray.reverse().join("-");
+                    if(stockItem.date >= newDate){
+                        count++;
+                    }
+                })
+                item.count= count
                 await postData("user/setnetamount", { netAmount : item.netAmount, id : item.ppm_userGroups[0].id })
             })
             setData(usersList.data);
@@ -105,7 +119,9 @@ export default function LeaderBoard() {
                                 {
                                     title: 'Profit/Loss per Day(Rs)',
                                     cellStyle: { color: "orange", fontWeight: 700 },
-                                    render: rowData => "₹" + ((rowData.profitLoss) / Math.round((new Date() - new Date(rowData.dateOfRegistration)) / (24 * 60 * 60 * 1000))).toFixed(2)
+                                    render: rowData => (rowData.profitLoss / rowData.count) >=0 ?
+                                        <span style={{color: "green"}}> {"₹" + (rowData.profitLoss / rowData.count).toFixed(2)} </span> :
+                                        <span style={{color: "red"}}> {"₹" + (rowData.profitLoss / rowData.count).toFixed(2)} </span>
                                 },
                                 {
                                     title: 'Brokrage Amount(Rs)',
