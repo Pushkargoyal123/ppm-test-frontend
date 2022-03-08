@@ -34,6 +34,14 @@ const useStyles = makeStyles((theme) => ({
     wrapper: {
         minHeight: "60vh",
     },
+    companyName: { 
+      color : "blue", 
+      fontWeight: "bold", 
+      textAlign: "center", 
+      fontSize: "1.2rem", 
+      letterSpacing: 2, 
+      marginTop: 20
+    }
 }))
 
 function getModalStyle() {
@@ -83,9 +91,8 @@ export default function StockData(props) {
 
     useEffect(function(){
         const fetchCompanyData=async()=>{
-
+          
         const body={CompanyCode: props.data.CompanyCode}
-
         const result= await postData("stock/getallcompanystockdetails", body);
 
         if(!result.success){
@@ -182,7 +189,12 @@ export default function StockData(props) {
     }
     const result = await postData("stock/insertportfolio", body);
     if(result.success){
-      props.setComponent(<Portfolio setComponent={props.setComponent} companyCode={props.data.companyCode} setUnderlinedButton = {props.setUnderlinedButton}/>)
+      props.setComponent(<Portfolio 
+        setUnderlinedButton = {props.setUnderlinedButton} 
+        data={props.data} 
+        setComponent={props.setComponent} 
+        companyCode={props.data.companyCode} 
+      />)
       props.setUnderlinedButton("Portfolio");
     } 
   }
@@ -283,7 +295,8 @@ export default function StockData(props) {
                     <Button color="primary" variant="contained" onClick={handleOpen}> Buy/Sell</Button>
                     <Button color="secondary" variant="contained"  onClick={()=>props.setComponent(<Stock setComponent={props.setComponent}/>)}> Go Back</Button>
                 </div>
-                <Divider style={{ margin: 20 }} />
+                <div className={classes.companyName}> {props.data.CompanyName + "  ("+ props.data.CompanyCode + ")"} </div>
+                <Divider style={{ marginBottom: 20 }} />
                  <div style={{display:"flex", justifyContent:"space-evenly", flexWrap:"wrap" ,borderBottom:"2px black solid", borderLeft:"2px black solid", borderRight:"2px black solid"}}>
                    {timeDuration.map(function(item, index){
                       return( <Button key={index} style={ item.time===buttonColor ? {border: "2px black solid"} : { } } onClick={()=>handleGraphData(item)}>{item.time}</Button> )

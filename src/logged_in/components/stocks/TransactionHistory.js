@@ -3,9 +3,11 @@ import { Divider, Box, makeStyles } from "@material-ui/core";
 import MaterialTable from 'material-table';
 import { useEffect, useState } from "react"
 import { getData } from "../../../service/service";
-import { portfolioHistoryColumns } from "../../../config"
 import { useSelector } from "react-redux";
 import CircularProgress from '@material-ui/core/CircularProgress';
+import ToolTip from "../../../shared/components/ToolTip";
+import KeyboardBackspaceRoundedIcon from '@material-ui/icons/KeyboardBackspaceRounded';
+import Portfolio from "./Portfolio";
 
 const useStyles = makeStyles((theme) => ({
     blogContentWrapper: {
@@ -44,7 +46,9 @@ export default function TransactionHistory(props) {
                 setMessage(1)
                 setData(resultportfolio.data);
             }
-            setMessage(2);
+            else{
+                setMessage(2);
+            }
         }
         fetchTransactionHistory()
     }, [userId])
@@ -65,39 +69,77 @@ export default function TransactionHistory(props) {
                     </div>
                         :
                         <MaterialTable
-                            title="Transaction History"
+                            title= <ToolTip title="Back" component= {()=><KeyboardBackspaceRoundedIcon
+                                color="secondary"
+                                style={{ border: "1px blue solid", fontSize: "2rem", cursor: "pointer" }}
+                                onClick={() => props.setComponent(<Portfolio setComponent={props.setComponent} />)}
+                            />} />
+
                             style={{ fontWeight: 500 }}
-                            columns={portfolioHistoryColumns}
-                            data={data}
-                            localization={{
-                                body: message === 1 ?
-                                    data.length ? null : {
-                                        emptyDataSourceMessage: (
-                                            "You haven't Buy or Sell Any Stock"
-                                        ),
-                                    } :
-                                    {
-                                        emptyDataSourceMessage: (
-                                            <span className={classes.message}>!!OOPS Server Error</span>
-                                        ),
-                                    },
-                            }}
-                            options={{
-                                pageSize: 50,
-                                maxBodyHeight: '80vh',
-                                emptyRowsWhenPaging: false,
-                                pageSizeOptions: [50, 100, 150, 200],
-                                filtering: true,
-                                headerStyle: {
-                                    fontSize: "1.1rem",
-                                    fontWeight: "500",
-                                    backgroundColor: "#D1D1D8",
-                                    textAlign: "center",
-                                },
-                                searchFieldStyle: {
-                                    backgroundColor: "#D1D1D8",
-                                },
-                            }}
+                columns={[
+                    {
+                        title: 'Trans_ID',
+                        field: 'id',
+                        cellStyle: { textAlign: "center", backgroundColor: "#e55039", color: "white", fontWeight: "600", width: "4%" },
+                        customFilterAndSearch: (term, rowData) => term === parseInt(rowData.id) + 1000 + "",
+                        render: rowData => parseInt(rowData.id) + 1000
+                    },
+                    {
+                        title: 'Company',
+                        field: 'companyName',
+                        render: rowData => rowData.companyName + "(" + rowData.companyCode + ")"
+                    },
+                    {
+                        title: 'Status',
+                        field: 'buyStock',
+                        customFilterAndSearch: (term, rowData) => term.toUpperCase() === "BUY" ? rowData.buyStock : rowData.sellStock,
+                        render: rowData => rowData.buyStock > 0 ? <span style={{ color: "green", fontWeight: 600 }}>BUY</span> : <span style={{ color: "red", fontWeight: 600 }}>SELL</span>,
+                    },
+                    {
+                        title: 'Stocks',
+                        field: 'buyStock',
+                        render: rowData => rowData.buyStock > 0 ? <span>{rowData.buyStock}</span> : <span>{rowData.sellStock}</span>
+                    },
+                    {
+                        title: 'Date',
+                        field: 'dateTime',
+                        render: rowData => rowData.dateTime.split(" ")[0]
+                    },
+                    {
+                        title: 'Time',
+                        field: 'dateTime',
+                        render: rowData => rowData.dateTime.split(" ")[1]
+                    },
+                ]}
+                data={data}
+                localization={{
+                    body: message === 1 ?
+                        data.length ? null : {
+                            emptyDataSourceMessage: (
+                                "You haven't Buy or Sell Any Stock"
+                            ),
+                        } :
+                        {
+                            emptyDataSourceMessage: (
+                                <span className={classes.message}>!!OOPS Server Error</span>
+                            ),
+                        },
+                }}
+                options={{
+                    pageSize: 50,
+                    maxBodyHeight: '80vh',
+                    emptyRowsWhenPaging: false,
+                    pageSizeOptions: [50, 100, 150, 200],
+                    filtering: true,
+                    headerStyle: {
+                        fontSize: "1.1rem",
+                        fontWeight: "500",
+                        backgroundColor: "#D1D1D8",
+                    },
+                    searchFieldStyle: {
+                        backgroundColor: "#D1D1D8",
+                    },
+                }}
                         />
                 }
             </div>

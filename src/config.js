@@ -48,42 +48,6 @@ const timeDuration = [
   },
 ];
 
-const portfolioHistoryColumns = [
-  {
-    title: 'Trans_ID',
-    field: 'id',
-    cellStyle: { textAlign: "center", backgroundColor: "#e55039", color: "white", fontWeight: "600" },
-    customFilterAndSearch: (term, rowData) => term === parseInt(rowData.id) + 1000 + "",
-    render: rowData => parseInt(rowData.id) + 1000
-  },
-  {
-    title: 'Company',
-    field: 'companyName',
-    render: rowData => rowData.companyName + "(" + rowData.companyCode + ")"
-  },
-  {
-    title: 'Status',
-    field: 'buyStock',
-    customFilterAndSearch: (term, rowData) => term.toUpperCase() === "BUY" ? rowData.buyStock : rowData.sellStock,
-    render: rowData => rowData.buyStock > 0 ? <span style={{ color: "green", fontWeight: 600 }}>BUY</span> : <span style={{ color: "red", fontWeight: 600 }}>SELL</span>,
-  },
-  {
-    title: 'Stocks',
-    field: 'buyStock',
-    render: rowData => rowData.buyStock > 0 ? <span>{rowData.buyStock}</span> : <span>{rowData.sellStock}</span>
-  },
-  {
-    title: 'Date',
-    field: 'dateTime',
-    render: rowData => rowData.dateTime.split(" ")[0]
-  },
-  {
-    title: 'Time',
-    field: 'dateTime',
-    render: rowData => rowData.dateTime.split(" ")[1]
-  },
-]
-
 const loggedOut_menuItems = [
   {
     link: "/",
@@ -180,7 +144,6 @@ const loggedIn_menuItems = [
 
 export {
   timeDuration,
-  portfolioHistoryColumns,
   loggedOut_menuItems,
   loggedIn_menuItems
 }

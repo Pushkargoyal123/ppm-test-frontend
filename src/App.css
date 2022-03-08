@@ -9,6 +9,15 @@ body{
 .red{
 	background-color: red;
 }
+.tablecell{
+  color: rgb(36, 36, 36) !important;
+  font-size: 1rem !important; 
+  font-weight: 600 !important;
+  text-align: center !important;
+}
+.white{
+  color: white!important;
+}
 .MuiTableCell-root{
   padding: 5px!important;
 }
@@ -51,3 +60,4 @@ body{
   width: 20%;
   height: 20%;
 }
+

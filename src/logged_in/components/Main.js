@@ -333,7 +333,7 @@ function Main(props) {
       setComponent(<ContactUs/>)
     }
       else if(link==="/portfolio"){
-      setComponent(<Portfolio setComponent={setComponent}/>)
+      setComponent(<Portfolio setComponent={setComponent} setUnderlinedButton = {setUnderlinedButton}/>)
     }
      else if(link==="/post"){
       setComponent(<Stock/>)

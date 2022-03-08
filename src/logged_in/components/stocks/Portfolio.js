@@ -8,6 +8,9 @@ import TransactionHistory from "./TransactionHistory"
 import { getData } from "../../../service/service";
 import { useSelector } from "react-redux";
 import CircularProgress from '@material-ui/core/CircularProgress';
+import CompanyDetail from "./CompanyDetail";
+import ToolTip from "../../../shared/components/ToolTip";
+
 
 const useStyles = makeStyles((theme) => ({
     blogContentWrapper: {
@@ -24,9 +27,9 @@ const useStyles = makeStyles((theme) => ({
     wrapper: {
         minHeight: "60vh",
     },
-    message : {
+    message: {
         color: "red",
-        fontWeight : "600"
+        fontWeight: "600"
     }
 }))
 
@@ -152,7 +155,7 @@ export default function Portfolio(props) {
                 setCount(count);
                 setData(finalData);
             }
-            else{
+            else {
                 setMessage(2);
             }
         }
@@ -165,7 +168,6 @@ export default function Portfolio(props) {
         }
         fetchVirtualAmount();
     }, [userId])
-
 
     return (
         <Box
@@ -182,20 +184,31 @@ export default function Portfolio(props) {
                     </div>
                         :      
                  <MaterialTable
-                  title= <Button variant="contained" color="secondary" onClick={()=>props.setComponent(<TransactionHistory/>)}>Transaction History</Button>
+                    title={<ToolTip title="Transaction History" component = {()=>  <Button 
+                        variant="contained" 
+                        color="secondary" 
+                        onClick={()=>props.setComponent(<TransactionHistory setComponent={props.setComponent}/>)}>
+                            Transaction History
+                        </Button>}/>}
+
                   style={{ fontWeight: 500, marginTop: 20 }}
                 columns={[
                     {
-                        title: 'Company Code',
+                        title: 'S.No.',
                         field: 'tableData.id',
-                        cellStyle: { textAlign: "center", backgroundColor: "#f1c40f", fontWeight: "600" },
+                        cellStyle: { textAlign: "center", backgroundColor: "#f1c40f", fontWeight: "600", width: "4%"},
                         render: rowData => rowData.tableData.id + 1
                     },
                     {
                         title: 'Company Code',
                         field: 'companyCode',
-                        cellStyle: { color: "blue", fontWeight: "600" },
-                        render: rowData => rowData.companyCode
+                        render: rowData => <ToolTip title= {"See "+rowData.companyName+ " Transaction History"} component= {()=> <span >
+                            <Button
+                                onClick={() => props.setComponent(<CompanyDetail data={rowData} setComponent={props.setComponent} setUnderlinedButton = {props.setUnderlinedButton}></CompanyDetail>)}
+                                style={{ color: "blue", fontWeight: "600", border: "1px blue solid" }} >
+                                {rowData.companyCode}
+                            </Button>
+                        </span>}/>
                     },
                     {
                         title: 'Average Buying Price',
@@ -246,12 +259,12 @@ export default function Portfolio(props) {
                                     <TableCell style={{ color: totalPL >= 0 ? totalPL === 0 ? "orange" : "green" : "red", fontSize: "1.2rem", fontWeight: "800" }}>₹{totalPL}</TableCell>
                                 </TableRow>
                                 <TableRow>
-                                    <TableCell style={{ color: "black", fontSize: "1.1rem", fontWeight: "600", textAlign: "center" }} colSpan={8}>
+                                    <TableCell className="tablecell" colSpan={8}>
                                         <Divider style={{ margin: 20 }} />
                                         <div style={{ margin: 10 }}>Current Invested Amount : <span style={{ color: "red" }}>₹{totalBuyPrice.toFixed(2)}</span></div>
                                         <div style={{ margin: 10 }}>Total Brokerage Charge : <span style={{ color: "red" }}>₹{count * 10} </span></div>
                                         <div style={{ margin: 10 }}>Amount left in your bucket for buying stocks : <span style={{ color: "red" }}>₹{virtualAmount}</span></div>
-                                        <div style={{ margin: 10 }}>Net Amount : <span style={{ color: "red" }}>₹{(parseFloat(totalBuyPrice) + parseFloat(virtualAmount)+ totalPL ).toFixed(2)}</span></div>
+                                        <div style={{ margin: 10 }}>Net Amount : <span style={{ color: "red" }}>₹{(parseFloat(totalBuyPrice) + parseFloat(virtualAmount) + totalPL).toFixed(2)}</span></div>
                                         <Divider style={{ margin: 20 }} />
                                         <div style={{ margin: 10, color: totalPL > 0 ? "green" : "red" }}>{userData.userName} is in {totalPL > 0 ? "Profit" : "Loss"} of ₹{totalPL.toFixed(2)}</div>
                                     </TableCell>
@@ -260,18 +273,18 @@ export default function Portfolio(props) {
                         </>
                     )
                 }}
-                 localization={{
-                    body: message===1 ? 
+                localization={{
+                    body: message === 1 ?
                         data.length ? null : {
-                        emptyDataSourceMessage: (
+                            emptyDataSourceMessage: (
                                 "You haven't Buy or Sell Any Stock"
-                        ),
-                    } :
-                    {
-                        emptyDataSourceMessage: (
-                            <span className={classes.message}>!!OOPS Server Error</span>
-                        ),
-                    } ,
+                            ),
+                        } :
+                        {
+                            emptyDataSourceMessage: (
+                                <span className={classes.message}>!!OOPS Server Error</span>
+                            ),
+                        },
                 }}
                 options={{
                     paging: false,
