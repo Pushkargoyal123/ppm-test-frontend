@@ -203,11 +203,11 @@ function NavBar(props) {
                 Swal.fire({
                   icon: 'success',
                   title: 'Registration Done',
-                  text: 'Login now',
+                  text: 'Verify Your Account',
                 }).then(
                   function(){
                     setOpen(true);
-                    setBody(true)
+                    setBody(3)
                     setLoginEmail(email);
                     setLoginPassword(password);
                   })
@@ -222,7 +222,7 @@ function NavBar(props) {
                   }).then(
                     function(){
                       setOpen(true);
-                      setBody(true)
+                      setBody(3)
                       setLoginEmail(email);
                       setLoginPassword(password);
                     })
@@ -297,7 +297,7 @@ function NavBar(props) {
       }
     }
 
-    const body1 = (
+    const registrationModal = (
     <div style={modalStyle} >
       <div className="flexBox">
         <span></span>
@@ -385,13 +385,27 @@ function NavBar(props) {
           <div className={classes.error}>{confirmPasswordError}</div>
         </FormControl>
 
-        <div onClick={()=>setBody(true)} className="links" style={{marginTop:10}}> Login now if already Registered ?</div>
+        <div onClick={()=>setBody(1)} className="links" style={{marginTop:10}}> Login now if already Registered ?</div>
             <div><Button onClick={handleSubmit} color="secondary" style={{ margin: 10, width: 350 }} variant="contained">Submit</Button></div>
     </div>
   );
 
+  const verifymodal =(
+    <div style={modalStyle}>
+      <div style={{textAlign: "right", padding: 20}}> <i style={{fontSize:25, cursor:"pointer"}} onClick={()=>setOpenModal(false)} class="fas fa-times"></i></div>
+      <div className="flexBox">
+        <span></span>
+        <h2 id="simple-modal-title">We have sent a mail to { email } Enter the OTP in the mail</h2>
+      </div>
+      <div style={{ margin: 20 }}><TextField autoComplete="off" onChange={(event) => { setSerialNumber(event.target.value) }} placeholder="ex. 12345678" id="outlined-ba" label="Serial Number" variant="outlined" style={{ width: 350 }} /></div>
+      <div style={{display:"flex", justifyContent:"space-around"}}>
+        <Button onClick={()=>alert("You entered "+serialNumber)} color="primary" style={{ margin: 20 }} variant="contained">Submit</Button>
+        <Button onClick={()=>setOpenModal(false)} color="primary" style={{ margin: 20 }} variant="contained">Cancil</Button>
+      </div>
+    </div>
+    )
 
-    const body2 = (
+    const loginModal = (
     <div style={modalStyle} >
       <div className="flexBox">
         <span></span>
@@ -422,7 +436,7 @@ function NavBar(props) {
           />
           {loginPasswordError ? <div className={classes.error}> *Password should be provided </div> :<div></div>}
         </FormControl>
-          <div onClick={()=>setBody(false)} className="links" style={{marginTop:10}}> Register now if not ?</div>
+          <div onClick={()=>setBody(2)} className="links" style={{marginTop:10}}> Register now if not ?</div>
           <div className="links">Forgot Password ? </div>
          <div><Button onClick={handleLogin} color="secondary" style={{ margin: 20, width: 400 }} variant="contained">Login</Button></div>
     </div>
@@ -445,9 +459,9 @@ function NavBar(props) {
 
   const handleOpen = (name) => {
     if(name==="Login")
-      setBody(true);
+      setBody(1);
     else
-      setBody(false)
+      setBody(2)
     setOpen(true);
   };
 
@@ -516,7 +530,7 @@ function NavBar(props) {
                     aria-labelledby="simple-modal-title"
                     aria-describedby="simple-modal-description"
                   >
-                    {body? body2 : body1}
+                    {body === 1 ? loginModal : body === 2 ? registrationModal : verifymodal}
                   </Modal>
                   <Button
                     color="secondary"

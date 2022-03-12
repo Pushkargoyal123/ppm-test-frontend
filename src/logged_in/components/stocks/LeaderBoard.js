@@ -94,7 +94,7 @@ export default function LeaderBoard() {
                                 {
                                     title: 'SNo.',
                                     field: 'tableData.id',
-                                    cellStyle: { textAlign: "center", backgroundColor: "#f1c40f", fontWeight: "600" },
+                                    cellStyle: { textAlign: "center", backgroundColor: "#f1c40f", fontWeight: "600", width: "4%" },
                                     render: rowData => rowData.tableData.id + 1
                                 },
                                 {
