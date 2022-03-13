@@ -113,7 +113,7 @@ export default function CriticalAnalysis() {
                             {
                                 title: 'Average Buying Price (Rs)',
                                 field: "averageBuyPrice",
-                                render: rowData => "₹" + rowData.averageBuyPrice
+                                render: rowData => "₹" + rowData.averageBuyPrice.toFixed(2)
                             },
                             {
                                 title: 'Total Profit/Loss (Rs)',

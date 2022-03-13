@@ -3,6 +3,7 @@ import {
     Box,
     makeStyles,
     CircularProgress,
+    Button,
 } from "@material-ui/core";
 import MaterialTable from 'material-table';
 import { useEffect, useState } from "react";
@@ -80,7 +81,7 @@ export default function LeaderBoard() {
             justifyContent="center"
         >
             <div className={classes.blogContentWrapper}>
-                <div style={{ fontSize: 40, textAlign: "center" }}><u>Leader Board</u></div>
+                <div style={{ fontSize: 40, textAlign: "center" }}  ><u>Leader Board</u></div>
 
                 {
                     !message ? <div className="ParentFlex">
@@ -95,7 +96,7 @@ export default function LeaderBoard() {
                                     title: 'SNo.',
                                     field: 'tableData.id',
                                     cellStyle: { textAlign: "center", backgroundColor: "#f1c40f", fontWeight: "600", width: "4%" },
-                                    render: rowData => rowData.tableData.id + 1
+                                    render: rowData => <Button> {rowData.tableData.id + 1 }</Button>
                                 },
                                 {
                                     title: 'Name',

@@ -120,11 +120,11 @@ const loggedIn_menuItems = [
     name: "Leader Board",
     icon: <BrandingWatermark className="text-white" />
   },
-  {
-    link: "/post",
-    name: "Blog",
-    icon: <PostAdd className="text-white" />
-  },
+  // {
+  //   link: "/post",
+  //   name: "Blog",
+  //   icon: <PostAdd className="text-white" />
+  // },
   {
     link: "/aboutus",
     name: "About US",

@@ -60,4 +60,6 @@ body{
   width: 20%;
   height: 20%;
 }
-
+.MuiGrid-spacing-xs-5 {
+  width: 100% !important;
+}
