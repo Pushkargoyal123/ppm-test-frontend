@@ -1,4 +1,4 @@
-import React, { memo, useState } from "react";
+import React, { memo, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import {
   AppBar,
@@ -29,7 +29,7 @@ import {
 import DateFnsUtils from '@date-io/date-fns';
 import { useHistory } from 'react-router-dom';
 import Swal from "sweetalert2";
-import { postData } from "../../../service/service";
+import { postData, getData } from "../../../service/service";
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { loggedOut_menuItems } from "../../../config"
@@ -125,6 +125,24 @@ function NavBar(props) {
   const [inputOTP, setInputOTP] = useState("");
 
   var dispatch = useDispatch(body)
+
+  useEffect(function(){
+    const isVerify = async()=>{
+      const isMail= history.location.pathname.split("/")
+      const verify= isMail[isMail.length-2]; 
+      if(verify==="true"){
+        const userEmail= isMail[isMail.length-1]
+        const result= await getData("/user/fetchuserverificationdetails?email=" + userEmail);
+        if(result.success && result.data){
+          setGeneratedOTP(result.data.verificationOTP)
+          setOpen(true)
+          setBody(3);
+          setEmail(userEmail);
+        }
+      }
+    }
+    isVerify();
+  }, [history])
 
   const changeVerify = async(body)=>{
     const result = await postData("user/changeVerify", body);

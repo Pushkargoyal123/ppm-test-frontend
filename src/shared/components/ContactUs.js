@@ -15,13 +15,6 @@ const useStyles = makeStyles((theme) => ({
     wrapper: {
         minHeight: "60vh",
     },
-    contactUsBox:{ 
-        minHeight: 250, 
-        minWidth: "60%", 
-        boxShadow: "rgba(0, 0, 0, 0.56) 0px 22px 70px 4px", 
-        marginBottom: 50 
-    },
-    containerGrid:{ padding: "20px" },
     itemGrid: { 
         fontSize: 22,
         marginBottom:20 
@@ -43,8 +36,17 @@ export default function ContactUs() {
             justifyContent="center"
         >
             <div className={classes.blogContentWrapper}>
-                <div className= {classes.contactUsBox}>
-                    <Grid className={classes.containerGrid} container>
+                <div className= "animation-bottom-top"
+                    style={{ 
+                        minHeight: 250, 
+                        minWidth: "60%", 
+                        boxShadow: "rgba(0, 0, 0, 0.56) 0px 22px 70px 4px", 
+                        marginBottom: 50 
+                    }}>
+                    <Grid 
+                        className="animation-bottom-top"
+                        style={{padding: 20}}
+                        container >
                         <Grid className={classes.itemGrid} item sm={6}>
                             <span className={classes.address}>PGR-Delhi Office Address</span>
                             <div>Praedico Global Research.Pvt.Ltd Udyog Vihar, Phase 4,</div>
@@ -58,8 +60,17 @@ export default function ContactUs() {
                         </Grid>
                     </Grid>
                 </div>
-                <div className= {classes.contactUsBox}>
-                    <Grid className={classes.containerGrid}  container>
+                <div className= "animation-bottom-top"
+                    style={{ 
+                        minHeight: 250, 
+                        minWidth: "60%", 
+                        boxShadow: "rgba(0, 0, 0, 0.56) 0px 22px 70px 4px", 
+                        marginBottom: 50 
+                    }}>
+                    <Grid  
+                        className="animation-bottom-top"
+                        style={{padding: 20}}  
+                        container>
                         <Grid className= {classes.itemGrid} item sm={6}>
                             <div className={classes.address}>PGR-Delhi Office Address</div>
                             <div>First Floor, Garima Arcade,</div>

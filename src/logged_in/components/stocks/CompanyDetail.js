@@ -103,7 +103,7 @@ export default function CompanyDetail(props) {
             display="flex"
             justifyContent="center"
         >
-            <div className={classes.blogContentWrapper}>
+            <div className={classes.blogContentWrapper  + " animation-bottom-top"}>
                 <div style={{ fontSize: 40, textAlign: "center" }}><u>{props.data.companyName}</u></div>
                 <div>
                     {

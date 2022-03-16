@@ -175,7 +175,7 @@ export default function Portfolio(props) {
             display="flex"
             justifyContent="center"
         >
-            <div className={classes.blogContentWrapper}>
+            <div className={classes.blogContentWrapper  + " animation-bottom-top"}>
                 <div style={{ fontSize: 40, textAlign: "center" }}><u>List Of Companies</u></div>
 
                 {

@@ -65,7 +65,7 @@ export default function CriticalAnalysis() {
         display="flex"
         justifyContent="center"
     >
-        <div className={classes.blogContentWrapper}>
+        <div className={classes.blogContentWrapper  + " animation-bottom-top"}>
             <div style={{ fontSize: 40, textAlign: "center" }}><u>Critical Analysis</u></div>
 
             {

@@ -53,7 +53,7 @@ export default function Stock() {
       display="flex"
       justifyContent="center"
     >
-      <div className={classes.blogContentWrapper}>
+      <div className={classes.blogContentWrapper + " animation-bottom-top"}>
         {
           !message ? <div className="ParentFlex">
             <CircularProgress color="secondary" className="preloader" />

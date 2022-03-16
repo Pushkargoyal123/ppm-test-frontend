@@ -101,7 +101,7 @@ export default function Stock(props){
             display="flex"
             justifyContent="center"
         >
-        <div className={classes.blogContentWrapper}>
+        <div className={classes.blogContentWrapper  + " animation-bottom-top"}>
           <StyledMenu
         id="customized-menu"
         anchorEl={anchorEl}

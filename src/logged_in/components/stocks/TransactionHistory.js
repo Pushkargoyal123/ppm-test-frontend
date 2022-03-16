@@ -59,7 +59,7 @@ export default function TransactionHistory(props) {
             display="flex"
             justifyContent="center"
         >
-            <div className={classes.blogContentWrapper}>
+            <div className={classes.blogContentWrapper + " animation-bottom-top"}>
                 <div style={{ fontSize: 40, textAlign: "center" }}><u>Transaction History</u></div>
                 <Divider style={{ margin: 20 }} />
 

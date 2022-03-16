@@ -63,3 +63,35 @@ body{
 .MuiGrid-spacing-xs-5 {
   width: 100% !important;
 }
+.buy-sell{
+  pointer-events: all;
+  cursor: pointer;
+}
+.buy-sell-disabled{
+  pointer-events: none;
+  cursor: not-allowed;
+}
+.buy-sell-wrapper{
+  cursor: pointer;
+  opacity: 1;
+}
+.buy-sell-wrapper-disabled{
+  cursor: not-allowed;
+}
+.buy-sell-wrapper-disabled:hover{
+  opacity: 0.6;
+}
+.animation-bottom-top{
+  animation: bottomTop ease-in-out 0.6s;
+  transition-property: opacity, transform;
+}
+@keyframes bottomTop{
+  from {
+    transform: translate3d(0,100px,0) scale(.6);
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateZ(0) scale(1);
+  }
+}
