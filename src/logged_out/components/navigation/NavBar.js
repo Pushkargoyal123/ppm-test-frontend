@@ -464,7 +464,7 @@ function NavBar(props) {
     <div style={modalStyle}>
       <div className="flexBox">
         <span></span>
-        <h2 id="simple-modal-title">We have sent a mail to {email} Enter the OTP in the mail</h2>
+        <h2 id="simple-modal-title">We have sent a mail to <span style={{color: "blue"}}>{email}</span> Enter the OTP in the mail</h2>
       </div>
       <div style={{ margin: 20 }}>
         <TextField 
