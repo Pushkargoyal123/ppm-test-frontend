@@ -44,6 +44,7 @@ export default function Stock() {
       setMessage(1)
       setStockEvaluation(result);
     }
+    console.log(result);
     setMessage(2);
   }
 

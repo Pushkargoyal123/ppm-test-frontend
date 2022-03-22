@@ -38,16 +38,16 @@ export default function LeaderBoard() {
     const [data, setData] = useState([]);
     const [message, setMessage] = useState(false);
 
-    useEffect(function () {
-        fetchUsers();
-    }, [])
-
     const user = useSelector(state => state.user)
     const userId = Object.values(user)[0].id
 
+    useEffect(function () {
+
+    const registerType = Object.values(user)[0].registerType
+
     async function fetchUsers() {
 
-        const usersList = await getData("user/fetchleaderboarddata");
+        const usersList = await getData("user/fetchleaderboarddata?registerType="+registerType);
 
         const stockData = await getData("stock/fetchallstockdata");
 
@@ -73,6 +73,9 @@ export default function LeaderBoard() {
         }
         setMessage(2);
     }
+
+        fetchUsers();
+    }, [user])
 
     return (
         <Box
