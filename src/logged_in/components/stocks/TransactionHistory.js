@@ -41,7 +41,7 @@ export default function TransactionHistory(props) {
 
     useEffect(function () {
         const fetchTransactionHistory = async () => {
-            const resultportfolio = await getData("stock/fetchportfoliohistory?UserId=" + userId)
+            const resultportfolio = await getData("stock/fetchusertransactionhistory?UserId=" + userId)
             if (resultportfolio.success) {
                 setMessage(1)
                 setData(resultportfolio.data);

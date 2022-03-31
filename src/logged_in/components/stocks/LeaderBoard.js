@@ -44,10 +44,11 @@ export default function LeaderBoard() {
     useEffect(function () {
 
     const registerType = Object.values(user)[0].registerType
+    const value = Object.values(user)[0].value
 
     async function fetchUsers() {
 
-        const usersList = await getData("user/fetchleaderboarddata?registerType="+registerType);
+        const usersList = await getData("user/fetchleaderboarddata/" + registerType + "?value="+ value);
 
         const stockData = await getData("stock/fetchallstockdata");
 
@@ -68,6 +69,9 @@ export default function LeaderBoard() {
                 })
                 item.count= count
                 await postData("user/setnetamount", { netAmount : item.netAmount, id : item.ppm_userGroups[0].id })
+            })
+            usersList.data.sort(function(a,b){
+                return a.profitLoss - b.profitLoss;
             })
             setData(usersList.data);
         }
@@ -114,7 +118,7 @@ export default function LeaderBoard() {
                                 },
                                 {
                                     title: 'Profit/Loss (Rs)',
-                                    field: 'totalCurrentPrice',
+                                    field: 'profitLoss',
                                     cellStyle: { fontWeight: 700 },
                                     render: rowData => (rowData.profitLoss) >= 0 ?
                                         <span style={{ color: "green" }}> {"₹" + (rowData.profitLoss).toFixed(2)}</span> :

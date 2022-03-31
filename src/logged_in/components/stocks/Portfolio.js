@@ -51,109 +51,125 @@ export default function Portfolio(props) {
     useEffect(function () {
 
         const fetchPortfolioHistory = async () => {
-            const resultgroup = await getData("stock/fetchallstockbuysell?UserId=" + userId);
 
             const resultportfolio = await getData("stock/fetchportfoliohistory?UserId=" + userId);
 
-            let count = 0;
-
-            if (resultgroup.success && resultportfolio.success) {
+            if (resultportfolio.success) {
                 setMessage(1);
-                const tableData = resultgroup.data.map(function (groupItem, index) {
-
-                    const filteredHistory = resultportfolio.data.filter(function (portfolioItem, index) {
-                        if (groupItem.companyName === portfolioItem.companyName) {
-                            return portfolioItem
-                        }
-                        return null
-                    })
-
-                    filteredHistory[0]["length"] = filteredHistory.filter(function (item) {
-                        return item.buyStock > 0
-                    }).length;
-
-                    let stocks = filteredHistory[0].buyStock !== 0 ? filteredHistory[0].buyStock : filteredHistory[0].sellStock
-                    filteredHistory[0]["current"] = filteredHistory[0].currentPrice / stocks
-
-                    const listOfCompanies = filteredHistory.reduce(function (total, item) {
-                        const existing = total.find(x => x.companyName === item.companyName);
-                        if (existing) {
-                            existing.buyStock += item.buyStock;
-                            existing.sellStock += item.sellStock;
-                            existing.totalBuyPrice += item.totalBuyPrice;
-                            existing.totalSellPrice += item.totalSellPrice;
-                        } else {
-                            total.push(item);
-                        }
-                        count++;
-                        return total;
-                    }, [])
-
-                    return listOfCompanies
+                let totalBuyPrice =0, stockLeft=0, totalCurrentPrice=0,count = 0 , totalProfitLoss=0;
+                resultportfolio.data.forEach(function(item, index){
+                        item.averageBuyingPrice = item.totalBuyingPrice / item.totalBuyStock;
+                        item.totalBuyingPrice = item.totalBuyingPrice / item.totalBuyStock * ( item.stockLeft )
+                        item.PL = item.totalCurrentPrice - item.totalBuyingPrice;
                 })
-
-                let finalData = tableData.map(r => {
-                    const { ...record } = r;
-                    return record["0"];
-                });
-
-                let status = null;
-                let PL = 0, totalPL = 0;
-
-                finalData.forEach(function (item) {
-                    if (item.current > (item.totalBuyPrice / item.buyStock)) {
-                        status = 'Profit';
-                    }
-                    else if ((item.current === (item.totalBuyPrice / item.buyStock)) || ((item.buyStock - item.sellStock) === 0)) {
-                        status = 'Neutral';
-                    }
-                    else {
-                        status = 'Loss';
-                    }
-
-                    if ((item.buyStock - item.sellStock) === 0) {
-                        if (item.totalBuyPrice > item.totalSellPrice) {
-                            PL = item.totalSellPrice - item.totalBuyPrice;
-                            status = 'Loss';
-                        }
-                        else {
-                            PL = item.totalSellPrice - item.totalBuyPrice;
-                            status = 'Profit';
-                        }
-                    }
-                    else {
-                        PL = Math.round((item.currentPrice * (item.buyStock - item.sellStock)) - (item.totalBuyPrice - item.totalSellPrice))
-
-                        if (PL === 0) {
-                            status = 'Neutral';
-                        }
-                        else if (PL > 0) {
-                            status = 'Profit';
-                        }
-                        else {
-                            status = 'Loss';
-                        }
-                    }
-                    item["PL"] = PL;
-                    item["status"] = status;
-                    totalPL += parseInt(PL);
+                resultportfolio.data.forEach(function(item, index){
+                    totalProfitLoss += item.PL
+                    totalBuyPrice += item.totalBuyingPrice; 
+                    stockLeft += parseInt(item.stockLeft);
+                    totalCurrentPrice += parseFloat(item.totalCurrentPrice);
+                    count += item.count;
                 })
-
-                setTotalPL(totalPL);
-
-                setTotalBuyPrice(finalData.reduce(function (total, item) {
-                    return total + (item.totalBuyPrice - item.totalSellPrice);
-                }, 0));
-
-                setTotalStock(finalData.reduce(function (total, item) {
-                    return total + (item.buyStock - item.sellStock);
-                }, 0))
-
-                setTotalCurrentPrice(finalData.reduce(function (total, item) {
-                    return total + (item.currentPrice * (item.buyStock - item.sellStock));
-                }, 0))
+                setTotalBuyPrice(totalBuyPrice);
+                setTotalStock(stockLeft);
+                setTotalCurrentPrice(totalCurrentPrice);
+                setTotalPL(totalProfitLoss);
                 setCount(count);
-                setData(finalData);
+                setData(resultportfolio.data);
+            //     const tableData = resultgroup.data.map(function (groupItem, index) {
+
+            //         const filteredHistory = resultportfolio.data.filter(function (portfolioItem, index) {
+            //             if (groupItem.companyName === portfolioItem.companyName) {
+            //                 return portfolioItem
+            //             }
+            //             return null
+            //         })
+
+            //         filteredHistory[0]["length"] = filteredHistory.filter(function (item) {
+            //             return item.buyStock > 0
+            //         }).length;
+
+            //         let stocks = filteredHistory[0].buyStock !== 0 ? filteredHistory[0].buyStock : filteredHistory[0].sellStock
+            //         filteredHistory[0]["current"] = filteredHistory[0].currentPrice / stocks
+
+            //         const listOfCompanies = filteredHistory.reduce(function (total, item) {
+            //             const existing = total.find(x => x.companyName === item.companyName);
+            //             if (existing) {
+            //                 existing.buyStock += item.buyStock;
+            //                 existing.sellStock += item.sellStock;
+            //                 existing.totalBuyPrice += item.totalBuyPrice;
+            //                 existing.totalSellPrice += item.totalSellPrice;
+            //             } else {
+            //                 total.push(item);
+            //             }
+            //             count++;
+            //             return total;
+            //         }, [])
+
+            //         return listOfCompanies
+            //     })
+
+            //     let finalData = tableData.map(r => {
+            //         const { ...record } = r;
+            //         return record["0"];
+            //     });
+
+            //     let status = null;
+            //     let PL = 0, totalPL = 0;
+
+            //     finalData.forEach(function (item) {
+            //         if (item.current > (item.totalBuyPrice / item.buyStock)) {
+            //             status = 'Profit';
+            //         }
+            //         else if ((item.current === (item.totalBuyPrice / item.buyStock)) || ((item.buyStock - item.sellStock) === 0)) {
+            //             status = 'Neutral';
+            //         }
+            //         else {
+            //             status = 'Loss';
+            //         }
+
+            //         if ((item.buyStock - item.sellStock) === 0) {
+            //             if (item.totalBuyPrice > item.totalSellPrice) {
+            //                 PL = item.totalSellPrice - item.totalBuyPrice;
+            //                 status = 'Loss';
+            //             }
+            //             else {
+            //                 PL = item.totalSellPrice - item.totalBuyPrice;
+            //                 status = 'Profit';
+            //             }
+            //         }
+            //         else {
+            //             PL = Math.round((item.currentPrice * (item.buyStock - item.sellStock)) - (item.totalBuyPrice - item.totalSellPrice))
+
+            //             if (PL === 0) {
+            //                 status = 'Neutral';
+            //             }
+            //             else if (PL > 0) {
+            //                 status = 'Profit';
+            //             }
+            //             else {
+            //                 status = 'Loss';
+            //             }
+            //         }
+            //         item["PL"] = PL;
+            //         item["status"] = status;
+            //         totalPL += parseInt(PL);
+            //     })
+
+            //     setTotalPL(totalPL);
+
+            //     setTotalBuyPrice(finalData.reduce(function (total, item) {
+            //         return total + (item.totalBuyPrice - item.totalSellPrice);
+            //     }, 0));
+
+            //     setTotalStock(finalData.reduce(function (total, item) {
+            //         return total + (item.buyStock - item.sellStock);
+            //     }, 0))
+
+            //     setTotalCurrentPrice(finalData.reduce(function (total, item) {
+            //         return total + (item.currentPrice * (item.buyStock - item.sellStock));
+            //     }, 0))
+            //     setCount(count);
+            //     setData(finalData);
             }
             else {
                 setMessage(2);
@@ -205,26 +221,26 @@ export default function Portfolio(props) {
                         render: rowData => <ToolTip title= {"See "+rowData.companyName+ " Transaction History"} component= {()=> <span >
                             <Button
                                 onClick={() => props.setComponent(<CompanyDetail data={rowData} setComponent={props.setComponent} setUnderlinedButton = {props.setUnderlinedButton}></CompanyDetail>)}
-                                style={{ color: "blue", fontWeight: "600", border: "1px blue solid" }} >
+                                style={{ color: "blue", fontWeight: "600", border: "1px blue solid", width:"100%" }} >
                                 {rowData.companyCode}
                             </Button>
                         </span>}/>
                     },
                     {
                         title: 'Average Buying Price',
-                        field: 'totalBuyPrice',
-                        render: rowData => "₹" + (rowData.totalBuyPrice / (rowData.buyStock)).toFixed(2)
+                        field: 'averageBuyingPrice',
+                        render: rowData => "₹" + (rowData.averageBuyingPrice).toFixed(2)
                     },
                     {
                         title: 'Total Buying Price',
-                        field: 'totalBuyPrice',
-                        render: rowData => "₹" + (rowData.totalBuyPrice / rowData.buyStock * (rowData.buyStock - rowData.sellStock)).toFixed(2)
+                        field: 'totalBuyingPrice',
+                        render: rowData => "₹" + (rowData.totalBuyingPrice).toFixed(2)
                     },
                     {
                         title: 'Stock Left',
-                        field: 'buyStock',
+                        field: 'stockLeft',
                         cellStyle: { fontWeight: "600" },
-                        render: rowData => rowData.buyStock - rowData.sellStock
+                        render: rowData => rowData.stockLeft
                     },
                     {
                         title: 'Current Price',
@@ -233,8 +249,8 @@ export default function Portfolio(props) {
                     },
                     {
                         title: 'Total Current Price',
-                        field: 'currentPrice',
-                        render: rowData => "₹" + (rowData.currentPrice * (rowData.buyStock - rowData.sellStock)).toFixed(2)
+                        field: 'totalCurrentPrice',
+                        render: rowData => "₹" + (rowData.totalCurrentPrice).toFixed(2)
                     },
                     {
                         title: 'Profit/Loss',
@@ -256,7 +272,7 @@ export default function Portfolio(props) {
                                     <TableCell style={{ color: "black", fontSize: "1.2rem", fontWeight: "500" }}>{totalStock}</TableCell>
                                     <TableCell style={{ color: "black", fontSize: "1.2rem" }}></TableCell>
                                     <TableCell style={{ color: "black", fontSize: "1.2rem", fontWeight: "500" }}>₹{totalCurrentPrice.toFixed(2)}</TableCell>
-                                    <TableCell style={{ color: totalPL >= 0 ? totalPL === 0 ? "orange" : "green" : "red", fontSize: "1.2rem", fontWeight: "800" }}>₹{totalPL}</TableCell>
+                                    <TableCell style={{ color: totalPL >= 0 ? totalPL === 0 ? "orange" : "green" : "red", fontSize: "1.2rem", fontWeight: "800" }}>₹{totalPL.toFixed(2)}</TableCell>
                                 </TableRow>
                                 <TableRow>
                                     <TableCell className="tablecell" colSpan={8}>

@@ -15,9 +15,9 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import DraftsIcon from '@material-ui/icons/Drafts';
-import SendIcon from '@material-ui/icons/Send';
+import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
+import AssessmentIcon from '@material-ui/icons/Assessment';
+import ShowChartIcon from '@material-ui/icons/ShowChart';
 import Stock from "../stocks/Stock";
 import CriticalAnalysis from "../stocks/CriticalAnalysis";
 import {loggedIn_menuItems} from "../../../config"
@@ -180,21 +180,21 @@ function NavBar(props) {
                       >
                         <StyledMenuItem onClick={()=>handleSelect("stocks")}>
                           <ListItemIcon>
-                            <SendIcon fontSize="small" />
+                            <ShowChartIcon fontSize="small" />
                           </ListItemIcon>
                           <ListItemText primary="Nifty Stocks" />
                         </StyledMenuItem>
 
                         <StyledMenuItem onClick={()=>handleSelect("critical analysis")}>
                           <ListItemIcon>
-                            <DraftsIcon fontSize="small" />
+                            <AssessmentIcon fontSize="small" />
                           </ListItemIcon>
                           <ListItemText primary="Critical Analysis" />
                         </StyledMenuItem>
                         
                         <StyledMenuItem>
                           <ListItemIcon>
-                            <InboxIcon fontSize="small" />
+                            <PlaylistAddCheckIcon fontSize="small" />
                           </ListItemIcon>
                           <ListItemText primary="Inbox" />
                         </StyledMenuItem>
