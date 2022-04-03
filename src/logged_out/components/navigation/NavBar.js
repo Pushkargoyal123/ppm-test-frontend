@@ -13,15 +13,15 @@ import NavigationDrawer from "../../../shared/components/NavigationDrawer";
 import Modal from '@material-ui/core/Modal';
 import TextField from '@material-ui/core/TextField';
 import { useHistory } from 'react-router-dom';
-import Swal from "sweetalert2";
-import { postData, getData } from "../../../service/service";
-import { toast, ToastContainer } from 'react-toastify';
+import { getData } from "../../../service/service";
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { loggedOut_menuItems } from "../../../config"
 import LoginModal from "../register_login/LoginModal";
 import RegistrationModal from "../register_login/RegistrationModal";
 import ResetPasswordModal from "../register_login/ResetPasswordModal";
 import ChangePasswordModal from "../register_login/ChangePasswordModal";
+import VerifyModal from "../register_login/VerifyModal";
 
 const styles = theme => ({
   appBar: {
@@ -94,7 +94,6 @@ function NavBar(props) {
   const [openModal, setOpenModal] = React.useState(false);
   const [body, setBody] = React.useState(false);
   const [generatedOTP, setGeneratedOTP] = useState("");
-  const [inputOTP, setInputOTP] = useState("");
 
   useEffect(function () {
     const isVerify = async () => {
@@ -105,8 +104,8 @@ function NavBar(props) {
         const result = await getData("/user/fetchuserverificationdetails?email=" + userEmail);
         if (result.success && result.data) {
           setGeneratedOTP(result.data.verificationOtp)
-          setOpen(true)
           setBody(3);
+          setOpen(true)
           setEmail(userEmail);
         }
       }
@@ -117,83 +116,6 @@ function NavBar(props) {
     }
     isVerify();
   }, [history])
-
-  const changeVerify = async (body) => {
-    const result = await postData("user/changeVerify", body);
-    if (result.success) {
-      setOpen(false);
-      Swal.fire({
-        icon: 'success',
-        title: 'Verified',
-        text: 'Account Successfully Verified',
-      }).then(
-        function () {
-          setOpen(true);
-          setBody(1)
-          setLoginEmail(email);
-          setLoginPassword(password);
-        })
-    }
-    else {
-      toast.error('🦄 ' + result.error, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        color: "red"
-      });
-    }
-  }
-
-  const handleVerifyOTP = () => {
-    if (generatedOTP !== inputOTP) {
-      toast.error("🦄 Verification OTP are not matching", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        color: "red"
-      });
-    }
-    else {
-      const body = { email: email }
-      changeVerify(body);
-    }
-  }
-
-  const verifymodal = (
-    <div style={modalStyle}>
-      <div className="flexBox">
-        <span></span>
-        <h2 id="simple-modal-title">We have sent a mail to <span style={{ color: "blue" }}>{email}</span> Enter the OTP in the mail</h2>
-      </div>
-      <div style={{ margin: 20 }}>
-        <TextField
-          onChange={(event) => { setInputOTP(event.target.value) }}
-          value={inputOTP}
-          placeholder="ex. 123456"
-          label="OTP"
-          variant="outlined"
-          style={{ width: 350 }}
-        />
-      </div>
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <Button
-          onClick={() => handleVerifyOTP()}
-          color="secondary"
-          style={{ margin: 20 }}
-          variant="contained">
-          Submit
-        </Button>
-      </div>
-    </div>
-  )
 
   const fetchCertificate = (
     <div style={modalStyle}>
@@ -241,7 +163,20 @@ function NavBar(props) {
         loginPassword={loginPassword}
       />
     else if (body === 3)
-      return verifymodal
+      return <VerifyModal
+      open={open}
+      setOpen={setOpen}
+      setBody={setBody}
+      loginEmail={loginEmail}
+      setLoginEmail={setLoginEmail}
+      email={email}
+      password={password}
+      setPassword={setPassword}
+      setLoginPassword={setLoginPassword}
+      loginPassword={loginPassword}
+      setGeneratedOTP = {setGeneratedOTP}
+      generatedOTP = {generatedOTP}
+      />
     else if (body === 4)
       return <ResetPasswordModal
         open={open}

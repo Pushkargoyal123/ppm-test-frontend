@@ -22,15 +22,14 @@ import InboxIcon from '@material-ui/icons/MoveToInbox';
 import DraftsIcon from '@material-ui/icons/Drafts';
 import SendIcon from '@material-ui/icons/Send';
 import MenuItem from '@material-ui/core/MenuItem';
-import Swal from "sweetalert2";
 import { useHistory } from 'react-router-dom';
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { postData, getData } from "../../service/service";
+import { getData } from "../../service/service";
 import LoginModal from "../../logged_out/components/register_login/LoginModal";
 import RegistrationModal from "../../logged_out/components/register_login/RegistrationModal";
 import ResetPasswordModal from "../../logged_out/components/register_login/ResetPasswordModal";
 import ChangePasswordModal from "../../logged_out/components/register_login/ChangePasswordModal";
+import VerifyModal from "../../logged_out/components/register_login/VerifyModal";
 
 const styles = theme => ({
   closeIcon: {
@@ -131,12 +130,11 @@ function NavigationDrawer(props) {
   const [serialNumber, setSerialNumber] = React.useState("");
   const [body, setBody] = React.useState(false)
   const [generatedOTP, setGeneratedOTP] = useState("");
-  const [inputOTP, setInputOTP] = useState("");
 
   const history = useHistory();
 
-  
-  useEffect(()=>{
+
+  useEffect(() => {
     const isVerify = async () => {
       const isMail = history.location.pathname.split("/")
       const verify = isMail[isMail.length - 2];
@@ -148,13 +146,13 @@ function NavigationDrawer(props) {
           setOpen(true)
           setBody(3);
           setEmail(userEmail);
-          onOpen();
+          // onOpen();
         }
       }
       else if (verify === "false") {
         setOpen(true);
         setBody(5);
-        onOpen()
+        // onOpen()
       }
     }
     isVerify();
@@ -167,84 +165,6 @@ function NavigationDrawer(props) {
       }
     };
   }, [width, open, onClose]);
-
-  const verifymodal = (
-    <div style={modalStyle}>
-      <div className="flexBox">
-        <span></span>
-        <h2 id="simple-modal-title">We have sent a mail to <span style={{ color: "blue" }}>{email}</span> Enter the OTP in the mail</h2>
-      </div>
-      <div style={{ margin: 20 }}>
-        <TextField
-          onChange={(event) => { setInputOTP(event.target.value) }}
-          value={inputOTP}
-          placeholder="ex. 123456"
-          label="OTP"
-          variant="outlined"
-          style={{ width: 350 }}
-        />
-      </div>
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <Button
-          onClick={() => handleVerifyOTP()}
-          color="secondary"
-          style={{ margin: 20 }}
-          variant="contained">
-          Submit
-        </Button>
-      </div>
-    </div>
-  )
-
-  
-  const changeVerify = async (body) => {
-    const result = await postData("user/changeVerify", body);
-    if (result.success) {
-      setOpen(false);
-      Swal.fire({
-        icon: 'success',
-        title: 'Verified',
-        text: 'Account Successfully Verified',
-      }).then(
-        function () {
-          setOpen(true);
-          setBody(1)
-          setLoginEmail(email);
-          setLoginPassword(password);
-        })
-    }
-    else {
-      toast.error('🦄 ' + result.error, {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        color: "red"
-      });
-    }
-  }
-
-  const handleVerifyOTP = () => {
-    if (generatedOTP !== inputOTP) {
-      toast.error("🦄 Verification OTP are not matching", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        color: "red"
-      });
-    }
-    else {
-      const body = { email: email }
-      changeVerify(body);
-    }
-  }
 
   const calledModal = () => {
 
@@ -278,7 +198,20 @@ function NavigationDrawer(props) {
 
       />
     else if (body === 3)
-      return verifymodal
+      return <VerifyModal
+        open={open}
+        setOpen={setOpen}
+        setBody={setBody}
+        loginEmail={loginEmail}
+        setLoginEmail={setLoginEmail}
+        email={email}
+        password={password}
+        setPassword={setPassword}
+        setLoginPassword={setLoginPassword}
+        loginPassword={loginPassword}
+        setGeneratedOTP={setGeneratedOTP}
+        generatedOTP={generatedOTP}
+      />
     else if (body === 4)
       return <ResetPasswordModal
         open={open}
@@ -324,7 +257,7 @@ function NavigationDrawer(props) {
   const handleOpen = (name) => {
     if (name === "Login")
       setBody(1);
-    else if(name === "Register")
+    else if (name === "Register")
       setBody(2)
     setOpen(true);
   };

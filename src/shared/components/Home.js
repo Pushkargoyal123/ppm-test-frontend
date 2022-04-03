@@ -3,6 +3,7 @@ import HeadSection from "./HeadSection";
 import FeatureSection from "./FeatureSection";
 import PricingSection from "./PricingSection";
 import OurStats from "./OurStats";
+import ExcelToTable from "./ExcelToTable";
 
 function Home(props) {
 
@@ -12,6 +13,7 @@ function Home(props) {
       <FeatureSection />
       <PricingSection />
       <OurStats/>
+      <ExcelToTable/>
     </Fragment>
   );
 }

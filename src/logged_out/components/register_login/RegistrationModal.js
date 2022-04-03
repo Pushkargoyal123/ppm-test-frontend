@@ -19,6 +19,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Swal from "sweetalert2";
 import { postData } from "../../../service/service";
+import ToolTip from "../../../shared/components/ToolTip";
 
 function getModalStyle() {
     const top = 50;
@@ -282,7 +283,10 @@ export default function RegistrationModal(props) {
           <div style={error}>{confirmPasswordError}</div>
         </FormControl>
   
-        <div onClick={() => props.setBody(1)} className="links" style={{ marginTop: 10 }}> Login now if already Registered ?</div>
+        <ToolTip 
+          title = "Open Login Page" 
+          component = {()=><div onClick={() => props.setBody(1)} className="links" style={{ marginTop: 10 }}> Login now if already Registered ?</div>}
+        />
         <div><Button onClick={handleSubmit} color="secondary" style={{ margin: 10, width: 350 }} variant="contained">Submit</Button></div>
       </div>
     )

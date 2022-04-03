@@ -45,6 +45,12 @@ export default function ResetPasswordModal(props) {
                     // title: 'Verified',
                     text: 'Thank you for request, Forgot password link will be send on your registered Email-Id ' + resetEmail + ' within 24 hours.',
                 })
+            }else{
+                Swal.fire({
+                    icon: 'error',
+                    title: "Record doesn't exist",
+                    text: "Sorry we dont't have any record with this mail Id  '"+ resetEmail+ "'",
+                })
             }
         }
     }
