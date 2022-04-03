@@ -118,7 +118,7 @@ export default function StockData(props) {
 
   const checkTrading = () => {
     const date = new Date();
-    if (date.getHours() > 17 || date.getHours() < 9) {
+    if (date.getHours() > 17 || date.getHours() < 9 || date.getDay() === 0) {
       setIsTrading(true);
     }
     else {
