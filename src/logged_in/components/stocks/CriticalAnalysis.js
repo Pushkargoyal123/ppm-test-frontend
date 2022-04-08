@@ -42,7 +42,7 @@ export default function CriticalAnalysis() {
     const [message, setMessage] = useState(false)
 
     const fetchAllHistory = async () => {
-        const resultHistory = await getData("stock/criticalanalysisdata");
+        const resultHistory = await getData("criticalanalysis/criticalanalysisdata");
         if (resultHistory.success) {
             setMessage(1)
             const finalData = resultHistory.data.map(function (rowData, index) {

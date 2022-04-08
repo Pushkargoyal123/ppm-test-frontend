@@ -1,26 +1,23 @@
 import {useState} from "react";
 import { Button , TextField} from '@material-ui/core';
-import { getData } from "../../../service/service";
+import { getData, postData } from "../../../service/service";
 import Swal from "sweetalert2";
 
 function getModalStyle() {
-    const top = 50;
-    const left = 50;
-
     return {
-        top: `${top}%`,
-        left: `${left}%`,
-        transform: `translate(-${top}%, -${left}%)`,
-        position: 'absolute',
-        minWidth: 500,
-        maxWidth: 600,
+        // top: `${top}%`,
+        // left: `${left}%`,
+        // transform: `translate(-${top}%, -${left}%)`,
+        // position: 'absolute',
+        // minWidth: 500,
+        // maxWidth: 600,
         textAlign: "center",
         backgroundColor: "white",
         border: '2px solid grey',
-        boxShadow: "0 0 8px 2px black",
-        borderRadius: 20,
-        maxHeight: "100vh",
-        overflowX: "scroll",
+        // boxShadow: "0 0 8px 2px black",
+        // borderRadius: 20,
+        height: "100%",
+        // overflowY: "scroll",
     };
 }
 
@@ -40,6 +37,8 @@ export default function ResetPasswordModal(props) {
             const result = await getData("user/resetpasswordmail/"+resetEmail);
             props.setOpen(false);
             if(result){
+                const form = {email : resetEmail};
+                await postData("user/updateresestpasswordrequest", form);
                 Swal.fire({
                     icon: 'success',
                     // title: 'Verified',
@@ -72,10 +71,12 @@ export default function ResetPasswordModal(props) {
                 label="Enter Your registered email-Id" 
                 type="email" 
                 variant="outlined" 
-                style={{ width: 350 }} 
+                style={{ width: 300 }} 
             />
         </div>
-        <div><Button onClick={handleResetPassword} color="secondary" style={{ margin: 20, width: 400 }} variant="contained">Reset Now</Button></div>
+        <div>   
+            <Button onClick={handleResetPassword} color="secondary" style={{ margin: 20, width: 300 }} variant="contained">Reset Now</Button>
+        </div>
     </div>
 
 }

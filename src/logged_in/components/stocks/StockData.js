@@ -13,15 +13,17 @@ import {
   YAxis,
 } from "recharts";
 import MaterialTable from 'material-table';
-import Modal from '@material-ui/core/Modal';
+import Dialog from '@material-ui/core/Dialog';
 import Portfolio from "./Portfolio";
 import { postData, getData } from "../../../service/service"
 import { timeDuration } from "../../../config";
 import { useSelector } from "react-redux";
+import useMediaQuery from '@material-ui/core/useMediaQuery';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { toast, ToastContainer } from 'react-toastify';
 import Swal from "sweetalert2";
 import ToolTip from "../../../shared/components/ToolTip";
+import { useTheme } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
   blogContentWrapper: {
@@ -48,23 +50,21 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 function getModalStyle() {
-  const top = 50;
-  const left = 50;
-
   return {
-    top: `${top}%`,
-    left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`,
-    position: 'absolute',
-    minHeight: 350,
-    borderRadius: 10,
-    minWidth: 400,
+    // top: `${top}%`,
+    // left: `${left}%`,
+    // transform: `translate(-${top}%, -${left}%)`,
+    // position: 'absolute',
+    // minWidth: 500,
+    // maxWidth: 600,
     textAlign: "center",
     backgroundColor: "white",
-    border: '8px solid grey',
-    borderTop: "",
-    boxShadow: "0 0 8px 2px black",
-  };
+    border: '2px solid grey',
+    // boxShadow: "0 0 8px 2px black",
+    // borderRadius: 20,
+    height: "100%",
+    // overflowY: "scroll",
+};
 }
 
 
@@ -93,6 +93,9 @@ export default function StockData(props) {
   const userId = Object.values(user)[0].id
   const ppmGroupId = Object.values(user)[0].groupId
 
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
   useEffect(function () {
     const fetchCompanyData = async () => {
 
@@ -118,7 +121,7 @@ export default function StockData(props) {
 
   const checkTrading = () => {
     const date = new Date();
-    if (date.getHours() > 17 || date.getHours() < 9 || date.getDay() === 0) {
+    if (date.getHours() > 17 || date.getHours() < 9 || date.getDay() === 0 || date.getDay() ===6) {
       setIsTrading(true);
     }
     else {
@@ -270,7 +273,7 @@ export default function StockData(props) {
   }
 
   const buyModal = (<div style={modalStyle}>
-    <div>
+    <div style={{height: "100%"}}>
       <div style={{ display: "flex" }}>
         <div style={{ width: "90%", margin: "auto", border: "4px grey solid", borderBottom: "", fontSize: 40, backgroundColor: "#9EFD38", color: "white" }}>BUY</div>
         <div
@@ -307,6 +310,9 @@ export default function StockData(props) {
       </> :
         <div style={{ color: "red", fontSize: "1.1rem", marginTop: 20, fontWeight: 500 }}>You have an insufficient balance...</div>}
       </> : <></>}
+      <div style={{margin:20, textAlign: "right", color: "blue", fontSize: "1.2rem", cursor: "pointer"}}>
+        <div onClick={handleClose}>Close</div>
+      </div>
     </div>
   </div>)
 
@@ -353,6 +359,9 @@ export default function StockData(props) {
       </> :
         <div style={{ color: "red", fontSize: "1.1rem", marginTop: 20, fontWeight: 500 }}>You have insufficient stocks</div>}
       </> : <></>}
+      <div style={{margin:20, textAlign: "right", color: "blue", fontSize: "1.2rem", cursor: "pointer"}}>
+        <div onClick={handleClose}>Close</div>
+      </div>
     </div>
   </div>)
 
@@ -365,14 +374,15 @@ export default function StockData(props) {
       <div className={classes.blogContentWrapper + " animation-bottom-top"}>
         <div style={{ display: "flex", justifyContent: "space-evenly", alignItems: "center", flexWrap: "wrap" }}>
           <div style={{ textAlign: "left", fontWeight: "bold", fontSize: 22 }}>Current Price : ₹{data[0] ? data[0].currentPrice : " "}</div>
-          <Modal
+          <Dialog
+            fullScreen = {fullScreen}
             open={open}
             onClose={handleClose}
             aria-labelledby="simple-modal-title"
             aria-describedby="simple-modal-description"
           >
             {body ? sellModal : buyModal}
-          </Modal>
+          </Dialog>
           <div className={ isTrading ? "buy-sell-wrapper" : "buy-sell-wrapper-disabled"}>
             <ToolTip 
               title= {isTrading ? "BUY OR SELL STOCK" : "You cannot BUY/SELL stock in between 9:00 AM to 6:00 PM"}

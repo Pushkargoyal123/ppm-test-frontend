@@ -22,24 +22,21 @@ import { postData } from "../../../service/service";
 import ToolTip from "../../../shared/components/ToolTip";
 
 function getModalStyle() {
-    const top = 50;
-    const left = 50;
-
-    return {
-        top: `${top}%`,
-        left: `${left}%`,
-        transform: `translate(-${top}%, -${left}%)`,
-        position: 'absolute',
-        minWidth: 500,
-        maxWidth: 600,
-        textAlign: "center",
-        backgroundColor: "white",
-        border: '2px solid grey',
-        boxShadow: "0 0 8px 2px black",
-        borderRadius: 20,
-        maxHeight: "100vh",
-        overflowX: "scroll",
-    };
+  return {
+    // top: `${top}%`,
+    // left: `${left}%`,
+    // transform: `translate(-${top}%, -${left}%)`,
+    // position: 'absolute',
+    // minWidth: 500,
+    // maxWidth: 600,
+    textAlign: "center",
+    backgroundColor: "white",
+    border: '2px solid grey',
+    // boxShadow: "0 0 8px 2px black",
+    // borderRadius: 20,
+    height: "100%",
+    // overflowY: "scroll",
+};
 }
 
 const error = {
@@ -203,23 +200,66 @@ export default function RegistrationModal(props) {
           <i style={{ fontSize: 25, cursor: "pointer" }} onClick={() => props.setOpen(false)} class="fas fa-times"></i>
         </div>
         <div style={{ margin: 10 }}>
-          <TextField value={name} error={nameError} helperText={nameError} onChange={(event) => setName(event.target.value)} id="outlined-basic" placeholder="ex. Pushkar Goyal" label="Name" variant="outlined" style={{ width: 350 }} />
+          <TextField 
+            value={name} 
+            error={nameError} 
+            helperText={nameError} 
+            onChange={(event) => setName(event.target.value)} 
+            id="outlined-basic" 
+            placeholder="ex. Pushkar Goyal" 
+            label="Name" 
+            variant="outlined" 
+            style={{ width: 300 }} 
+          />
         </div>
   
-        <FormControl style={{ width: 350 }} component="fieldset">
+        <FormControl style={{ width: 300 }} component="fieldset">
           <FormLabel style={{ textAlign: "left", color: genderError ? "red" : "grey" }} component="legend">Gender</FormLabel>
           <RadioGroup row aria-label="gender" name="row-radio-buttons-group">
-            <FormControlLabel onChange={(event) => { setGender(event.target.value) }} value="female" control={<Radio />} label="Female" checked={gender === "female"} />
-            <FormControlLabel onChange={(event) => { setGender(event.target.value) }} value="male" control={<Radio />} label="Male" checked={gender === "male"} />
+            <FormControlLabel 
+              onChange={(event) => { setGender(event.target.value) }} 
+              value="female" 
+              control={<Radio />} 
+              label="Female" 
+              checked={gender === "female"} 
+            />
+            <FormControlLabel 
+              onChange={(event) => { setGender(event.target.value) }} 
+              value="male" 
+              control={<Radio />} 
+              label="Male" 
+              checked={gender === "male"} 
+            />
           </RadioGroup>
           <div style={error}>{genderError}</div>
         </FormControl>
   
         <div style={{ margin: 10 }}>
-          <TextField value={props.email} error={emailError} helperText={emailError} onChange={(event) => { props.setEmail(event.target.value) }} placeholder="ex. pushkargoyal36@gmail.com" id="outlined-ba" label="Email" type="email" variant="outlined" style={{ width: 350 }} />
+          <TextField 
+            value={props.email} 
+            error={emailError} 
+            helperText={emailError} 
+            onChange={(event) => { props.setEmail(event.target.value) }} 
+            placeholder="ex. pushkargoyal36@gmail.com" 
+            id="outlined-ba" 
+            label="Email" 
+            type="email" 
+            variant="outlined" 
+            style={{ width: 300 }} 
+          />
         </div>
         <div style={{ margin: 10 }}>
-          <TextField value={whatsappNumber} error={whatsappNumberError} helperText={whatsappNumberError} onChange={(event) => { setWhatsappNumber(event.target.value) }} placeholder="ex. 7024649556" id="outlined-basi" label="Whatsapp Number" variant="outlined" style={{ width: 350 }} />
+          <TextField 
+            value={whatsappNumber} 
+            error={whatsappNumberError} 
+            helperText={whatsappNumberError} 
+            onChange={(event) => { setWhatsappNumber(event.target.value) }} 
+            placeholder="ex. 7024649556" 
+            id="outlined-basi" 
+            label="Whatsapp Number" 
+            variant="outlined" 
+            style={{ width: 300 }} 
+          />
         </div>
   
         <MuiPickersUtilsProvider style={{ margin: 10 }} utils={DateFnsUtils}>
@@ -232,14 +272,14 @@ export default function RegistrationModal(props) {
             id="date-picker-inline"
             label="Date of birth"
             value={selectedDate}
-            style={{ width: 350 }}
+            style={{ width: 300 }}
             onChange={(date) => setSelectedDate(date)}
             KeyboardButtonProps={{
               'aria-label': 'change date',
             }}
           />
         </MuiPickersUtilsProvider>
-        <FormControl style={{ width: 350 }}>
+        <FormControl style={{ width: 300 }}>
           <InputLabel style={{ color: passwordError ? "red" : null }}>Password</InputLabel>
           <Input
             id="standard-adornment-password"
@@ -261,7 +301,7 @@ export default function RegistrationModal(props) {
           <div style={error}>{passwordError}</div>
         </FormControl>
   
-        <FormControl style={{ width: 350 }}>
+        <FormControl style={{ width: 300 }}>
           <InputLabel style={{ color: confirmPasswordError ? "red" : null }}>Confirm Password</InputLabel>
           <Input
             id="standard-adornment-password"
@@ -287,7 +327,9 @@ export default function RegistrationModal(props) {
           title = "Open Login Page" 
           component = {()=><div onClick={() => props.setBody(1)} className="links" style={{ marginTop: 10 }}> Login now if already Registered ?</div>}
         />
-        <div><Button onClick={handleSubmit} color="secondary" style={{ margin: 10, width: 350 }} variant="contained">Submit</Button></div>
+        <div>
+          <Button onClick={handleSubmit} color="secondary" style={{ margin: 10, width: 300 }} variant="contained">Submit</Button>
+        </div>
       </div>
     )
 } 

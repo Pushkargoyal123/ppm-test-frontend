@@ -12,7 +12,8 @@ import WatchLaterIcon from '@material-ui/icons/WatchLater';
 import StockData from "./StockData"
 import CircularProgress from '@material-ui/core/CircularProgress';
 import AddIcon from '@material-ui/icons/AddCircle';
-import { getData} from "../../../service/service";
+import { getData, postData} from "../../../service/service";
+import { toast } from "react-toastify";
 
 const StyledMenu = withStyles({
   paper: {
@@ -95,6 +96,24 @@ export default function Stock(props){
     setMessage(2)
   }
 
+  const handleAddToWatchList = async(companyData) => {
+    const body = {companyCode : companyData.CompanyCode}
+    const result = await postData("watchlist/addstocktowatchlist", body )
+    console.log(result);
+    if(result.success){
+      toast.success('🦄  Stock added to your watch list', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: 0,
+      });
+    }
+    setAnchorEl(null);
+  }
+
 	return (
         <Box
             className={classNames("lg-p-top", classes.wrapper)}
@@ -115,7 +134,7 @@ export default function Stock(props){
           </ListItemIcon>
           <ListItemText primary="Add To Portfolio" />
         </StyledMenuItem>
-        <StyledMenuItem>
+        <StyledMenuItem onClick={()=> handleAddToWatchList(companyData)}>
           <ListItemIcon>
             <WatchLaterIcon fontSize="small" />
           </ListItemIcon>

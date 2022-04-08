@@ -1,13 +1,10 @@
 import classNames from "classnames";
-import { Box, makeStyles } from "@material-ui/core";
-import MaterialTable from 'material-table';
-import { useEffect, useState } from "react"
-import { getData } from "../../../service/service";
-import { useSelector } from "react-redux";
 import CircularProgress from '@material-ui/core/CircularProgress';
-import ToolTip from "../../../shared/components/ToolTip";
-import KeyboardBackspaceRoundedIcon from '@material-ui/icons/KeyboardBackspaceRounded';
-import Portfolio from "./Portfolio";
+import { useEffect, useState } from "react"
+import MaterialTable from 'material-table';
+import { Box, makeStyles } from "@material-ui/core";
+
+import { getData } from "../../../service/service";
 
 const useStyles = makeStyles((theme) => ({
     blogContentWrapper: {
@@ -19,39 +16,33 @@ const useStyles = makeStyles((theme) => ({
         },
         maxWidth: 1280,
         width: "100%",
-        boxShadow: "rgba(0, 0, 0, 0.56) 0px 22px 70px 4px"
+        textAlign: "justify-all"
     },
     wrapper: {
         minHeight: "60vh",
     },
-    message: {
-        color: "red",
-        fontWeight: "600"
-    }
 }))
 
-export default function TransactionHistory(props) {
+export default function WatchList(props) {
     const classes = useStyles();
 
-    const [data, setData] = useState([]);
-    const [message, setMessage] = useState(false);
-
-    const user = useSelector(state => state.user)
-    const userId = Object.values(user)[0].id
-
     useEffect(function () {
-        const fetchTransactionHistory = async () => {
-            const resultportfolio = await getData("stock/fetchusertransactionhistory?UserId=" + userId)
-            if (resultportfolio.success) {
+        const fetchUsersWatchList = async () => {
+            const result = await getData("watchlist/fetchuserwatchlist")
+            console.log(result);
+            if (result.success) {
                 setMessage(1)
-                setData(resultportfolio.data);
+                setData(result.data);
             }
             else{
                 setMessage(2);
             }
         }
-        fetchTransactionHistory()
-    }, [userId])
+        fetchUsersWatchList()
+    }, [])
+
+    const [data, setData] = useState([]);
+    const [message, setMessage] = useState(false);
 
     return (
         <Box
@@ -59,21 +50,15 @@ export default function TransactionHistory(props) {
             display="flex"
             justifyContent="center"
         >
-            <div className={classes.blogContentWrapper + " animation-bottom-top"}>
-                <div style={{ fontSize: 40, textAlign: "center" }}><u>Transaction History</u></div>
-
+            <div className={classes.blogContentWrapper}>
+                <div style={{ fontSize: 40, textAlign: "center" }}><u>Watch List</u></div>
                 {
                     !message ? <div className="ParentFlex">
                         <CircularProgress color="secondary" className="preloader" />
                     </div>
                         :
                         <MaterialTable
-                            title= <ToolTip title="Back" component= {()=><KeyboardBackspaceRoundedIcon
-                                color="secondary"
-                                style={{ border: "1px blue solid", fontSize: "2rem", cursor: "pointer" }}
-                                onClick={() => props.setComponent(<Portfolio setComponent={props.setComponent} />)}
-                            />} />
-
+                            title= ""
                             style={{ fontWeight: 500 }}
                 columns={[
                     {
@@ -115,7 +100,7 @@ export default function TransactionHistory(props) {
                     body: message === 1 ?
                         data.length ? null : {
                             emptyDataSourceMessage: (
-                                "You haven't Buy or Sell Any Stock"
+                                "There is no stock in your watch list"
                             ),
                         } :
                         {

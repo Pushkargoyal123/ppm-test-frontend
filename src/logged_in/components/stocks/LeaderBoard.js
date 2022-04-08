@@ -44,11 +44,11 @@ export default function LeaderBoard() {
     useEffect(function () {
 
     const registerType = Object.values(user)[0].registerType
-    const value = Object.values(user)[0].value
+    const groupId = Object.values(user)[0].groupId
 
     async function fetchUsers() {
 
-        const usersList = await getData("user/fetchleaderboarddata/" + registerType + "?value="+ value);
+        const usersList = await getData("leaderboard/fetchleaderboarddata/" + registerType + "?groupId="+ groupId);
 
         const stockData = await getData("stock/fetchallstockdata");
 
@@ -57,7 +57,7 @@ export default function LeaderBoard() {
             usersList.data.forEach(async function(item){
                 item.virtualAmount = item.ppm_userGroups[0].virtualAmount;
                 item.netAmount = (item.ppm_userGroups[0].virtualAmount + item.current_investment + item.totalCurrentPrice - item.current_investment )
-                item.profitLoss = item.totalCurrentPrice - item.current_investment
+                item.profitLoss = item.totalCurrentPrice - item.current_investment 
                 var count=1;
                 stockData.data.forEach(function(stockItem){
                     const dateArray=item.dateOfRegistration.split("-");

@@ -1,9 +1,10 @@
 import classNames from "classnames";
-import { Box, Button, makeStyles, Modal } from "@material-ui/core";
+import { Box, Button, makeStyles, useMediaQuery, Dialog } from "@material-ui/core";
 import MaterialTable from 'material-table';
 import React, { useEffect, useState } from "react";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import 'react-toastify/dist/ReactToastify.css';
+import { useTheme } from '@material-ui/core/styles';
 
 import { getData } from "../../../service/service";
 import LoginModal from "../register_login/LoginModal";
@@ -52,6 +53,9 @@ export default function Stock() {
   const [loginPassword, setLoginPassword] = useState("");
   const [body, setBody] = React.useState(false);
   const [generatedOTP, setGeneratedOTP] = useState("");
+
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   const fetchAllStocks = async () => {
     const result = await getData("stock/getallstockdetails");
@@ -226,14 +230,15 @@ export default function Stock() {
             />
 
         }
-        <Modal
+        <Dialog
+          fullScreen={fullScreen}
           open={open}
           onClose={() => setOpen(false)}
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
         >
           {calledModal()}
-        </Modal>
+        </Dialog>
       </div>
     </Box>)
 }

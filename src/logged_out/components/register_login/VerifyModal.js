@@ -5,23 +5,20 @@ import { postData } from "../../../service/service";
 import Swal from "sweetalert2";
 
 function getModalStyle() {
-    const top = 50;
-    const left = 50;
-
     return {
-        top: `${top}%`,
-        left: `${left}%`,
-        transform: `translate(-${top}%, -${left}%)`,
-        position: 'absolute',
+        // top: `${top}%`,
+        // left: `${left}%`,
+        // transform: `translate(-${top}%, -${left}%)`,
+        // position: 'absolute',
         // minWidth: 500,
-        maxWidth: 500,
+        // maxWidth: 600,
         textAlign: "center",
         backgroundColor: "white",
         border: '2px solid grey',
-        boxShadow: "0 0 8px 2px black",
-        borderRadius: 20,
-        maxHeight: "100vh",
-        // overflowX: "scroll",
+        // boxShadow: "0 0 8px 2px black",
+        // borderRadius: 20,
+        height: "100%",
+        // overflowY: "scroll",
     };
 }
 
@@ -91,7 +88,7 @@ export default function VerifyModal(props) {
                 placeholder="ex. 123456"
                 label="OTP"
                 variant="outlined"
-                style={{ width: 350 }}
+                style={{ width: 300 }}
             />
         </div>
         <div style={{ display: "flex", justifyContent: "center" }}>

@@ -6,15 +6,16 @@ import {
   Button,
   Hidden,
   IconButton,
-  withStyles
+  withStyles,
+  useMediaQuery,
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import NavigationDrawer from "../../../shared/components/NavigationDrawer";
-import Modal from '@material-ui/core/Modal';
+import Dialog from '@material-ui/core/Dialog';
 import TextField from '@material-ui/core/TextField';
 import { useHistory } from 'react-router-dom';
 import { getData } from "../../../service/service";
-import { ToastContainer } from 'react-toastify';
+import { useTheme } from '@material-ui/core/styles';
 import 'react-toastify/dist/ReactToastify.css';
 import { loggedOut_menuItems } from "../../../config"
 import LoginModal from "../register_login/LoginModal";
@@ -52,24 +53,21 @@ const styles = theme => ({
 });
 
 function getModalStyle() {
-  const top = 50;
-  const left = 50;
-
   return {
-    top: `${top}%`,
-    left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`,
-    position: 'absolute',
-    minWidth: 500,
-    maxWidth: 600,
+    // top: `${top}%`,
+    // left: `${left}%`,
+    // transform: `translate(-${top}%, -${left}%)`,
+    // position: 'absolute',
+    // minWidth: 500,
+    // maxWidth: 600,
     textAlign: "center",
     backgroundColor: "white",
     border: '2px solid grey',
-    boxShadow: "0 0 8px 2px black",
-    borderRadius: 20,
-    maxHeight: "100vh",
-    overflowX: "scroll",
-  };
+    // boxShadow: "0 0 8px 2px black",
+    // borderRadius: 20,
+    height: "100%",
+    // overflowY: "scroll",
+};
 }
 
 function NavBar(props) {
@@ -94,6 +92,9 @@ function NavBar(props) {
   const [openModal, setOpenModal] = React.useState(false);
   const [body, setBody] = React.useState(false);
   const [generatedOTP, setGeneratedOTP] = useState("");
+
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   useEffect(function () {
     const isVerify = async () => {
@@ -238,14 +239,15 @@ function NavBar(props) {
                 }
                 else if (element.modal) {
                   return (<span key={element.name}>
-                    <Modal
+                    <Dialog
+                      fullScreen= {fullScreen}
                       open={openModal}
                       onClose={() => setOpenModal(false)}
                       aria-labelledby="simple-modal-title"
                       aria-describedby="simple-modal-description"
                     >
                       {fetchCertificate}
-                    </Modal>
+                    </Dialog>
                     <Button
                       color="secondary"
                       size="large"
@@ -258,14 +260,15 @@ function NavBar(props) {
                   </span>);
                 }
                 return (<span key={element.name}>
-                  <Modal
+                  <Dialog
+                    fullScreen = {fullScreen}
                     open={open}
                     onClose={handleClose}
                     aria-labelledby="simple-modal-title"
                     aria-describedby="simple-modal-description"
                   >
                     {calledModal()}
-                  </Modal>
+                  </Dialog>
                   <Button
                     color="secondary"
                     size="large"
@@ -292,17 +295,6 @@ function NavBar(props) {
         onClose={handleMobileDrawerClose}
         setComponent={props.SetComponent}
       // handleLogin={handleLogin}
-      />
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
       />
     </div>
   );

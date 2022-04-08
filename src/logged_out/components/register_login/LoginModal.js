@@ -3,34 +3,31 @@ import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
+import { InputLabel, useMediaQuery, Dialog } from '@material-ui/core';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import TextField from '@material-ui/core/TextField';
 import FormControl from '@material-ui/core/FormControl';
-import Modal from '@material-ui/core/Modal';
 import Swal from "sweetalert2";
 import { postData } from "../../../service/service";
 import { useHistory } from 'react-router-dom';
 import { useDispatch } from "react-redux";
+import { useTheme } from '@material-ui/core/styles';
 
 function getModalStyle() {
-    const top = 50;
-    const left = 50;
-
     return {
-        top: `${top}%`,
-        left: `${left}%`,
-        transform: `translate(-${top}%, -${left}%)`,
-        position: 'absolute',
-        minWidth: 500,
-        maxWidth: 600,
+        // top: `${top}%`,
+        // left: `${left}%`,
+        // transform: `translate(-${top}%, -${left}%)`,
+        // position: 'absolute',
+        // minWidth: 500,
+        // maxWidth: 600,
         textAlign: "center",
         backgroundColor: "white",
         border: '2px solid grey',
-        boxShadow: "0 0 8px 2px black",
-        borderRadius: 20,
-        maxHeight: "100vh",
+        // boxShadow: "0 0 8px 2px black",
+        // borderRadius: 20,
+        height: "100%",
         // overflowY: "scroll",
     };
 }
@@ -43,6 +40,9 @@ export default function LoginModal(props) {
 
     var dispatch = useDispatch();
     const history = useHistory();
+
+    const theme = useTheme();
+    const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     const handleLogin = async () => {
 
@@ -76,6 +76,7 @@ export default function LoginModal(props) {
                 })
                 dispatch({ type: "ADD_USER", payload: [props.loginEmail, data.data] })
                 localStorage.setItem("token", data.data.token);
+                sessionStorage.setItem("data", JSON.stringify(data.data));
                 history.replace({ pathname: "/c/dashboard" }, { data });
             }
             else {
@@ -90,7 +91,8 @@ export default function LoginModal(props) {
     }
 
     return (
-        <Modal
+        <Dialog
+            fullScreen = {fullScreen}
             open={props.open}
             onClose={() => props.setOpen(false)}
             aria-labelledby="simple-modal-title"
@@ -103,9 +105,20 @@ export default function LoginModal(props) {
                     <i style={{ fontSize: 25, cursor: "pointer" }} onClick={() => props.setOpen(false)} class="fas fa-times"></i>
                 </div>
                 <div style={{ margin: 20 }}>
-                    <TextField value={props.loginEmail} error={loginEmailError} helperText={loginEmailError ? "*Email should be required" : ""} onChange={(event) => { props.setLoginEmail(event.target.value) }} placeholder="ex. pushkargoyal36@gmail.com" id="outlined-ba" label="Email" type="email" variant="outlined" style={{ width: 350 }} />
+                    <TextField 
+                        value={props.loginEmail} 
+                        error={loginEmailError} 
+                        helperText={loginEmailError ? "*Email should be required" : ""} 
+                        onChange={(event) => { props.setLoginEmail(event.target.value) }} 
+                        placeholder="ex. pushkargoyal36@gmail.com" 
+                        id="outlined-ba" 
+                        label="Email" 
+                        type="email" 
+                        variant="outlined" 
+                        style={{ width: 300 }} 
+                    />
                 </div>
-                <FormControl style={{ width: 350 }} variant="outlined">
+                <FormControl style={{ width: 300 }} variant="outlined">
                     <InputLabel >Password</InputLabel>
                     <Input
                         id="standard-adornment-password"
@@ -132,8 +145,10 @@ export default function LoginModal(props) {
                     <div></div>
                 }
                 <div onClick = {()=> props.setBody(4)} className="links">Forgot Password ? </div>
-                <div><Button onClick={handleLogin} color="secondary" style={{ margin: 20, width: 400 }} variant="contained">Login</Button></div>
+                <div>
+                    <Button onClick={handleLogin} color="secondary" style={{ margin: 20, width: 300 }} variant="contained">Login</Button>
+                </div>
             </div>
-        </Modal>
+        </Dialog>
     );
 }

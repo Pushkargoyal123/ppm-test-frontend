@@ -1,4 +1,4 @@
-import React, { memo, useState, useCallback } from "react";
+import React, { memo, useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import {
   AppBar,
@@ -20,8 +20,10 @@ import AssessmentIcon from '@material-ui/icons/Assessment';
 import ShowChartIcon from '@material-ui/icons/ShowChart';
 import Stock from "../stocks/Stock";
 import CriticalAnalysis from "../stocks/CriticalAnalysis";
-import {loggedIn_menuItems} from "../../../config"
-import { useDispatch, useSelector } from "react-redux";
+import { loggedIn_menuItems } from "../../../config"
+import { useDispatch } from "react-redux";
+import { postData } from "../../../service/service";
+import WatchList from "../stocks/WatchList";
 
 const styles = theme => ({
   appBar: {
@@ -43,8 +45,8 @@ const styles = theme => ({
   noDecoration: {
     textDecoration: "none !important"
   },
-  scroll:{
-    overflow:"scroll"
+  scroll: {
+    overflow: "scroll"
   }
 });
 
@@ -86,16 +88,26 @@ function NavBar(props) {
     selectedTab
   } = props;
 
-  const history = useHistory();
-  var dispatch=useDispatch();
-  const user=useSelector(state=>state.user);
-
-  if(!Object.values(user).length){
-    history.replace({pathname:"/"});
-  }
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
+  const [user, setUser] = useState(null);
+
+  const history = useHistory();
+  var dispatch = useDispatch();
+
+  useEffect(function () {
+    setUser(JSON.parse(sessionStorage.getItem("data")));
+    dispatch({ type: "ADD_USER", payload: [JSON.parse(sessionStorage.getItem("data")).email, JSON.parse(sessionStorage.getItem("data"))] })
+  }, [dispatch])
+
+  const handleLogOut = async () => {
+    const form = { email: user.email, UserId: user.id };
+    await postData("user/userlogout", form);
+    dispatch({ type: "DEL_USER", payload: [user.email] })
+    localStorage.removeItem("token");
+    history.replace({ pathname: "/" });
+  }
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -103,10 +115,12 @@ function NavBar(props) {
 
   const handleSelect = (page) => {
     setAnchorEl(null);
-    if(page==="stocks")
-      props.setComponent(<Stock setComponent={props.setComponent} setUnderlinedButton= {props.setUnderlinedButton}/>)
-    else if(page==="critical analysis")
-       props.setComponent(<CriticalAnalysis setComponent={props.setComponent} setUnderlinedButton= {props.setUnderlinedButton}/>)
+    if (page === "stocks")
+      props.setComponent(<Stock setComponent={props.setComponent} setUnderlinedButton={props.setUnderlinedButton} />)
+    else if (page === "critical analysis")
+      props.setComponent(<CriticalAnalysis setComponent={props.setComponent} setUnderlinedButton={props.setUnderlinedButton} />)
+    else if (page === "watch list")
+      props.setComponent(<WatchList setComponent={props.setComponent} setUnderlinedButton={props.setUnderlinedButton} />)
     props.setUnderlinedButton("Stocks");
   };
 
@@ -117,13 +131,6 @@ function NavBar(props) {
   const handleMobileDrawerClose = useCallback(() => {
     setIsMobileDrawerOpen(false);
   }, [setIsMobileDrawerOpen]);
-
-  const handleLogOut=()=>{
-    const userEmail=Object.keys(user)[0]
-    dispatch({type:"DEL_USER",payload:[userEmail ] })
-    localStorage.removeItem("token");
-    history.replace({pathname:"/"});
-  }
 
   return (
     <div className={classes.root}>
@@ -146,72 +153,72 @@ function NavBar(props) {
               {loggedIn_menuItems.map(element => {
                 if (element.link) {
                   return (
-                      <Button
-                        key={element.link}
-                        color="secondary"
-                        size="large"
-                        classes={{ text: classes.menuButtonText }}
-                        onClick={()=>props.SetComponent(element.link, element)}
-                        style={props.underlinedButton===element.name ? {textDecoration:"underline"} : {}}
-                      >
-                        {element.name}
-                      </Button>
-                  );
-                }
-                else if(element.menus){
-                   return (<>
-                      <Button
-                        color="secondary"
-                        size="large"
-                        onClick={handleClick}
-                        key={element.link}
-                        classes={{ text: classes.menuButtonText }}
-                        style={props.underlinedButton===element.name ? {textDecoration:"underline"} : {}}
-                      >
-                        {element.name} &nbsp;
-                        <i className="fas fa-caret-down"></i>
-                      </Button>
-                      <StyledMenu
-                        id="customized-menu"
-                        anchorEl={anchorEl}
-                        keepMounted
-                        open={Boolean(anchorEl)}
-                        onClose={()=>setAnchorEl(null)}
-                      >
-                        <StyledMenuItem onClick={()=>handleSelect("stocks")}>
-                          <ListItemIcon>
-                            <ShowChartIcon fontSize="small" />
-                          </ListItemIcon>
-                          <ListItemText primary="Nifty Stocks" />
-                        </StyledMenuItem>
-
-                        <StyledMenuItem onClick={()=>handleSelect("critical analysis")}>
-                          <ListItemIcon>
-                            <AssessmentIcon fontSize="small" />
-                          </ListItemIcon>
-                          <ListItemText primary="Critical Analysis" />
-                        </StyledMenuItem>
-                        
-                        <StyledMenuItem>
-                          <ListItemIcon>
-                            <PlaylistAddCheckIcon fontSize="small" />
-                          </ListItemIcon>
-                          <ListItemText primary="Inbox" />
-                        </StyledMenuItem>
-                      </StyledMenu></>
-                  );
-                }
-                  return (
-                      <Button
+                    <Button
                       key={element.link}
-                        color="secondary"
-                        size="large"
-                        classes={{ text: classes.menuButtonText }}
-                        onClick={handleLogOut}
-                      >
-                        {element.name}
-                      </Button>
+                      color="secondary"
+                      size="large"
+                      classes={{ text: classes.menuButtonText }}
+                      onClick={() => props.SetComponent(element.link, element)}
+                      style={props.underlinedButton === element.name ? { textDecoration: "underline" } : {}}
+                    >
+                      {element.name}
+                    </Button>
                   );
+                }
+                else if (element.menus) {
+                  return (<>
+                    <Button
+                      color="secondary"
+                      size="large"
+                      onClick={handleClick}
+                      key={element.link}
+                      classes={{ text: classes.menuButtonText }}
+                      style={props.underlinedButton === element.name ? { textDecoration: "underline" } : {}}
+                    >
+                      {element.name} &nbsp;
+                      <i className="fas fa-caret-down"></i>
+                    </Button>
+                    <StyledMenu
+                      id="customized-menu"
+                      anchorEl={anchorEl}
+                      keepMounted
+                      open={Boolean(anchorEl)}
+                      onClose={() => setAnchorEl(null)}
+                    >
+                      <StyledMenuItem onClick={() => handleSelect("stocks")}>
+                        <ListItemIcon>
+                          <ShowChartIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText primary="Nifty Stocks" />
+                      </StyledMenuItem>
+
+                      <StyledMenuItem onClick={() => handleSelect("critical analysis")}>
+                        <ListItemIcon>
+                          <AssessmentIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText primary="Critical Analysis" />
+                      </StyledMenuItem>
+
+                      <StyledMenuItem onClick={() => handleSelect("watch list")}>
+                        <ListItemIcon>
+                          <PlaylistAddCheckIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText primary="Watch List" />
+                      </StyledMenuItem>
+                    </StyledMenu></>
+                  );
+                }
+                return (
+                  <Button
+                    key={element.link}
+                    color="secondary"
+                    size="large"
+                    classes={{ text: classes.menuButtonText }}
+                    onClick={handleLogOut}
+                  >
+                    {element.name}
+                  </Button>
+                );
               })}
             </Hidden>
           </div>
@@ -225,7 +232,7 @@ function NavBar(props) {
         selectedItem={selectedTab}
         onClose={handleMobileDrawerClose}
         setComponent={props.SetComponent}
-        handleLogOut= {handleLogOut}
+        handleLogOut={handleLogOut}
       />
     </div>
   );

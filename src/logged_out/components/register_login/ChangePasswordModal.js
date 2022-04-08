@@ -7,23 +7,20 @@ import Swal from "sweetalert2";
 import { useHistory } from 'react-router-dom';
 
 function getModalStyle() {
-    const top = 50;
-    const left = 50;
-
     return {
-        top: `${top}%`,
-        left: `${left}%`,
-        transform: `translate(-${top}%, -${left}%)`,
-        position: 'absolute',
+        // top: `${top}%`,
+        // left: `${left}%`,
+        // transform: `translate(-${top}%, -${left}%)`,
+        // position: 'absolute',
         // minWidth: 500,
-        maxWidth: 500,
+        // maxWidth: 600,
         textAlign: "center",
         backgroundColor: "white",
         border: '2px solid grey',
-        boxShadow: "0 0 8px 2px black",
-        borderRadius: 20,
-        maxHeight: "100vh",
-        // overflowX: "scroll",
+        // boxShadow: "0 0 8px 2px black",
+        // borderRadius: 20,
+        height: "100%",
+        // overflowY: "scroll",
     };
 }
 
@@ -94,7 +91,7 @@ export default function ChangePasswordModal(props) {
             <i style={{ fontSize: 25, cursor: "pointer" }} onClick={() => props.setOpen(false)} class="fas fa-times"></i>
         </div>
         <div style={{ margin: 20 }}>
-            <FormControl style={{ width: 350 }} variant="outlined">
+            <FormControl style={{ width: 300 }} variant="outlined">
                 <InputLabel style={{ color: newPasswordError ? "red" : null }}>New Password</InputLabel>
                 <Input
                     id="standard-adornment-password"
@@ -115,7 +112,7 @@ export default function ChangePasswordModal(props) {
                 />
                 <div style={error}> {newPasswordError}</div>
             </FormControl>
-            <FormControl style={{ width: 350, marginTop: 15 }}>
+            <FormControl style={{ width: 300, marginTop: 15 }}>
                 <InputLabel style={{ color: confirmPasswordError ? "red" : null }}>Confirm Password</InputLabel>
                 <Input
                     id="standard-adornment-password"
@@ -137,7 +134,9 @@ export default function ChangePasswordModal(props) {
                   <div style={error}> {confirmPasswordError} </div>
             </FormControl>
         </div>
-        <div><Button onClick={handleResetPassword} color="secondary" style={{ width: 400, marginBottom: 20 }} variant="contained">Reset Now</Button></div>
+        <div>
+            <Button onClick={handleResetPassword} color="secondary" style={{ width: 300, marginBottom: 20 }} variant="contained">Reset Now</Button>
+        </div>
     </div>
 
 }
