@@ -3,7 +3,6 @@ import MaterialTable, { MTableBody } from 'material-table';
 import { TableCell, TableFooter, TableRow } from "@material-ui/core";
 import { useEffect, useState } from "react";
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { useSelector } from "react-redux";
 import {
     Box,
     Button,
@@ -47,10 +46,6 @@ const useStyles = makeStyles((theme) => ({
 export default function CompanyDetail(props) {
     const classes = useStyles();
 
-    const user = useSelector(state => state.user)
-    const userData = Object.values(user)[0];
-    const userId = userData.id
-
     const [message, setMessage] = useState(false)
     const [data, setData] = useState([]);
     const [totalBuyStock, setTotalBuyStock]= useState("");
@@ -60,7 +55,7 @@ export default function CompanyDetail(props) {
 
     useEffect(() => {
         const fetchcompanyStockBuySell = async () => {
-            const result = await getData("stock/fetchcompanydetail?companyCode=" + props.data.companyCode + "&userId=" + userId);
+            const result = await getData("stock/fetchcompanydetail?companyCode=" + props.data.companyCode);
             let buyStockSum=0, sellStockSum=0, buyStockPriceSum=0, sellStockPriceSum=0;
             if (result.success) {
                 setMessage(1)
@@ -86,7 +81,7 @@ export default function CompanyDetail(props) {
             }
         }
         fetchcompanyStockBuySell();
-    }, [props.data.companyCode, userId])
+    }, [props.data.companyCode])
 
     const handleBuySellStocks = ()=>{
         props.setComponent(<StockData 

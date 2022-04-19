@@ -46,13 +46,12 @@ export default function Portfolio(props) {
 
     const user = useSelector(state => state.user)
     const userData = Object.values(user)[0];
-    const userId = userData.id
 
     useEffect(function () {
 
         const fetchPortfolioHistory = async () => {
 
-            const resultportfolio = await getData("stock/fetchportfoliohistory?UserId=" + userId);
+            const resultportfolio = await getData("stock/fetchportfoliohistory");
 
             if (resultportfolio.success) { 
                 setMessage(1);
@@ -83,12 +82,12 @@ export default function Portfolio(props) {
 
         fetchPortfolioHistory();
         const fetchVirtualAmount = async () => {
-            const result = await getData("group/findbyuserid?UserId=" + userId);
+            const result = await getData("user/findvirtualamountyuserid");
             if (result.success)
                 setVirtualAmount(result.data.virtualAmount.toFixed(2));
         }
         fetchVirtualAmount();
-    }, [userId])
+    }, [])
 
     return (
         <Box
@@ -108,7 +107,7 @@ export default function Portfolio(props) {
                     title={<ToolTip title="Transaction History" component = {()=>  <Button 
                         variant="contained" 
                         color="secondary" 
-                        onClick={()=>props.setComponent(<TransactionHistory setComponent={props.setComponent}/>)}>
+                        onClick={()=>props.setComponent(<TransactionHistory setUnderlinedButton = {props.setUnderlinedButton} setComponent={props.setComponent}/>)}>
                             Transaction History
                         </Button>}/>}
 

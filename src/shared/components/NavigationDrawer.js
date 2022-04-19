@@ -18,18 +18,13 @@ import CloseIcon from "@material-ui/icons/Close";
 import Modal from '@material-ui/core/Modal';
 import TextField from '@material-ui/core/TextField';
 import Menu from '@material-ui/core/Menu';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
+import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
 import DraftsIcon from '@material-ui/icons/Drafts';
 import SendIcon from '@material-ui/icons/Send';
 import MenuItem from '@material-ui/core/MenuItem';
 import { useHistory } from 'react-router-dom';
-import 'react-toastify/dist/ReactToastify.css';
 import { getData } from "../../service/service";
-import LoginModal from "../../logged_out/components/register_login/LoginModal";
-import RegistrationModal from "../../logged_out/components/register_login/RegistrationModal";
-import ResetPasswordModal from "../../logged_out/components/register_login/ResetPasswordModal";
-import ChangePasswordModal from "../../logged_out/components/register_login/ChangePasswordModal";
-import VerifyModal from "../../logged_out/components/register_login/VerifyModal";
+import CalledModal from "../../service/CalledModal";
 
 const styles = theme => ({
   closeIcon: {
@@ -166,66 +161,6 @@ function NavigationDrawer(props) {
     };
   }, [width, open, onClose]);
 
-  const calledModal = () => {
-
-    if (body === 1)
-      return <LoginModal
-        open={open}
-        setOpen={setOpen}
-        setBody={setBody}
-        loginEmail={loginEmail}
-        setLoginEmail={setLoginEmail}
-        email={email}
-        password={password}
-        setPassword={setPassword}
-        setLoginPassword={setLoginPassword}
-        loginPassword={loginPassword}
-      />
-    else if (body === 2)
-      return <RegistrationModal
-        setGeneratedOTP={setGeneratedOTP}
-        open={open1}
-        setOpen={setOpen}
-        setBody={setBody}
-        loginEmail={loginEmail}
-        setLoginEmail={setLoginEmail}
-        setEmail={setEmail}
-        email={email}
-        password={password}
-        setPassword={setPassword}
-        setLoginPassword={setLoginPassword}
-        loginPassword={loginPassword}
-
-      />
-    else if (body === 3)
-      return <VerifyModal
-        open={open}
-        setOpen={setOpen}
-        setBody={setBody}
-        loginEmail={loginEmail}
-        setLoginEmail={setLoginEmail}
-        email={email}
-        password={password}
-        setPassword={setPassword}
-        setLoginPassword={setLoginPassword}
-        loginPassword={loginPassword}
-        setGeneratedOTP={setGeneratedOTP}
-        generatedOTP={generatedOTP}
-      />
-    else if (body === 4)
-      return <ResetPasswordModal
-        open={open}
-        setOpen={setOpen}
-        setBody={setBody}
-      />
-    else if (body === 5)
-      return <ChangePasswordModal
-        open={open}
-        setOpen={setOpen}
-        setBody={setBody}
-      />
-  }
-
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -236,6 +171,8 @@ function NavigationDrawer(props) {
       props.setComponent("stock", element);
     else if (name === "critical analysis")
       props.setComponent("critical analysis", element);
+    else if (name === "watch list")
+      props.setComponent("watch list", element);
     props.onClose();
   };
 
@@ -347,11 +284,11 @@ function NavigationDrawer(props) {
                   <ListItemText primary="Critical Analysis" />
                 </StyledMenuItem>
 
-                <StyledMenuItem>
+                <StyledMenuItem onClick={() => handleSelect("watch list", element)}>
                   <ListItemIcon>
-                    <InboxIcon fontSize="small" />
+                    <PlaylistAddCheckIcon fontSize="small" />
                   </ListItemIcon>
-                  <ListItemText primary="Inbox" />
+                  <ListItemText primary="Watch List" />
                 </StyledMenuItem>
               </StyledMenu></div>
             );
@@ -414,7 +351,7 @@ function NavigationDrawer(props) {
               aria-labelledby="simple-modal-title"
               aria-describedby="simple-modal-description"
             >
-              {calledModal()}
+              {CalledModal(open, setGeneratedOTP, setEmail, generatedOTP, setOpen, body, setBody, loginEmail, setLoginEmail, email, password, setPassword, setLoginPassword, loginPassword)}
             </Modal>
             <ListItem button onClick={() => handleOpen(element.name)}>
               <ListItemIcon>{element.icon}</ListItemIcon>

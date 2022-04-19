@@ -3,7 +3,6 @@ import { Box, makeStyles } from "@material-ui/core";
 import MaterialTable from 'material-table';
 import { useEffect, useState } from "react"
 import { getData } from "../../../service/service";
-import { useSelector } from "react-redux";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ToolTip from "../../../shared/components/ToolTip";
 import KeyboardBackspaceRoundedIcon from '@material-ui/icons/KeyboardBackspaceRounded';
@@ -36,12 +35,9 @@ export default function TransactionHistory(props) {
     const [data, setData] = useState([]);
     const [message, setMessage] = useState(false);
 
-    const user = useSelector(state => state.user)
-    const userId = Object.values(user)[0].id
-
     useEffect(function () {
         const fetchTransactionHistory = async () => {
-            const resultportfolio = await getData("stock/fetchusertransactionhistory?UserId=" + userId)
+            const resultportfolio = await getData("stock/fetchusertransactionhistory")
             if (resultportfolio.success) {
                 setMessage(1)
                 setData(resultportfolio.data);
@@ -51,7 +47,7 @@ export default function TransactionHistory(props) {
             }
         }
         fetchTransactionHistory()
-    }, [userId])
+    }, [])
 
     return (
         <Box
@@ -71,7 +67,7 @@ export default function TransactionHistory(props) {
                             title= <ToolTip title="Back" component= {()=><KeyboardBackspaceRoundedIcon
                                 color="secondary"
                                 style={{ border: "1px blue solid", fontSize: "2rem", cursor: "pointer" }}
-                                onClick={() => props.setComponent(<Portfolio setComponent={props.setComponent} />)}
+                                onClick={() => props.setComponent(<Portfolio setUnderlinedButton = {props.setUnderlinedButton} setComponent={props.setComponent} />)}
                             />} />
 
                             style={{ fontWeight: 500 }}

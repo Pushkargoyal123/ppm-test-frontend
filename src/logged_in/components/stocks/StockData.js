@@ -64,7 +64,7 @@ function getModalStyle() {
     // borderRadius: 20,
     height: "100%",
     // overflowY: "scroll",
-};
+  };
 }
 
 
@@ -90,7 +90,6 @@ export default function StockData(props) {
   const [isTrading, setIsTrading] = useState(false);
 
   const user = useSelector(state => state.user)
-  const userId = Object.values(user)[0].id
   const ppmGroupId = Object.values(user)[0].groupId
 
   const theme = useTheme();
@@ -121,7 +120,7 @@ export default function StockData(props) {
 
   const checkTrading = () => {
     const date = new Date();
-    if (date.getHours() > 17 || date.getHours() < 9 || date.getDay() === 0 || date.getDay() ===6) {
+    if (date.getHours() > 17 || date.getHours() < 9 || date.getDay() === 0 || date.getDay() === 6) {
       setIsTrading(true);
     }
     else {
@@ -135,7 +134,7 @@ export default function StockData(props) {
   }
 
   const fetchVirtualAmountAndNetAmount = async () => {
-    const result = await getData("group/findbyuserid?UserId=" + userId);
+    const result = await getData("user/findvirtualamountyuserid");
     if (result.success) {
       setVirtualAmount(result.data.virtualAmount.toFixed(2));
       setNetAmount(result.data.netAmount.toFixed(2));
@@ -143,12 +142,9 @@ export default function StockData(props) {
   }
 
   const fetchPortfolioStock = async () => {
-    let body = {
-      userId: userId,
-      companyName: props.data.CompanyName,
-    }
+    let body = { companyName: props.data.CompanyName }
 
-    const result = await postData("stock/fetchportfolio", body);
+    const result = await postData("stock/fetchstockleft", body);
     if (result.status) {
       setStockAvailable(result.stockAvailable);
     }
@@ -171,26 +167,26 @@ export default function StockData(props) {
     setOpen(false);
   };
 
-  const setBuyingPrice = (value) => {
-    if (value === "") {
+  const setBuyingPrice = (event) => {
+    if(event.target.value === ""){
       setStockBuy("");
-      setBuyPrice(value * data[0].currentPrice.toFixed(2));
-      setDisplayBuyButton(false);
-    } else {
-      setStockBuy(parseInt(value));
-      setBuyPrice((parseInt(value) * data[0].currentPrice).toFixed(2));
+      setDisplayBuyButton(false)
+    }
+    else{
+      setStockBuy((v) => (event.target.validity.valid ? event.target.value : v))
+      setBuyPrice((parseInt(event.target.value) * data[0].currentPrice).toFixed(2));
       setDisplayBuyButton(true);
     }
   }
 
-  const setSellingPrice = (value) => {
-    if (value === "") {
-      setStockSell("")
-      setSellPrice((value * data[0].currentPrice).toFixed(2));
+  const setSellingPrice = (event) => {
+    if(event.target.value === ""){
+      setStockSell("");
       setDisplaySellButton(false);
-    } else {
-      setStockSell(parseInt(value))
-      setSellPrice((parseInt(value) * data[0].currentPrice).toFixed(2));
+    }
+    else{
+      setStockSell((v) => (event.target.validity.valid ? event.target.value : v))
+      setSellPrice((parseInt(event.target.value) * data[0].currentPrice).toFixed(2));
       setDisplaySellButton(true);
     }
   }
@@ -221,7 +217,6 @@ export default function StockData(props) {
         comment: comment,
         virtualAmount: virtualAmount,
         netAmount: netAmount,
-        UserId: userId,
         ppmGroupId: ppmGroupId
       }
       const result = await postData("stock/insertportfolio", body);
@@ -273,7 +268,7 @@ export default function StockData(props) {
   }
 
   const buyModal = (<div style={modalStyle}>
-    <div style={{height: "100%"}}>
+    <div style={{ height: "100%" }}>
       <div style={{ display: "flex" }}>
         <div style={{ width: "90%", margin: "auto", border: "4px grey solid", borderBottom: "", fontSize: 40, backgroundColor: "#9EFD38", color: "white" }}>BUY</div>
         <div
@@ -290,8 +285,9 @@ export default function StockData(props) {
       <div style={{ display: "flex", justifyContent: "space-evenly" }}>
         <input
           value={stockBuy}
-          onChange={(event) => setBuyingPrice(event.target.value)}
+          onChange={(event) => setBuyingPrice(event)}
           placeholder="Enter Stock!"
+          pattern="[0-9]*"
           style={{ padding: "5px", margin: "0 10px", borderRadius: "30px", outline: "none", border: "2px grey solid", paddingLeft: 10, width: 170, fontSize: 20 }}
         />
         <div
@@ -310,7 +306,7 @@ export default function StockData(props) {
       </> :
         <div style={{ color: "red", fontSize: "1.1rem", marginTop: 20, fontWeight: 500 }}>You have an insufficient balance...</div>}
       </> : <></>}
-      <div style={{margin:20, textAlign: "right", color: "blue", fontSize: "1.2rem", cursor: "pointer"}}>
+      <div style={{ margin: 20, textAlign: "right", color: "blue", fontSize: "1.2rem", cursor: "pointer" }}>
         <div onClick={handleClose}>Close</div>
       </div>
     </div>
@@ -342,13 +338,14 @@ export default function StockData(props) {
       <div style={{ display: "flex", padding: "0 20px", justifyContent: "space-evenly" }}>
         <input
           value={stockSell}
-          onChange={(event) => setSellingPrice(event.target.value)}
+          onChange={(event) => setSellingPrice(event)}
           placeholder="Enter Stock!"
+          pattern="[0-9]*"
           style={{ padding: "5px", margin: "0 10px", borderRadius: "30px", outline: "none", border: "2px grey solid", paddingLeft: 10, width: 170, fontSize: 20 }}
         />
         <div style={{ fontSize: 22, fontWeight: "700" }}>Total Selling Price : <span style={{ color: "blue" }}>₹{sellPrice}</span></div>
       </div>
-      {displaySellButton ? <> {stockAvailable >= stockSell ? <>
+      {displaySellButton ? <> {stockAvailable >= parseInt(stockSell) ?  <>
         <textarea
           onChange={(event) => setComment(event.target.value)}
           value={comment}
@@ -359,7 +356,7 @@ export default function StockData(props) {
       </> :
         <div style={{ color: "red", fontSize: "1.1rem", marginTop: 20, fontWeight: 500 }}>You have insufficient stocks</div>}
       </> : <></>}
-      <div style={{margin:20, textAlign: "right", color: "blue", fontSize: "1.2rem", cursor: "pointer"}}>
+      <div style={{ margin: 20, textAlign: "right", color: "blue", fontSize: "1.2rem", cursor: "pointer" }}>
         <div onClick={handleClose}>Close</div>
       </div>
     </div>
@@ -375,7 +372,7 @@ export default function StockData(props) {
         <div style={{ display: "flex", justifyContent: "space-evenly", alignItems: "center", flexWrap: "wrap" }}>
           <div style={{ textAlign: "left", fontWeight: "bold", fontSize: 22 }}>Current Price : ₹{data[0] ? data[0].currentPrice : " "}</div>
           <Dialog
-            fullScreen = {fullScreen}
+            fullScreen={fullScreen}
             open={open}
             onClose={handleClose}
             aria-labelledby="simple-modal-title"
@@ -383,13 +380,13 @@ export default function StockData(props) {
           >
             {body ? sellModal : buyModal}
           </Dialog>
-          <div className={ isTrading ? "buy-sell-wrapper" : "buy-sell-wrapper-disabled"}>
-            <ToolTip 
-              title= {isTrading ? "BUY OR SELL STOCK" : "You cannot BUY/SELL stock in between 9:00 AM to 6:00 PM"}
-              component = {()=>   <Button
+          <div className={isTrading ? "buy-sell-wrapper" : "buy-sell-wrapper-disabled"}>
+            <ToolTip
+              title={isTrading ? "BUY OR SELL STOCK" : "You cannot BUY/SELL stock in between 9:00 AM to 6:00 PM"}
+              component={() => <Button
                 color="primary"
                 variant="contained"
-                className= { isTrading ? "buy-sell" : "buy-sell-disabled"}
+                className={isTrading ? "buy-sell" : "buy-sell-disabled"}
                 onClick={isTrading ? handleOpen : null}>
                 Buy/Sell
               </Button>}

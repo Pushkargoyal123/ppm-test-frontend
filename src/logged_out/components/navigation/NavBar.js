@@ -11,18 +11,13 @@ import {
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import NavigationDrawer from "../../../shared/components/NavigationDrawer";
+import CalledModal from "../../../service/CalledModal";
 import Dialog from '@material-ui/core/Dialog';
 import TextField from '@material-ui/core/TextField';
 import { useHistory } from 'react-router-dom';
 import { getData } from "../../../service/service";
 import { useTheme } from '@material-ui/core/styles';
-import 'react-toastify/dist/ReactToastify.css';
 import { loggedOut_menuItems } from "../../../config"
-import LoginModal from "../register_login/LoginModal";
-import RegistrationModal from "../register_login/RegistrationModal";
-import ResetPasswordModal from "../register_login/ResetPasswordModal";
-import ChangePasswordModal from "../register_login/ChangePasswordModal";
-import VerifyModal from "../register_login/VerifyModal";
 
 const styles = theme => ({
   appBar: {
@@ -67,7 +62,7 @@ function getModalStyle() {
     // borderRadius: 20,
     height: "100%",
     // overflowY: "scroll",
-};
+  };
 }
 
 function NavBar(props) {
@@ -133,65 +128,6 @@ function NavBar(props) {
     </div>
   )
 
-  const calledModal = () => {
-
-    if (body === 1)
-      return <LoginModal
-        open={open}
-        setOpen={setOpen}
-        setBody={setBody}
-        loginEmail={loginEmail}
-        setLoginEmail={setLoginEmail}
-        email={email}
-        password={password}
-        setPassword={setPassword}
-        setLoginPassword={setLoginPassword}
-        loginPassword={loginPassword}
-      />
-    else if (body === 2)
-      return <RegistrationModal
-        setGeneratedOTP={setGeneratedOTP}
-        open={open}
-        setOpen={setOpen}
-        setBody={setBody}
-        loginEmail={loginEmail}
-        setLoginEmail={setLoginEmail}
-        setEmail={setEmail}
-        email={email}
-        password={password}
-        setPassword={setPassword}
-        setLoginPassword={setLoginPassword}
-        loginPassword={loginPassword}
-      />
-    else if (body === 3)
-      return <VerifyModal
-      open={open}
-      setOpen={setOpen}
-      setBody={setBody}
-      loginEmail={loginEmail}
-      setLoginEmail={setLoginEmail}
-      email={email}
-      password={password}
-      setPassword={setPassword}
-      setLoginPassword={setLoginPassword}
-      loginPassword={loginPassword}
-      setGeneratedOTP = {setGeneratedOTP}
-      generatedOTP = {generatedOTP}
-      />
-    else if (body === 4)
-      return <ResetPasswordModal
-        open={open}
-        setOpen={setOpen}
-        setBody={setBody}
-      />
-    else if (body === 5)
-      return <ChangePasswordModal
-        open={open}
-        setOpen={setOpen}
-        setBody={setBody}
-      />
-  }
-
   const handleOpen = (name) => {
     if (name === "Login")
       setBody(1);
@@ -240,7 +176,7 @@ function NavBar(props) {
                 else if (element.modal) {
                   return (<span key={element.name}>
                     <Dialog
-                      fullScreen= {fullScreen}
+                      fullScreen={fullScreen}
                       open={openModal}
                       onClose={() => setOpenModal(false)}
                       aria-labelledby="simple-modal-title"
@@ -261,13 +197,13 @@ function NavBar(props) {
                 }
                 return (<span key={element.name}>
                   <Dialog
-                    fullScreen = {fullScreen}
+                    fullScreen={fullScreen}
                     open={open}
                     onClose={handleClose}
                     aria-labelledby="simple-modal-title"
                     aria-describedby="simple-modal-description"
                   >
-                    {calledModal()}
+                    {CalledModal(open, setGeneratedOTP, setEmail, generatedOTP, setOpen, body, setBody, loginEmail, setLoginEmail, email, password, setPassword, setLoginPassword, loginPassword)}
                   </Dialog>
                   <Button
                     color="secondary"

@@ -16,6 +16,7 @@ import AboutUs from "../../shared/components/AboutUs";
 import Portfolio from "./stocks/Portfolio";
 import LeaderBoard from "./stocks/LeaderBoard";
 import CriticalAnalysis from "./stocks/CriticalAnalysis";
+import WatchList from "./stocks/WatchList";
 
 const styles = (theme) => ({
   main: {
@@ -349,6 +350,9 @@ function Main(props) {
     }
     else if(link==="critical analysis"){
       setComponent(<CriticalAnalysis />)
+    }
+    else if(link==="watch list"){
+      setComponent(<WatchList setComponent={setComponent} setUnderlinedButton = {setUnderlinedButton} />)
     }
     setUnderlinedButton(element.name);
   }

@@ -16,7 +16,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import DateFnsUtils from '@date-io/date-fns';
 import { IconButton, Button, TextField } from '@material-ui/core';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import Swal from "sweetalert2";
 import { postData } from "../../../service/service";
 import ToolTip from "../../../shared/components/ToolTip";

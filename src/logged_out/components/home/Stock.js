@@ -3,16 +3,11 @@ import { Box, Button, makeStyles, useMediaQuery, Dialog } from "@material-ui/cor
 import MaterialTable from 'material-table';
 import React, { useEffect, useState } from "react";
 import CircularProgress from '@material-ui/core/CircularProgress';
-import 'react-toastify/dist/ReactToastify.css';
 import { useTheme } from '@material-ui/core/styles';
 
 import { getData } from "../../../service/service";
-import LoginModal from "../register_login/LoginModal";
-import RegistrationModal from "../register_login/RegistrationModal";
-import ResetPasswordModal from "../register_login/ResetPasswordModal";
-import ChangePasswordModal from "../register_login/ChangePasswordModal";
-import VerifyModal from "../register_login/VerifyModal";
 import ToolTip from "../../../shared/components/ToolTip";
+import CalledModal from "../../../service/CalledModal";
 
 const useStyles = makeStyles((theme) => ({
   blogContentWrapper: {
@@ -65,62 +60,6 @@ export default function Stock() {
     } else {
       setMessage(2);
     }
-  }
-
-  const calledModal = () => {
-
-    if (body === 1)
-      return <LoginModal
-        open={open}
-        setOpen={setOpen}
-        setBody={setBody}
-        loginEmail={loginEmail}
-        setLoginEmail={setLoginEmail}
-        setLoginPassword={setLoginPassword}
-        loginPassword={loginPassword}
-      />
-    else if (body === 2)
-      return <RegistrationModal
-        setGeneratedOTP={setGeneratedOTP}
-        open={open}
-        setOpen={setOpen}
-        setBody={setBody}
-        loginEmail={loginEmail}
-        setLoginEmail={setLoginEmail}
-        setEmail={setEmail}
-        email={email}
-        password={password}
-        setPassword={setPassword}
-        setLoginPassword={setLoginPassword}
-        loginPassword={loginPassword}
-      />
-    else if (body === 3)
-      return <VerifyModal
-        open={open}
-        setOpen={setOpen}
-        setBody={setBody}
-        loginEmail={loginEmail}
-        setLoginEmail={setLoginEmail}
-        email={email}
-        password={password}
-        setPassword={setPassword}
-        setLoginPassword={setLoginPassword}
-        loginPassword={loginPassword}
-        setGeneratedOTP={setGeneratedOTP}
-        generatedOTP={generatedOTP}
-      />
-    else if (body === 4)
-      return <ResetPasswordModal
-        open={open}
-        setOpen={setOpen}
-        setBody={setBody}
-      />
-    else if (body === 5)
-      return <ChangePasswordModal
-        open={open}
-        setOpen={setOpen}
-        setBody={setBody}
-      />
   }
 
   return (
@@ -237,7 +176,7 @@ export default function Stock() {
           aria-labelledby="simple-modal-title"
           aria-describedby="simple-modal-description"
         >
-          {calledModal()}
+          {CalledModal(open, setGeneratedOTP, setEmail, generatedOTP, setOpen, body, setBody, loginEmail, setLoginEmail, email, password, setPassword, setLoginPassword, loginPassword)}
         </Dialog>
       </div>
     </Box>)

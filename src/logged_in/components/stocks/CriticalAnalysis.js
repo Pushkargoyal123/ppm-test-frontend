@@ -6,6 +6,8 @@ import {
 } from "@material-ui/core";
 import MaterialTable from 'material-table';
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+
 import { getData } from "../../../service/service";
 
 
@@ -25,47 +27,50 @@ const useStyles = makeStyles((theme) => ({
     wrapper: {
         minHeight: "60vh",
     },
-    message : {
+    message: {
         color: "red",
-        fontWeight : "600"
+        fontWeight: "600"
     }
 }))
 
 export default function CriticalAnalysis() {
     const classes = useStyles();
 
+    const user = useSelector(state => state.user)
+
     useEffect(function () {
+
+        const fetchAllHistory = async () => {
+            const ppmGroupId = Object.values(user)[0].groupId
+            const resultHistory = await getData("criticalanalysis/criticalanalysisdata/" + ppmGroupId);
+            if (resultHistory.success) {
+                setMessage(1)
+                const finalData = resultHistory.data.map(function (rowData, index) {
+                    rowData.id = index + 1
+                    rowData.companyName = rowData.companyName + "(" + rowData.companyCode + ")";
+                    rowData.averageBuyPrice = rowData.totalBuyPrice / rowData.totalBuyStock
+                    rowData.PL = rowData.currentPrice * rowData.totalBuyStock - rowData.totalBuyPrice
+                    rowData.PLPercent = (rowData.currentPrice * rowData.totalBuyStock - rowData.totalBuyPrice) * 100 / rowData.totalBuyPrice
+                    return rowData;
+                })
+                setData(finalData);
+            }
+            else {
+                setMessage(2)
+            }
+        }
         fetchAllHistory()
-    }, [])
+    }, [user])
 
     const [data, setData] = useState([]);
-    const [message, setMessage] = useState(false)
-
-    const fetchAllHistory = async () => {
-        const resultHistory = await getData("criticalanalysis/criticalanalysisdata");
-        if (resultHistory.success) {
-            setMessage(1)
-            const finalData = resultHistory.data.map(function (rowData, index) {
-                rowData.id = index + 1
-                rowData.companyName = rowData.companyName + "(" + rowData.companyCode + ")";
-                rowData.averageBuyPrice = rowData.totalBuyPrice / rowData.totalBuyStock
-                rowData.PL = rowData.currentPrice * rowData.totalBuyStock - rowData.totalBuyPrice
-                rowData.PLPercent = (rowData.currentPrice * rowData.totalBuyStock - rowData.totalBuyPrice) * 100 / rowData.totalBuyPrice
-                return rowData;
-            })
-            setData(finalData);
-        }
-        else {
-            setMessage(2)
-        }
-    }
+    const [message, setMessage] = useState(false);
 
     return <Box
         className={classNames("lg-p-top", classes.wrapper)}
         display="flex"
         justifyContent="center"
     >
-        <div className={classes.blogContentWrapper  + " animation-bottom-top"}>
+        <div className={classes.blogContentWrapper + " animation-bottom-top"}>
             <div style={{ fontSize: 40, textAlign: "center" }}><u>Critical Analysis</u></div>
 
             {
