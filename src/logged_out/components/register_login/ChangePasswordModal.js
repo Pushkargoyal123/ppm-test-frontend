@@ -8,17 +8,9 @@ import { useHistory } from 'react-router-dom';
 
 function getModalStyle() {
     return {
-        // top: `${top}%`,
-        // left: `${left}%`,
-        // transform: `translate(-${top}%, -${left}%)`,
-        // position: 'absolute',
-        // minWidth: 500,
-        // maxWidth: 600,
         textAlign: "center",
         backgroundColor: "white",
         border: '2px solid grey',
-        // boxShadow: "0 0 8px 2px black",
-        // borderRadius: 20,
         height: "100%",
         // overflowY: "scroll",
     };

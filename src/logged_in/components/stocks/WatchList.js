@@ -25,7 +25,8 @@ const useStyles = makeStyles((theme) => ({
         },
         maxWidth: 1280,
         width: "100%",
-        textAlign: "justify-all"
+        textAlign: "justify-all",
+        boxShadow: "rgba(0, 0, 0, 0.56) 0px 22px 70px 4px"
     },
     wrapper: {
         minHeight: "60vh",
@@ -72,7 +73,7 @@ export default function WatchList(props) {
 
     useEffect(function () {
         const fetchUsersWatchList = async () => {
-            const result = await getData("watchlist/fetchuserwatchlist")
+            const result = await getData("watchlist/fetchuserwatchlist");
             if (result.success) {
                 setMessage(1)
                 setData(result.data);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import InputAdornment from '@material-ui/core/InputAdornment';
@@ -9,7 +9,9 @@ import IconButton from '@material-ui/core/IconButton';
 import TextField from '@material-ui/core/TextField';
 import FormControl from '@material-ui/core/FormControl';
 import Swal from "sweetalert2";
-import { postData } from "../../../service/service";
+import { makeStyles } from '@material-ui/core/styles';
+import Select from '@material-ui/core/Select';
+import { postData, getData } from "../../../service/service";
 import { useHistory } from 'react-router-dom';
 import { useDispatch } from "react-redux";
 import { useTheme } from '@material-ui/core/styles';
@@ -31,22 +33,65 @@ function getModalStyle() {
         // overflowY: "scroll",
     };
 }
+
+const useStyles = makeStyles((theme) => ({
+    formControl: {
+        margin: theme.spacing(1),
+        minWidth: 120,
+    },
+    selectEmpty: {
+        marginTop: theme.spacing(2),
+    },
+}));
+
+const error = {
+    textAlign: "left",
+    color: "red",
+    opacity: "0.7",
+    fontSize: "0.7rem",
+    marginTop: 3,
+}
+
 export default function LoginModal(props) {
+
+    useEffect(function () {
+        fetchAllColleges()
+    }, [])
 
     const [loginEmailError, setLoginEmailError] = useState(false);
     const [loginPasswordError, setLoginPasswordError] = useState(false);
     const [modalStyle] = React.useState(getModalStyle);
     const [showPassword, setShowPassword] = React.useState(false);
+    const [loginWith, setLoginWith] = useState("");
+    const [loginWithError, setLoginWithError] = useState(false);
+    const [collegeList, setCollegeList] = useState([]);
 
     var dispatch = useDispatch();
     const history = useHistory();
 
+    const classes = useStyles();
+
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
+    const fetchAllColleges = async () => {
+        const result = await getData("college/getAllCollegeNames");
+        if (result.success) {
+            setCollegeList(result.data);
+        }
+    }
 
     const handleLogin = async () => {
 
         let err = false;
+
+        if (loginWith === "") {
+            err = true;
+            setLoginWithError("*Login with should be provided");
+        }
+        else {
+            setLoginWithError(null)
+        }
 
         if (props.loginEmail.trim() === "") {
             err = true;
@@ -65,7 +110,7 @@ export default function LoginModal(props) {
         }
         if (!err) {
 
-            let form = { email: props.loginEmail, password: props.loginPassword };
+            let form = { registerType: loginWith, email: props.loginEmail, password: props.loginPassword };
             const data = await postData("user/login", form);
 
             if (data.success) {
@@ -90,9 +135,13 @@ export default function LoginModal(props) {
         }
     }
 
+    const handleSelectChange = (event) => {
+        setLoginWith(event.target.value);
+    }
+
     return (
         <Dialog
-            fullScreen = {fullScreen}
+            fullScreen={fullScreen}
             open={props.open}
             onClose={() => props.setOpen(false)}
             aria-labelledby="simple-modal-title"
@@ -104,18 +153,46 @@ export default function LoginModal(props) {
                     <h2 id="simple-modal-title">Login Page</h2>
                     <i style={{ fontSize: 25, cursor: "pointer" }} onClick={() => props.setOpen(false)} class="fas fa-times"></i>
                 </div>
+                <div style={{ margin: "0 10px" }}>
+                    <FormControl style={{ width: 300, margin: 0 }} variant="outlined" className={classes.formControl}>
+                        <InputLabel style={{ color: loginWithError ? "red" : null }} htmlFor="outlined-age-native-simple">Login With</InputLabel>
+                        <Select
+                            native
+                            value={loginWith}
+                            onChange={handleSelectChange}
+                            label="Register With"
+                            helperText={loginWithError}
+                            error={loginWithError}
+                            placeholder="Register With"
+                            inputProps={{
+                                name: 'Register With',
+                                id: 'outlined-age-native-simple',
+                            }}
+                        >
+                            <option aria-label="None" value=""></option>
+                            <option value="pgr">Praedico Global Research</option>
+                            {
+                                collegeList.map(function (item) {
+                                    return <option key={item.shortName} value={item.shortName}>{item.name}</option>
+                                })
+                            }
+                        </Select>
+                        <div style={error}>{loginWithError}</div>
+                    </FormControl>
+                </div>
+
                 <div style={{ margin: 20 }}>
-                    <TextField 
-                        value={props.loginEmail} 
-                        error={loginEmailError} 
-                        helperText={loginEmailError ? "*Email should be required" : ""} 
-                        onChange={(event) => { props.setLoginEmail(event.target.value) }} 
-                        placeholder="ex. pushkargoyal36@gmail.com" 
-                        id="outlined-ba" 
-                        label="Email" 
-                        type="email" 
-                        variant="outlined" 
-                        style={{ width: 300 }} 
+                    <TextField
+                        value={props.loginEmail}
+                        error={loginEmailError}
+                        helperText={loginEmailError ? "*Email should be required" : ""}
+                        onChange={(event) => { props.setLoginEmail(event.target.value) }}
+                        placeholder="ex. pushkargoyal36@gmail.com"
+                        id="outlined-ba"
+                        label="Email"
+                        type="email"
+                        variant="outlined"
+                        style={{ width: 300 }}
                     />
                 </div>
                 <FormControl style={{ width: 300 }} variant="outlined">
@@ -137,14 +214,14 @@ export default function LoginModal(props) {
                             </InputAdornment>
                         }
                     />
-                    {loginPasswordError ? <div style={{ color: "red", fontWeight: "600" }}> *Password should be provided </div> : <div></div>}
+                    {loginPasswordError ? <div style={error}> *Password should be provided </div> : <div></div>}
                 </FormControl>
                 {
                     props.setBody ?
-                    <div onClick={() => props.setBody(2)} className="links" style={{ marginTop: 10 }}> Register now if not ?</div> :
-                    <div></div>
+                        <div onClick={() => props.setBody(2)} className="links" style={{ marginTop: 10 }}> Register now if not ?</div> :
+                        <div></div>
                 }
-                <div onClick = {()=> props.setBody(4)} className="links">Forgot Password ? </div>
+                <div onClick={() => props.setBody(4)} className="links">Forgot Password ? </div>
                 <div>
                     <Button onClick={handleLogin} color="secondary" style={{ margin: 20, width: 300 }} variant="contained">Login</Button>
                 </div>
