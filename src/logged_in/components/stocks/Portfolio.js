@@ -51,7 +51,7 @@ export default function Portfolio(props) {
 
         const fetchPortfolioHistory = async () => {
 
-            const resultportfolio = await getData("stock/fetchportfoliohistory");
+            const resultportfolio = await getData("stock/fetchportfoliohistory/"+ userData.id);
 
             if (resultportfolio.success) { 
                 setMessage(1);
@@ -87,7 +87,7 @@ export default function Portfolio(props) {
                 setVirtualAmount(result.data.virtualAmount.toFixed(2));
         }
         fetchVirtualAmount();
-    }, [])
+    }, [userData.id])
 
     return (
         <Box
