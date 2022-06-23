@@ -27,7 +27,9 @@ body{
   cursor: pointer;
   box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
 }
-
+.MuiDialog-paperWidthSm{
+  max-width: 800px !important;
+}
 .tableShadow{
 	 box-shadow: rgba(0, 0, 0, 0.56) 0px 22px 70px 4px;
 }
