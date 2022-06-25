@@ -9,7 +9,6 @@ import OurStats from "./OurStats";
 // import ExcelToTable from "./ExcelToTable";
 
 function Home(props) {
-
   const location = useLocation();
 
   return (

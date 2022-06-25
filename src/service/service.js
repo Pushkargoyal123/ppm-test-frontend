@@ -1,10 +1,10 @@
 
 // const ServerURL="http://localhost:7080/api/";
-const ServerURL="https://test.praedicofinance.com/api/"
+// const ServerURL="https://test.praedicofinance.com/api/"
 
 async function postData(url, body){
     try{
-        const response = await fetch(ServerURL + url , 
+        const response = await fetch(process.env.React_App_SERVERURL + url , 
             {   
                 method: "POST", 
                 mode: "cors", 
@@ -26,7 +26,7 @@ async function postData(url, body){
 
 async function getData(url){
     try{
-        const response = await fetch(ServerURL + url , 
+        const response = await fetch(process.env.React_App_SERVERURL + url , 
             {   
                 headers: { 
                     "Authorization" : "Bearer "+localStorage.getItem("token")
@@ -43,4 +43,4 @@ async function getData(url){
 }
 
 
-export {ServerURL, postData , getData};
+export { postData , getData};
