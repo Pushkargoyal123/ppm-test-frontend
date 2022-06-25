@@ -19,17 +19,17 @@ export default function HomePageModal() {
     };
 
     return <div>
-        <Dialog 
-            onClose={() => setOpen(false)} 
-            aria-labelledby="simple-dialog-title" 
+        <Dialog
+            onClose={() => setOpen(false)}
+            aria-labelledby="simple-dialog-title"
             open={open}
         >
-            <Slider {...settings} style={{ margin: 28}}>
+            <Slider {...settings} style={{ margin: 28 }}>
                 <div>
-                    <img src="./images/logged_out/certificate.jpeg" alt='slider1' style={{width: "100%", height: "100%"}} />
+                    <img src="./images/logged_out/slider1.jpeg" alt='slider2' style={{ width: "100%", height: "100%" }} />
                 </div>
                 <div>
-                    <img src="./images/logged_out/slider1.jpeg" alt='slider2' style={{width:"100%", height:"100%"}}/>
+                    <img src="./images/logged_out/certificate.jpeg" alt='slider1' style={{ width: "100%", height: "100%" }} />
                 </div>
             </Slider>
         </Dialog>
