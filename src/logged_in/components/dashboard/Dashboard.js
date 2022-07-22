@@ -22,35 +22,35 @@ function Dashboard(props) {
   useEffect(selectDashboard, [selectDashboard]);
 
   return (
-            <Box
-            className={classNames("lg-p-top", {minHeight:"60vh"})}
-            display="flex"
-            justifyContent="center"
-            flexDirection="column"
-        >
-    <Fragment>
-      <StatisticsArea CardChart={CardChart} data={statistics} />
-      <Box mt={4}>
-        <Typography variant="subtitle1" gutterBottom>
-          Your Account
-        </Typography>
-      </Box>
-      <AccountInformationArea
-        isAccountActivated={isAccountActivated}
-        toggleAccountActivation={toggleAccountActivation}
-      />
-      <Box mt={4}>
-        <Typography variant="subtitle1" gutterBottom>
-          Settings
-        </Typography>
-      </Box>
-      <SettingsArea pushMessageToSnackbar={pushMessageToSnackbar} />
-      <UserDataArea
-        pushMessageToSnackbar={pushMessageToSnackbar}
-        targets={targets}
-        setTargets={setTargets}
-      />
-    </Fragment>
+    <Box
+      className={classNames("lg-p-top", { minHeight: "60vh" })}
+      display="flex"
+      justifyContent="center"
+      flexDirection="column"
+    >
+      <Fragment>
+        <StatisticsArea CardChart={CardChart} data={statistics} />
+        <Box mt={4}>
+          <Typography variant="subtitle1" gutterBottom>
+            Your Account
+          </Typography>
+        </Box>
+        <AccountInformationArea
+          isAccountActivated={isAccountActivated}
+          toggleAccountActivation={toggleAccountActivation}
+        />
+        <Box mt={4}>
+          <Typography variant="subtitle1" gutterBottom>
+            Settings
+          </Typography>
+        </Box>
+        <SettingsArea pushMessageToSnackbar={pushMessageToSnackbar} />
+        <UserDataArea
+          pushMessageToSnackbar={pushMessageToSnackbar}
+          targets={targets}
+          setTargets={setTargets}
+        />
+      </Fragment>
     </Box>
   );
 }

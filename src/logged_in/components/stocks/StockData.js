@@ -168,11 +168,11 @@ export default function StockData(props) {
   };
 
   const setBuyingPrice = (event) => {
-    if(event.target.value === ""){
+    if (event.target.value === "") {
       setStockBuy("");
       setDisplayBuyButton(false)
     }
-    else{
+    else {
       setStockBuy((v) => (event.target.validity.valid ? event.target.value : v))
       setBuyPrice((parseInt(event.target.value) * data[0].currentPrice).toFixed(2));
       setDisplayBuyButton(true);
@@ -180,11 +180,11 @@ export default function StockData(props) {
   }
 
   const setSellingPrice = (event) => {
-    if(event.target.value === ""){
+    if (event.target.value === "") {
       setStockSell("");
       setDisplaySellButton(false);
     }
-    else{
+    else {
       setStockSell((v) => (event.target.validity.valid ? event.target.value : v))
       setSellPrice((parseInt(event.target.value) * data[0].currentPrice).toFixed(2));
       setDisplaySellButton(true);
@@ -192,6 +192,7 @@ export default function StockData(props) {
   }
 
   const handleBuySell = async () => {
+    console.log(props);
     if (!comment) {
       let reason = stockBuy === "" ? " selling " : " buying "
       toast.error("🦄 Please tell the reason of" + reason + "stocks", {
@@ -345,7 +346,7 @@ export default function StockData(props) {
         />
         <div style={{ fontSize: 22, fontWeight: "700" }}>Total Selling Price : <span style={{ color: "blue" }}>₹{sellPrice}</span></div>
       </div>
-      {displaySellButton ? <> {stockAvailable >= parseInt(stockSell) ?  <>
+      {displaySellButton ? <> {stockAvailable >= parseInt(stockSell) ? <>
         <textarea
           onChange={(event) => setComment(event.target.value)}
           value={comment}

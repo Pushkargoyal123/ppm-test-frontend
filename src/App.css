@@ -97,3 +97,9 @@ body{
     transform: translateZ(0) scale(1);
   }
 }
+.tick-icon{
+  color: green;
+}
+.cross-icon{
+  color: red;
+}
