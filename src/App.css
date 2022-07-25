@@ -103,3 +103,13 @@ body{
 .cross-icon{
   color: red;
 }
+.planModal{
+  display: flex !important;
+  font-size: 17px;
+}
+
+@media only screen and (max-width: 800px) {
+  .planModal{
+    display: block !important;
+  }
+}
