@@ -57,7 +57,7 @@ export default function MemberShip() {
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     const fetchAllData = async () => {
-        const plans = await getData("plans/planList");
+        const plans = await getData("plans/planListForUser");
 
         const featurePLans = await getData("plans/getFeaturePlans");
 
