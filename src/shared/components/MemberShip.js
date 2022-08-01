@@ -1,6 +1,7 @@
 import classNames from "classnames";
+import { useSelector } from "react-redux";
 import { Divider, Box, makeStyles, Button, Dialog, useMediaQuery } from "@material-ui/core";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import CheckCircleOutlineRoundedIcon from '@material-ui/icons/CheckCircleOutlineRounded';
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import Table from '@material-ui/core/Table';
@@ -8,8 +9,10 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { useTheme } from '@material-ui/core/styles';
+import Swal from "sweetalert2";
 
-import { getData } from "../../service/service";
+import { getData, postData } from "../../service/service";
+import CalledModal from "../../service/CalledModal";
 
 const useStyles = makeStyles((theme) => ({
     blogContentWrapper: {
@@ -43,18 +46,32 @@ export default function MemberShip() {
     const [plans, setPlans] = useState([]);
     const [planChargeList, setPLanChargeList] = useState([]);
     const [open, setOpen] = useState(false);
+    const [openLoginModal, setOpenLoginModal] = useState(false);
+    const [openReferralModal, setOpenReferralModal] = useState(false);
     const [selectedPlan, setSelectedPlan] = useState({});
     const [displayPrice, setDisplayPrice] = useState("");
     const [month, setMonth] = useState("");
     const [index, setIndex] = useState(0);
+    const [email, setEmail] = React.useState("");
+    const [password, setPassword] = React.useState("");
+    const [loginEmail, setLoginEmail] = useState("");
+    const [loginPassword, setLoginPassword] = useState("");
+    const [body, setBody] = React.useState(false);
+    const [generatedOTP, setGeneratedOTP] = useState("");
 
     const classes = useStyles();
     useEffect(function () {
         fetchAllData();
+        const script = document.createElement("script");
+        script.src = "https://checkout.razorpay.com/v1/checkout.js";
+        script.async = true;
+        document.body.appendChild(script);
     }, [])
 
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+
+    const user = useSelector(state => state.user)
 
     const fetchAllData = async () => {
         const plans = await getData("plans/planListForUser");
@@ -80,10 +97,89 @@ export default function MemberShip() {
         setIndex(index);
     }
 
-    const dateFormat = () =>{
+    const dateFormat = () => {
         let date = new Date();
         date.setMonth(date.getMonth() + month);
         return date.toISOString().split('T')[0]
+    }
+
+    const options = {
+        key: "rzp_test_GQ6XaPC6gMPNwH",
+        amount: displayPrice * 100,
+        name: "Praedico",
+        description: "Stock Market",
+        image: "/images/logged_out/pgr_logo.png",
+        handler: async function (response) {
+            let endDate = new Date();
+            endDate.setMonth(endDate.getMonth() + month)
+
+            const selectedMonth = planChargeList.filter(function (item) {
+                return item.monthValue === month
+            })
+
+            let ppmSubscriptionMonthlyPlanChargeId;
+            if (selectedMonth.length) {
+                ppmSubscriptionMonthlyPlanChargeId = selectedMonth[0].ppm_subscription_monthly_plan_charges.filter(function (item) {
+                    return item.displayPrice === Number(displayPrice)
+                })[0].id
+            }
+
+            setOpen(false);
+            setOpenReferralModal(false)
+
+            let body = {
+                startDate: new Date().toLocaleString(),
+                endDate: endDate.toLocaleString(),
+                UserId: Object.values(user)[0].id,
+                ppmSubscriptionPlanId: selectedPlan.id,
+                ppmSubscriptionMonthId: selectedMonth[0].id,
+                ppmSubscriptionMonthlyPlanChargeId: ppmSubscriptionMonthlyPlanChargeId,
+                ppmUserGroupId: Object.values(user)[0].userGroupId
+            }
+            const data = await postData("plans/addUserSubscription", body);
+            if (data.success) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Congratulations!! You have successfully buyed our plans',
+                    text: "Now you can start buy or sell our stocks",
+                })
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'OOPS!!',
+                    text: "Something went wrong",
+                })
+            }
+        },
+        prefill: {
+            name: Object.values(user)[0] ? Object.values(user)[0].userName : null,
+            contact: Object.values(user)[0] ? Object.values(user)[0].phone : null,
+            email: Object.values(user)[0] ? Object.values(user)[0].email : null,
+        },
+        notes: {
+            address: "some address"
+        },
+        theme: {
+            color: "blue",
+            hide_topbar: false
+        }
+    }
+
+    const openPayModal = () => {
+        if (!Object.values(user)[0]) {
+            setOpenReferralModal(false);
+            setOpen(true);
+            setBody(1)
+            setOpenLoginModal(true)
+        } else {
+            var rzpl = new window.Razorpay(options);
+            rzpl.open();
+        }
+    }
+
+    const openTheReferralModal = () => {
+        setOpen(false);
+        setOpenReferralModal(true)
     }
 
     return (<Box
@@ -124,7 +220,7 @@ export default function MemberShip() {
                         </TableRow>
                     })
                 }
-                <Divider style={{ width: "249%" }} /> <Divider style={{ width: "249%" }} />
+                <Divider style={{ width: "258%" }} /> <Divider style={{ width: "258%" }} />
                 {
                     planChargeList.map(function (month) {
                         return <TableRow >
@@ -138,7 +234,7 @@ export default function MemberShip() {
                                                 <span>₹{planCharge.displayPrice}/-</span>
                                                 <span> (-{Math.round((planCharge.strikePrice - planCharge.displayPrice) * 100 / planCharge.strikePrice)} %)</span>
                                                 <br />
-                                                <Button variant="contained" color="secondary" onClick= {()=> handleOpenModal(planCharge, month, index)}>Buy Now</Button>
+                                                <Button variant="contained" color="secondary" onClick={() => handleOpenModal(planCharge, month, index)}>Buy Now</Button>
                                             </div>
                                         }
                                     </TableCell>
@@ -157,7 +253,7 @@ export default function MemberShip() {
             onClose={() => setOpen(false)}
             aria-labelledby="simple-modal-title"
             aria-describedby="simple-modal-description"
-            style={{maxWidth: 600, margin:"auto"}}
+            style={{ maxWidth: 600, margin: "auto" }}
         >
             <div style={modalStyle} >
                 <div className="flexBox">
@@ -166,29 +262,71 @@ export default function MemberShip() {
                     <i style={{ fontSize: 25, cursor: "pointer" }} onClick={() => setOpen(false)} class="fas fa-times"></i>
                 </div>
                 <div className="planModal">
-                    <div style={{margin:20}}>
-                        <img src={"images/shared/" + selectedPlan.planName  + ".png"} alt="plan"/>
+                    <div style={{ margin: 20 }}>
+                        <img src={"/images/shared/" + selectedPlan.planName + ".png"} alt="plan" />
                     </div>
-                    <div style={{textAlign: "left", margin: 20}}> 
-                        You have selected 
-                        <span style={{ fontWeight: "bold" }}> {selectedPlan.planName} </span> 
-                        plan of 
-                        <span style={{color: "green", fontWeight: "bold"}}> (₹{displayPrice}/-) </span> 
-                        for {month} Months and it is valid upto 
-                        <span style={{ color: "blue", fontWeight: "bold"}}> {" " + dateFormat()} </span>
-                        <br/>
-                        In this plan we will offer you { featurePlans.length } major service access these are :
+                    <div style={{ textAlign: "left", margin: 20 }}>
+                        You have selected
+                        <span style={{ fontWeight: "bold" }}> {selectedPlan.planName} </span>
+                        plan of
+                        <span style={{ color: "green", fontWeight: "bold" }}> (₹{displayPrice}/-) </span>
+                        for {month} Months and it is valid upto
+                        <span style={{ color: "blue", fontWeight: "bold" }}> {" " + dateFormat()} </span>
+                        <br />
+                        In this plan we will offer you {featurePlans.length} major service access these are :
                         {
-                            featurePlans.map(function(features){
-                                return features.ppm_subscription_plan_features[index].featureValue === "YES" ? 
-                                    <li style={{marginLeft: 10}}>  {features.featureName} </li> :
+                            featurePlans.map(function (features) {
+                                return features.ppm_subscription_plan_features[index].featureValue === "YES" ?
+                                    <li style={{ marginLeft: 10 }}>  {features.featureName} </li> :
                                     <div></div>
                             })
                         }
-                        <Button color="secondary" variant="contained" style={{marginTop: 10}}>Register</Button>
+                        <Button
+                            onClick={() => openTheReferralModal()}
+                            color="secondary"
+                            variant="contained"
+                            style={{ marginTop: 10 }}
+                        >
+                            Register
+                        </Button>
                     </div>
+                    <Dialog
+                        fullScreen={fullScreen}
+                        open={openLoginModal}
+                        onClose={() => setOpenLoginModal(false)}
+                        aria-labelledby="simple-modal-title"
+                        aria-describedby="simple-modal-description"
+                    >
+                        {CalledModal(openLoginModal, setGeneratedOTP, setEmail, generatedOTP, setOpenLoginModal, body, setBody, loginEmail, setLoginEmail, email, password, setPassword, setLoginPassword, loginPassword)}
+                    </Dialog>
                 </div>
             </div>
         </Dialog>
+
+        <Dialog
+            fullScreen={fullScreen}
+            open={openReferralModal}
+            onClose={() => setOpenReferralModal(false)}
+            aria-labelledby="simple-modal-title"
+            aria-describedby="simple-modal-description"
+            style={{ maxWidth: 600, margin: "auto" }}
+        >
+            <div style={modalStyle}>
+                <div className="flexBox">
+                    <span></span>
+                    <h2 id="simple-modal-title">Are You sure</h2>
+                    <i style={{ fontSize: 25, cursor: "pointer" }} onClick={() => setOpenReferralModal(false)} class="fas fa-times"></i>
+                </div>
+                <Button
+                    onClick={() => openPayModal()}
+                    color="secondary"
+                    variant="contained"
+                    style={{ marginTop: 10 }}
+                >
+                    Pay Now
+                </Button>
+            </div>
+        </Dialog>
+
     </Box>)
 }

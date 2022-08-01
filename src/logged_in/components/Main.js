@@ -17,6 +17,7 @@ import Portfolio from "./stocks/Portfolio";
 import LeaderBoard from "./stocks/LeaderBoard";
 import CriticalAnalysis from "./stocks/CriticalAnalysis";
 import WatchList from "./stocks/WatchList";
+import MemberShip from "../../shared/components/MemberShip";
 
 const styles = (theme) => ({
   main: {
@@ -341,6 +342,9 @@ function Main(props) {
     }
     else if(link==="/leaderboard"){
       setComponent(<LeaderBoard/>)
+    }
+    else if(link==="/membership"){
+      setComponent(<MemberShip/>)
     }
     else if(link==="/c/dashboard" || link==="/"){
       setComponent(<Home/>)

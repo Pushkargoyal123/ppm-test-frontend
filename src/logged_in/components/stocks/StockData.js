@@ -192,7 +192,6 @@ export default function StockData(props) {
   }
 
   const handleBuySell = async () => {
-    console.log(props);
     if (!comment) {
       let reason = stockBuy === "" ? " selling " : " buying "
       toast.error("🦄 Please tell the reason of" + reason + "stocks", {
