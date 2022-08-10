@@ -5,12 +5,11 @@ import ResetPasswordModal from "../logged_out/components/register_login/ResetPas
 import ChangePasswordModal from "../logged_out/components/register_login/ChangePasswordModal";
 
 export default function CalledModal(open, setGeneratedOTP, setEmail, generatedOTP, setOpen,body, setBody, loginEmail, setLoginEmail, email, password, setPassword, setLoginPassword, loginPassword){
-
     if (body === 1)
       return <LoginModal
         open={open}
         setOpen={setOpen}
-        setBody={setBody}
+        setBody={setBody} 
         loginEmail={loginEmail}
         setLoginEmail={setLoginEmail}
         email={email}

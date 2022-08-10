@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { useSelector } from "react-redux";
-import { Divider, Box, makeStyles, Button, Dialog, useMediaQuery } from "@material-ui/core";
+import { Divider, Box, makeStyles, Button } from "@material-ui/core";
 import React, { useEffect, useState } from "react";
 import CheckCircleOutlineRoundedIcon from '@material-ui/icons/CheckCircleOutlineRounded';
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
@@ -8,11 +8,11 @@ import Table from '@material-ui/core/Table';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
-import { useTheme } from '@material-ui/core/styles';
 import Swal from "sweetalert2";
 
 import { getData, postData } from "../../service/service";
-import CalledModal from "../../service/CalledModal";
+import PayModal from "./PayModal";
+import ReferralModal from "./ReferralModal";
 
 const useStyles = makeStyles((theme) => ({
     blogContentWrapper: {
@@ -46,18 +46,18 @@ export default function MemberShip() {
     const [plans, setPlans] = useState([]);
     const [planChargeList, setPLanChargeList] = useState([]);
     const [open, setOpen] = useState(false);
-    const [openLoginModal, setOpenLoginModal] = useState(false);
+    const [month, setMonth] = useState("");
     const [openReferralModal, setOpenReferralModal] = useState(false);
     const [selectedPlan, setSelectedPlan] = useState({});
     const [displayPrice, setDisplayPrice] = useState("");
-    const [month, setMonth] = useState("");
+    const [openLoginModal, setOpenLoginModal] = useState(false);
     const [index, setIndex] = useState(0);
-    const [email, setEmail] = React.useState("");
-    const [password, setPassword] = React.useState("");
-    const [loginEmail, setLoginEmail] = useState("");
-    const [loginPassword, setLoginPassword] = useState("");
-    const [body, setBody] = React.useState(false);
-    const [generatedOTP, setGeneratedOTP] = useState("");
+    const [body, setBody] = React.useState(1);
+    const [planChargeId, setPlanChargeId] = useState("");
+    const [referToDiscount, setReferToDiscount] = useState("");
+    const [referToFinalPrice, setReferToFinalPrice] = useState();
+    const [referByDiscount, setReferByDiscount] = useState("");
+    const [referByFinalPrice, setReferByFinalPrice] = useState();
 
     const classes = useStyles();
     useEffect(function () {
@@ -67,9 +67,6 @@ export default function MemberShip() {
         script.async = true;
         document.body.appendChild(script);
     }, [])
-
-    const theme = useTheme();
-    const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     const user = useSelector(state => state.user)
 
@@ -89,23 +86,9 @@ export default function MemberShip() {
         }
     }
 
-    const handleOpenModal = (planCharge, month, index) => {
-        setOpen(true)
-        setMonth(month.monthValue);
-        setDisplayPrice(planCharge.displayPrice)
-        setSelectedPlan(plans[index]);
-        setIndex(index);
-    }
-
-    const dateFormat = () => {
-        let date = new Date();
-        date.setMonth(date.getMonth() + month);
-        return date.toISOString().split('T')[0]
-    }
-
     const options = {
         key: "rzp_test_GQ6XaPC6gMPNwH",
-        amount: displayPrice * 100,
+        amount: referToFinalPrice * 100,
         name: "Praedico",
         description: "Stock Market",
         image: "/images/logged_out/pgr_logo.png",
@@ -134,7 +117,12 @@ export default function MemberShip() {
                 ppmSubscriptionPlanId: selectedPlan.id,
                 ppmSubscriptionMonthId: selectedMonth[0].id,
                 ppmSubscriptionMonthlyPlanChargeId: ppmSubscriptionMonthlyPlanChargeId,
-                ppmUserGroupId: Object.values(user)[0].userGroupId
+                ppmUserGroupId: Object.values(user)[0].userGroupId,
+                MonthlyPlanDisplayPrice: displayPrice,
+                referToDiscountPercent : referToDiscount,
+                referToDiscountAmount : displayPrice - referToFinalPrice,
+                referByDiscountPercent : referByDiscount,
+                referByDiscountAmount : displayPrice - referByFinalPrice
             }
             const data = await postData("plans/addUserSubscription", body);
             if (data.success) {
@@ -166,20 +154,30 @@ export default function MemberShip() {
     }
 
     const openPayModal = () => {
+        var rzpl = new window.Razorpay(options);
+        rzpl.open();
+    }
+
+    const handleOpenModal = (planCharge, month, index) => {
+        setOpen(true)
+        setMonth(month.monthValue);
+        setDisplayPrice(planCharge.displayPrice)
+        setReferToFinalPrice(planCharge.displayPrice)
+        setPlanChargeId(planCharge.id);
+        setSelectedPlan(plans[index]);
+        setIndex(index);
+    }
+
+    const openTheReferralModal = () => {
         if (!Object.values(user)[0]) {
             setOpenReferralModal(false);
             setOpen(true);
             setBody(1)
             setOpenLoginModal(true)
         } else {
-            var rzpl = new window.Razorpay(options);
-            rzpl.open();
+            setOpen(false);
+            setOpenReferralModal(true)
         }
-    }
-
-    const openTheReferralModal = () => {
-        setOpen(false);
-        setOpenReferralModal(true)
     }
 
     return (<Box
@@ -247,86 +245,38 @@ export default function MemberShip() {
 
         </div>
 
-        <Dialog
-            fullScreen={fullScreen}
+        <PayModal
             open={open}
-            onClose={() => setOpen(false)}
-            aria-labelledby="simple-modal-title"
-            aria-describedby="simple-modal-description"
-            style={{ maxWidth: 600, margin: "auto" }}
-        >
-            <div style={modalStyle} >
-                <div className="flexBox">
-                    <span></span>
-                    <h2 id="simple-modal-title">Selected Plan</h2>
-                    <i style={{ fontSize: 25, cursor: "pointer" }} onClick={() => setOpen(false)} class="fas fa-times"></i>
-                </div>
-                <div className="planModal">
-                    <div style={{ margin: 20 }}>
-                        <img src={"/images/shared/" + selectedPlan.planName + ".png"} alt="plan" />
-                    </div>
-                    <div style={{ textAlign: "left", margin: 20 }}>
-                        You have selected
-                        <span style={{ fontWeight: "bold" }}> {selectedPlan.planName} </span>
-                        plan of
-                        <span style={{ color: "green", fontWeight: "bold" }}> (₹{displayPrice}/-) </span>
-                        for {month} Months and it is valid upto
-                        <span style={{ color: "blue", fontWeight: "bold" }}> {" " + dateFormat()} </span>
-                        <br />
-                        In this plan we will offer you {featurePlans.length} major service access these are :
-                        {
-                            featurePlans.map(function (features) {
-                                return features.ppm_subscription_plan_features[index].featureValue === "YES" ?
-                                    <li style={{ marginLeft: 10 }}>  {features.featureName} </li> :
-                                    <div></div>
-                            })
-                        }
-                        <Button
-                            onClick={() => openTheReferralModal()}
-                            color="secondary"
-                            variant="contained"
-                            style={{ marginTop: 10 }}
-                        >
-                            Register
-                        </Button>
-                    </div>
-                    <Dialog
-                        fullScreen={fullScreen}
-                        open={openLoginModal}
-                        onClose={() => setOpenLoginModal(false)}
-                        aria-labelledby="simple-modal-title"
-                        aria-describedby="simple-modal-description"
-                    >
-                        {CalledModal(openLoginModal, setGeneratedOTP, setEmail, generatedOTP, setOpenLoginModal, body, setBody, loginEmail, setLoginEmail, email, password, setPassword, setLoginPassword, loginPassword)}
-                    </Dialog>
-                </div>
-            </div>
-        </Dialog>
+            setOpen={setOpen}
+            featurePlans={featurePlans}
+            displayPrice={displayPrice}
+            selectedPlan={selectedPlan}
+            modalStyle ={modalStyle}
+            month = {month}
+            openTheReferralModal={openTheReferralModal}
+            openLoginModal = {openLoginModal}
+            setOpenLoginModal = {setOpenLoginModal}
+            index={index}
+            body={body}
+            setBody={setBody}
+        />
 
-        <Dialog
-            fullScreen={fullScreen}
-            open={openReferralModal}
-            onClose={() => setOpenReferralModal(false)}
-            aria-labelledby="simple-modal-title"
-            aria-describedby="simple-modal-description"
-            style={{ maxWidth: 600, margin: "auto" }}
-        >
-            <div style={modalStyle}>
-                <div className="flexBox">
-                    <span></span>
-                    <h2 id="simple-modal-title">Are You sure</h2>
-                    <i style={{ fontSize: 25, cursor: "pointer" }} onClick={() => setOpenReferralModal(false)} class="fas fa-times"></i>
-                </div>
-                <Button
-                    onClick={() => openPayModal()}
-                    color="secondary"
-                    variant="contained"
-                    style={{ marginTop: 10 }}
-                >
-                    Pay Now
-                </Button>
-            </div>
-        </Dialog>
+        <ReferralModal
+            openReferralModal = {openReferralModal}
+            setOpenReferralModal={setOpenReferralModal}
+            openPayModal = {openPayModal}
+            planChargeId = {planChargeId}
+            displayPrice = {displayPrice}
+            modalStyle = {modalStyle}
+            referByDiscount = {referByDiscount}
+            setReferByDiscount = {setReferByDiscount}
+            referToDiscount = {referToDiscount} 
+            setReferToDiscount = {setReferToDiscount}
+            referToFinalPrice = {referToFinalPrice}
+            setReferToFinalPrice = {setReferToFinalPrice}
+            referByFinalPrice = {referByFinalPrice}
+            setReferByFinalPrice = {setReferByFinalPrice}
+        />
 
     </Box>)
 }
