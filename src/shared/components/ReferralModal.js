@@ -31,7 +31,6 @@ export default function ReferralModal(props) {
             planChargeId: props.planChargeId
         }
         const data = await postData("referral/getReferral", body);
-        console.log(data);
         if (data.success) {
             setOpen(true)
             setIsShow(false)

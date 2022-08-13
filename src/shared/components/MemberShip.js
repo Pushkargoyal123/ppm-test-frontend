@@ -54,10 +54,10 @@ export default function MemberShip() {
     const [index, setIndex] = useState(0);
     const [body, setBody] = React.useState(1);
     const [planChargeId, setPlanChargeId] = useState("");
-    const [referToDiscount, setReferToDiscount] = useState("");
-    const [referToFinalPrice, setReferToFinalPrice] = useState();
-    const [referByDiscount, setReferByDiscount] = useState("");
-    const [referByFinalPrice, setReferByFinalPrice] = useState();
+    const [referToDiscount, setReferToDiscount] = useState(0);
+    const [referToFinalPrice, setReferToFinalPrice] = useState(0);
+    const [referByDiscount, setReferByDiscount] = useState(0);
+    const [referByFinalPrice, setReferByFinalPrice] = useState(0);
 
     const classes = useStyles();
     useEffect(function () {
@@ -122,7 +122,7 @@ export default function MemberShip() {
                 referToDiscountPercent : referToDiscount,
                 referToDiscountAmount : displayPrice - referToFinalPrice,
                 referByDiscountPercent : referByDiscount,
-                referByDiscountAmount : displayPrice - referByFinalPrice
+                referByDiscountAmount : referByFinalPrice ? displayPrice - referByFinalPrice : 0
             }
             const data = await postData("plans/addUserSubscription", body);
             if (data.success) {
@@ -158,14 +158,23 @@ export default function MemberShip() {
         rzpl.open();
     }
 
-    const handleOpenModal = (planCharge, month, index) => {
-        setOpen(true)
-        setMonth(month.monthValue);
-        setDisplayPrice(planCharge.displayPrice)
-        setReferToFinalPrice(planCharge.displayPrice)
-        setPlanChargeId(planCharge.id);
-        setSelectedPlan(plans[index]);
-        setIndex(index);
+    const handleOpenModal = async(planCharge, month, index) => {
+        const data = await getData("plans/hasPlan");
+        if(data.success && data.data){
+            Swal.fire({
+                icon: 'info',
+                title: 'OOPS!!',
+                text: "You Already have an active " + data.data.ppm_subscription_plan.planName + "plan of " + data.data.ppm_subscription_month.monthValue + " months that is valid upto " + data.data.endDate.split(",")[0],
+            })
+        }else{
+            setOpen(true)
+            setMonth(month.monthValue);
+            setDisplayPrice(planCharge.displayPrice)
+            setReferToFinalPrice(planCharge.displayPrice)
+            setPlanChargeId(planCharge.id);
+            setSelectedPlan(plans[index]);
+            setIndex(index);
+        }
     }
 
     const openTheReferralModal = () => {
