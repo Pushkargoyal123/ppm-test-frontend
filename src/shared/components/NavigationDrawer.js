@@ -12,19 +12,22 @@ import {
   Typography,
   withWidth,
   isWidthUp,
-  Toolbar
+  Toolbar,
+  Avatar
 } from "@material-ui/core";
 import CloseIcon from "@material-ui/icons/Close";
 import Modal from '@material-ui/core/Modal';
 import TextField from '@material-ui/core/TextField';
 import Menu from '@material-ui/core/Menu';
 import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
+import AssessmentIcon from '@material-ui/icons/Assessment';
 import DraftsIcon from '@material-ui/icons/Drafts';
 import SendIcon from '@material-ui/icons/Send';
 import MenuItem from '@material-ui/core/MenuItem';
 import { useHistory } from 'react-router-dom';
 import { getData } from "../../service/service";
 import CalledModal from "../../service/CalledModal";
+import ProfileModal from "../../logged_in/components/Modals/ProfileModal";
 
 const styles = theme => ({
   closeIcon: {
@@ -121,6 +124,7 @@ function NavigationDrawer(props) {
   const [password, setPassword] = React.useState("");
   const [loginPassword, setLoginPassword] = React.useState("");
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorProfile, setAnchorProfile] = useState(null);
   const [openModal, setOpenModal] = React.useState(false);
   const [serialNumber, setSerialNumber] = React.useState("");
   const [body, setBody] = React.useState(false)
@@ -202,6 +206,10 @@ function NavigationDrawer(props) {
   const handleClose = () => {
     setOpen(false);
   };
+
+  const handleProfileClick = (event) => {
+    setAnchorProfile(event.currentTarget);
+  }
 
   return (<>
     <Drawer variant="temporary" open={open} onClose={onClose} anchor={anchor}>
@@ -343,6 +351,48 @@ function NavigationDrawer(props) {
                   />
                 </ListItem>
               </span>);
+          }
+          else if (element.profile) {
+            return (<>
+            <button style={{border:"none"}}>
+              <Avatar
+                color="secondary"
+                size="large"
+                onClick={handleProfileClick}
+                key={element.link}
+                classes={{ text: classes.menuButtonText }}
+                style={{
+                  textDecoration: props.underlinedButton === element.name ? "underline" : "", 
+                }}
+              >
+                H
+              </Avatar>
+              </button>
+              <StyledMenu
+                id="customized-menu"
+                anchorEl={anchorProfile}
+                keepMounted
+                open={Boolean(anchorProfile)}
+                onClose={() => setAnchorProfile(null)}
+              >
+                <ProfileModal/>
+
+                <StyledMenuItem >
+                  <ListItemIcon>
+                    <AssessmentIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText primary="My Referrals" />
+                </StyledMenuItem>
+
+                <StyledMenuItem onClick={props.handleLogOut}>
+                  <ListItemIcon>
+                    <PlaylistAddCheckIcon fontSize="small" />
+                  </ListItemIcon>
+                  <ListItemText primary="Log Out" />
+                </StyledMenuItem>
+              </StyledMenu>
+              </>
+            );
           }
           return (<span key={element.name}>
             <Modal

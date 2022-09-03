@@ -6,7 +6,8 @@ import {
   Button,
   Hidden,
   IconButton,
-  withStyles
+  withStyles,
+  Avatar
 } from "@material-ui/core";
 import MenuIcon from "@material-ui/icons/Menu";
 import NavigationDrawer from "../../../shared/components/NavigationDrawer";
@@ -18,8 +19,10 @@ import ListItemText from '@material-ui/core/ListItemText';
 import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import ShowChartIcon from '@material-ui/icons/ShowChart';
+
 import Stock from "../stocks/Stock";
 import CriticalAnalysis from "../stocks/CriticalAnalysis";
+import ProfileModal from "../Modals/ProfileModal";
 import { loggedIn_menuItems } from "../../../config"
 import { useDispatch } from "react-redux";
 import { postData } from "../../../service/service";
@@ -90,6 +93,7 @@ function NavBar(props) {
 
 
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorProfile, setAnchorProfile] = useState(null);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [user, setUser] = useState(null);
 
@@ -112,6 +116,10 @@ function NavBar(props) {
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+
+  const handleProfileClick = (event) => {
+    setAnchorProfile(event.currentTarget);
+  }
 
   const handleSelect = (page) => {
     setAnchorEl(null);
@@ -206,6 +214,48 @@ function NavBar(props) {
                         <ListItemText primary="Watch List" />
                       </StyledMenuItem>
                     </StyledMenu></>
+                  );
+                }
+                else if (element.profile) {
+                  return (<>
+                  <button style={{border:"none"}}>
+                    <Avatar
+                      color="secondary"
+                      size="large"
+                      onClick={handleProfileClick}
+                      key={element.link}
+                      classes={{ text: classes.menuButtonText }}
+                      style={{
+                        textDecoration: props.underlinedButton === element.name ? "underline" : "", 
+                      }}
+                    >
+                      H
+                    </Avatar>
+                    </button>
+                    <StyledMenu
+                      id="customized-menu"
+                      anchorEl={anchorProfile}
+                      keepMounted
+                      open={Boolean(anchorProfile)}
+                      onClose={() => setAnchorProfile(null)}
+                    >
+                      <ProfileModal/>
+
+                      <StyledMenuItem >
+                        <ListItemIcon>
+                          <AssessmentIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText primary="My Referrals" />
+                      </StyledMenuItem>
+
+                      <StyledMenuItem onClick={handleLogOut}>
+                        <ListItemIcon>
+                          <PlaylistAddCheckIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText primary="Log Out" />
+                      </StyledMenuItem>
+                    </StyledMenu>
+                    </>
                   );
                 }
                 return (

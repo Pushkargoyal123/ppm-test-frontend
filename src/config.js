@@ -136,7 +136,7 @@ const loggedIn_menuItems = [
     icon: <ContactSupport className="text-white" />
   },
   {
-    button: true,
+    profile: "Profile",
     name: "Log Out",
     icon: <ExitToApp className="text-white" />
   },
