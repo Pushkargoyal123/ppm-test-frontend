@@ -7,8 +7,10 @@ import {
 } from "@material-ui/core";
 import MaterialTable from 'material-table';
 import { useEffect, useState } from "react";
-import { getData, postData } from "../../../service/service";
 import { useSelector } from "react-redux";
+
+import { getData, postData } from "../../../service/service";
+import GroupDropDown from "../GroupDropDown";
 
 const useStyles = makeStyles((theme) => ({
     blogContentWrapper: {
@@ -37,49 +39,50 @@ export default function LeaderBoard() {
 
     const [data, setData] = useState([]);
     const [message, setMessage] = useState(false);
+    const [groupId, setGroupId] = useState("");
 
     const user = useSelector(state => state.user)
     const userId = Object.values(user)[0].id
 
     useEffect(function () {
 
-    const registerType = Object.values(user)[0].registerType
-    const groupId = Object.values(user)[0].groupId
+        const registerType = Object.values(user)[0].registerType
 
-    async function fetchUsers() {
+        async function fetchUsers() {
 
-        const usersList = await getData("leaderboard/fetchleaderboarddata/" + registerType + "?groupId="+ groupId);
+            const usersList = await getData("leaderboard/fetchleaderboarddata/" + registerType + "?groupId=" + groupId);
 
-        const stockData = await getData("stock/fetchallstockdata");
+            const stockData = await getData("stock/fetchallstockdata");
 
-        if (usersList.success && stockData.success) {
-            setMessage(1)
-            usersList.data.forEach(async function(item){
-                item.virtualAmount = item.ppm_userGroups[0].virtualAmount;
-                item.netAmount = (item.ppm_userGroups[0].virtualAmount + item.current_investment + item.totalCurrentPrice - item.current_investment )
-                item.profitLoss = item.totalCurrentPrice - item.current_investment 
-                var count=1;
-                stockData.data.forEach(function(stockItem){
-                    const dateArray=item.dateOfRegistration.split("-");
-                    dateArray[1] = dateArray[1] < 10 ? "0"+dateArray[1] : dateArray[1];
-                    const newDate= dateArray.reverse().join("-");
-                    if(stockItem.date >= newDate){
-                        count++;
-                    }
+            if (usersList.success && stockData.success) {
+                setMessage(1)
+                usersList.data.forEach(async function (item) {
+                    item.virtualAmount = item.ppm_userGroups[0].virtualAmount;
+                    item.netAmount = (item.ppm_userGroups[0].virtualAmount + item.current_investment + item.totalCurrentPrice - item.current_investment)
+                    item.profitLoss = item.totalCurrentPrice - item.current_investment
+                    var count = 1;
+                    stockData.data.forEach(function (stockItem) {
+                        const dateArray = item.dateOfRegistration.split("-");
+                        dateArray[1] = dateArray[1] < 10 ? "0" + dateArray[1] : dateArray[1];
+                        const newDate = dateArray.reverse().join("-");
+                        if (stockItem.date >= newDate) {
+                            count++;
+                        }
+                    })
+                    item.count = count
+                    await postData("user/setnetamount", { netAmount: item.netAmount, id: item.ppm_userGroups[0].id })
                 })
-                item.count= count
-                await postData("user/setnetamount", { netAmount : item.netAmount, id : item.ppm_userGroups[0].id })
-            })
-            usersList.data.sort(function(a,b){
-                return a.profitLoss - b.profitLoss;
-            })
-            setData(usersList.data);
+                usersList.data.sort(function (a, b) {
+                    return a.profitLoss - b.profitLoss;
+                })
+                setData(usersList.data);
+            } else {
+                setMessage(2);
+            }
         }
-        setMessage(2);
-    }
-
-        fetchUsers();
-    }, [user])
+        if (groupId !== "")
+            fetchUsers();
+    }, [user, groupId])
 
     return (
         <Box
@@ -87,9 +90,8 @@ export default function LeaderBoard() {
             display="flex"
             justifyContent="center"
         >
-            <div className={classes.blogContentWrapper  + " animation-bottom-top"}>
-                <div style={{ fontSize: 40, textAlign: "center" }}  ><u>Leader Board</u></div>
-
+            <div className={classes.blogContentWrapper + " animation-bottom-top"}>
+                <GroupDropDown groupId={groupId} setGroupId={setGroupId} heading="Leader Board" />
                 {
                     !message ? <div className="ParentFlex">
                         <CircularProgress color="secondary" className="preloader" />
@@ -103,7 +105,7 @@ export default function LeaderBoard() {
                                     title: 'SNo.',
                                     field: 'tableData.id',
                                     cellStyle: { textAlign: "center", backgroundColor: "#f1c40f", fontWeight: "600", width: "4%" },
-                                    render: rowData => <Button> {rowData.tableData.id + 1 }</Button>
+                                    render: rowData => <Button> {rowData.tableData.id + 1}</Button>
                                 },
                                 {
                                     title: 'Name',
@@ -127,9 +129,9 @@ export default function LeaderBoard() {
                                 {
                                     title: 'Profit/Loss per Day(Rs)',
                                     cellStyle: { color: "orange", fontWeight: 700 },
-                                    render: rowData => (rowData.profitLoss / rowData.count) >=0 ?
-                                        <span style={{color: "green"}}> {"₹" + (rowData.profitLoss / rowData.count).toFixed(2)} </span> :
-                                        <span style={{color: "red"}}> {"₹" + (rowData.profitLoss / rowData.count).toFixed(2)} </span>
+                                    render: rowData => (rowData.profitLoss / rowData.count) >= 0 ?
+                                        <span style={{ color: "green" }}> {"₹" + (rowData.profitLoss / rowData.count).toFixed(2)} </span> :
+                                        <span style={{ color: "red" }}> {"₹" + (rowData.profitLoss / rowData.count).toFixed(2)} </span>
                                 },
                                 {
                                     title: 'Brokrage Amount(Rs)',
@@ -145,7 +147,7 @@ export default function LeaderBoard() {
                                 {
                                     title: 'Net Amount(Rs)',
                                     field: 'netAmount',
-                                    render: rowData => "₹" + (rowData.netAmount ).toFixed(2)
+                                    render: rowData => "₹" + (rowData.netAmount).toFixed(2)
                                 },
                                 {
                                     title: 'Starting Date',
