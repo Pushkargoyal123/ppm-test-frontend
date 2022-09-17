@@ -2,11 +2,13 @@ import classNames from "classnames";
 import { Box, makeStyles } from "@material-ui/core";
 import MaterialTable from 'material-table';
 import { useEffect, useState } from "react"
-import { getData } from "../../../service/service";
 import CircularProgress from '@material-ui/core/CircularProgress';
-import ToolTip from "../../../shared/components/ToolTip";
 import KeyboardBackspaceRoundedIcon from '@material-ui/icons/KeyboardBackspaceRounded';
+
 import Portfolio from "./Portfolio";
+import ToolTip from "../../../shared/components/ToolTip";
+import { getData } from "../../../service/service";
+import GroupDropDown from "../GroupDropDown";
 
 const useStyles = makeStyles((theme) => ({
     blogContentWrapper: {
@@ -34,10 +36,11 @@ export default function TransactionHistory(props) {
 
     const [data, setData] = useState([]);
     const [message, setMessage] = useState(false);
+    const [groupId, setGroupId] = useState("");
 
     useEffect(function () {
         const fetchTransactionHistory = async () => {
-            const resultportfolio = await getData("stock/fetchusertransactionhistory")
+            const resultportfolio = await getData("stock/fetchusertransactionhistory?ppmGroupId="+groupId)
             if (resultportfolio.success) {
                 setMessage(1)
                 setData(resultportfolio.data);
@@ -47,7 +50,7 @@ export default function TransactionHistory(props) {
             }
         }
         fetchTransactionHistory()
-    }, [])
+    }, [groupId])
 
     return (
         <Box
@@ -57,7 +60,12 @@ export default function TransactionHistory(props) {
         >
             <div className={classes.blogContentWrapper + " animation-bottom-top"}>
                 <div style={{ fontSize: 40, textAlign: "center" }}><u>Transaction History</u></div>
-
+                    <GroupDropDown
+                        setMessage={setMessage}
+                        groupId={groupId}
+                        setGroupId={setGroupId}
+                        heading="Critical Analysis"
+                    />
                 {
                     !message ? <div className="ParentFlex">
                         <CircularProgress color="secondary" className="preloader" />

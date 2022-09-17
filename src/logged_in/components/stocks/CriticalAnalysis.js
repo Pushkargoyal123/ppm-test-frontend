@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 import { getData } from "../../../service/service";
+import GroupDropDown from "../GroupDropDown";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -36,13 +37,16 @@ const useStyles = makeStyles((theme) => ({
 export default function CriticalAnalysis() {
     const classes = useStyles();
 
+    const [data, setData] = useState([]);
+    const [message, setMessage] = useState(false);
+    const [groupId, setGroupId] = useState("");
+
     const user = useSelector(state => state.user)
 
     useEffect(function () {
 
         const fetchAllHistory = async () => {
-            const ppmGroupId = Object.values(user)[0].groupId
-            const resultHistory = await getData("criticalanalysis/criticalanalysisdata/" + ppmGroupId);
+            const resultHistory = await getData("criticalanalysis/criticalanalysisdata/" + groupId);
             if (resultHistory.success) {
                 setMessage(1)
                 const finalData = resultHistory.data.map(function (rowData, index) {
@@ -60,10 +64,7 @@ export default function CriticalAnalysis() {
             }
         }
         fetchAllHistory()
-    }, [user])
-
-    const [data, setData] = useState([]);
-    const [message, setMessage] = useState(false);
+    }, [user, groupId])
 
     return <Box
         className={classNames("lg-p-top", classes.wrapper)}
@@ -71,7 +72,12 @@ export default function CriticalAnalysis() {
         justifyContent="center"
     >
         <div className={classes.blogContentWrapper + " animation-bottom-top"}>
-            <div style={{ fontSize: 40, textAlign: "center" }}><u>Critical Analysis</u></div>
+            <GroupDropDown
+                setMessage={setMessage}
+                groupId={groupId}
+                setGroupId={setGroupId}
+                heading="Critical Analysis"
+            />
 
             {
                 !message ? <div className="ParentFlex">

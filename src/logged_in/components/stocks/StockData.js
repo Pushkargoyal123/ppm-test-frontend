@@ -17,13 +17,13 @@ import Dialog from '@material-ui/core/Dialog';
 import Portfolio from "./Portfolio";
 import { postData, getData } from "../../../service/service"
 import { timeDuration } from "../../../config";
-import { useSelector } from "react-redux";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { toast, ToastContainer } from 'react-toastify';
 import Swal from "sweetalert2";
 import ToolTip from "../../../shared/components/ToolTip";
 import { useTheme } from '@material-ui/core/styles';
+import GroupDropDown from "../GroupDropDown";
 
 const useStyles = makeStyles((theme) => ({
   blogContentWrapper: {
@@ -69,7 +69,9 @@ function getModalStyle() {
 
 
 export default function StockData(props) {
+
   const classes = useStyles();
+
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [modalStyle] = React.useState(getModalStyle);
@@ -88,9 +90,8 @@ export default function StockData(props) {
   const [buttonColor, setButtonColor] = useState("ALL");
   const [minMax, setMinMax] = useState([]);
   const [isTrading, setIsTrading] = useState(false);
-
-  const user = useSelector(state => state.user)
-  const ppmGroupId = Object.values(user)[0].groupId
+  const [groupId, setGroupId] = useState("");
+  const [message, setMessage] = useState("");
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -112,7 +113,7 @@ export default function StockData(props) {
     }
     fetchCompanyData();
     checkTrading();
-  }, [props.data])
+  }, [props.data, groupId])
 
   const dataFormater = (number) => {
     return (number);
@@ -134,7 +135,7 @@ export default function StockData(props) {
   }
 
   const fetchVirtualAmountAndNetAmount = async () => {
-    const result = await getData("user/findvirtualamountyuserid");
+    const result = await getData("user/findvirtualamountyuserid?ppmGroupId=" + groupId);
     if (result.success) {
       setVirtualAmount(result.data.virtualAmount.toFixed(2));
       setNetAmount(result.data.netAmount.toFixed(2));
@@ -142,7 +143,10 @@ export default function StockData(props) {
   }
 
   const fetchPortfolioStock = async () => {
-    let body = { companyName: props.data.CompanyName }
+    let body = { 
+      companyName: props.data.CompanyName,
+      ppmGroupId: groupId
+    }
 
     const result = await postData("stock/fetchstockleft", body);
     if (result.status) {
@@ -217,7 +221,7 @@ export default function StockData(props) {
         comment: comment,
         virtualAmount: virtualAmount,
         netAmount: netAmount,
-        ppmGroupId: ppmGroupId
+        ppmGroupId: groupId
       }
       const result = await postData("stock/insertportfolio", body);
       if (result.success) {
@@ -370,7 +374,14 @@ export default function StockData(props) {
     >
       <div className={classes.blogContentWrapper + " animation-bottom-top"}>
         <div style={{ display: "flex", justifyContent: "space-evenly", alignItems: "center", flexWrap: "wrap" }}>
-          <div style={{ textAlign: "left", fontWeight: "bold", fontSize: 22 }}>Current Price : ₹{data[0] ? data[0].currentPrice : " "}</div>
+          {/* <div style={{ textAlign: "left", fontWeight: "bold", fontSize: 22 }}>Current Price : ₹{data[0] ? data[0].currentPrice : " "}</div> */}
+          <GroupDropDown
+            setMessage={setMessage}
+            message={message}
+            groupId={groupId}
+            setGroupId={setGroupId}
+            current = {data[0] ? "Current Price : ₹" +  data[0].currentPrice : " "}
+          />
           <Dialog
             fullScreen={fullScreen}
             open={open}
@@ -380,6 +391,12 @@ export default function StockData(props) {
           >
             {body ? sellModal : buyModal}
           </Dialog>
+          <Button
+            color="secondary"
+            variant="contained"
+            onClick={() => props.setComponent(<Stock setComponent={props.setComponent} />)}>
+            Go Back
+          </Button>
           <div className={isTrading ? "buy-sell-wrapper" : "buy-sell-wrapper-disabled"}>
             <ToolTip
               title={isTrading ? "BUY OR SELL STOCK" : "You cannot BUY/SELL stock in between 9:00 AM to 6:00 PM"}
@@ -392,12 +409,6 @@ export default function StockData(props) {
               </Button>}
             />
           </div>
-          <Button
-            color="secondary"
-            variant="contained"
-            onClick={() => props.setComponent(<Stock setComponent={props.setComponent} />)}>
-            Go Back
-          </Button>
         </div>
         <div className={classes.companyName}> {props.data.CompanyName + "  (" + props.data.CompanyCode + ")"} </div>
         <Divider style={{ marginBottom: 20 }} />
@@ -433,80 +444,80 @@ export default function StockData(props) {
           data.length === 0 ? <div className="ParentFlex">
             <CircularProgress color="secondary" className="preloader" />
           </div>
-            :      
-      <MaterialTable
-        style={{marginTop:"80px", boxShadow: "rgba(0, 0, 0, 0.56) 0px 22px 70px 4px"}}
-        title=<div style={{color:"green", fontWeight:500, fontSize:22}}>Total Records : {data.length}  Right prediction : 56.32%</div>
-        columns={[
-          {
-            title: 'Previous Date',
-            field: 'date',
-            width: 150,
-            cellStyle: { textAlign: "center", fontWeight: "600" },
-            render: (rowData) => { if (rowData.tableData.id === 0) return data[rowData.tableData.id].date; else return data[rowData.tableData.id - 1].date; }
-          },
-          {
-            title: 'Previous Price',
-            field: 'currentPrice',
-            width: 150,
-            cellStyle: { textAlign: "center", fontWeight: "600" },
-            render: rowData => { if (rowData.tableData.id === 0) return "₹" + data[rowData.tableData.id].currentPrice; else return "₹" + data[rowData.tableData.id - 1].currentPrice; }
-          },
-          {
-            title: 'Previous Signal',
-            field: 'stockSignal',
-            width: 150,
-            cellStyle: { textAlign: "center", fontWeight: "600" },
-            lookup: { "buy": 'BUY', "sell": 'SELL', "neutral": "NEUTRAL" },
-            render: (rowData) => { if (rowData.stockSignal === "buy") return <span style={{ color: "green" }}>BUY</span>; else if (rowData.stockSignal === "sell") return <span style={{ color: "RED" }}>Sell</span>; else return <span style={{ color: "orange" }}>NEUTRAL</span>; }
-          },
-          {
-            title: 'Next Date',
-            field: 'date',
-            width: 150,
-            cellStyle: { textAlign: "center", fontWeight: "600" }
-          },
-          {
-            title: 'Next Price',
-            field: 'currentPrice',
-            width: 150,
-            cellStyle: { textAlign: "center", fontWeight: "600" },
-            customFilterAndSearch: (term, rowData) => term >= parseInt(rowData.currentPrice),
-            render: rowData => ("₹" + rowData.currentPrice)
-          },
-          {
-            title: 'Prediction',
-            field: 'stockSignal',
-            width: 150,
-            cellStyle: { textAlign: "center", fontWeight: "600" },
-            render: (rowData) => { if (rowData.stockSignal === "buy") return <span style={{ color: "green" }}>BUY</span>; else if (rowData.stockSignal === "sell") return <span style={{ color: "RED" }}>Sell</span>; else return <span style={{ color: "orange" }}>NEUTRAL</span>; }
-          },
-        ]}
-        data={data}
-        options={{
-          pageSize: 50,
-          maxBodyHeight: '80vh',
-          emptyRowsWhenPaging: false,
-          pageSizeOptions: [50, 100, 150, 200],
-          headerStyle: {
-            fontSize: "1.1rem",
-            fontWeight: "500",
-            backgroundColor: "#D1D1D8",
-            textAlign: "center",
-          },
-          searchFieldStyle: {
-            backgroundColor: "#D1D1D8",
-          },
-          filtering: true,
-          // rowStyle: (rowData, index) => {
-          //      if(index%2 === 0 ) {
-          //        return {backgroundColor: '#c7ecee'};
-          //      }
-          //    return {backgroundColor: '#ecf0f1'};
-          //  }
-        }}
-      />
-    }
+            :
+            <MaterialTable
+              style={{ marginTop: "80px", boxShadow: "rgba(0, 0, 0, 0.56) 0px 22px 70px 4px" }}
+              title=<div style={{ color: "green", fontWeight: 500, fontSize: 22 }}>Total Records : {data.length}  Right prediction : 56.32%</div>
+              columns={[
+                {
+                  title: 'Previous Date',
+                  field: 'date',
+                  width: 150,
+                  cellStyle: { textAlign: "center", fontWeight: "600" },
+                  render: (rowData) => { if (rowData.tableData.id === 0) return data[rowData.tableData.id].date; else return data[rowData.tableData.id - 1].date; }
+                },
+                {
+                  title: 'Previous Price',
+                  field: 'currentPrice',
+                  width: 150,
+                  cellStyle: { textAlign: "center", fontWeight: "600" },
+                  render: rowData => { if (rowData.tableData.id === 0) return "₹" + data[rowData.tableData.id].currentPrice; else return "₹" + data[rowData.tableData.id - 1].currentPrice; }
+                },
+                {
+                  title: 'Previous Signal',
+                  field: 'stockSignal',
+                  width: 150,
+                  cellStyle: { textAlign: "center", fontWeight: "600" },
+                  lookup: { "buy": 'BUY', "sell": 'SELL', "neutral": "NEUTRAL" },
+                  render: (rowData) => { if (rowData.stockSignal === "buy") return <span style={{ color: "green" }}>BUY</span>; else if (rowData.stockSignal === "sell") return <span style={{ color: "RED" }}>Sell</span>; else return <span style={{ color: "orange" }}>NEUTRAL</span>; }
+                },
+                {
+                  title: 'Next Date',
+                  field: 'date',
+                  width: 150,
+                  cellStyle: { textAlign: "center", fontWeight: "600" }
+                },
+                {
+                  title: 'Next Price',
+                  field: 'currentPrice',
+                  width: 150,
+                  cellStyle: { textAlign: "center", fontWeight: "600" },
+                  customFilterAndSearch: (term, rowData) => term >= parseInt(rowData.currentPrice),
+                  render: rowData => ("₹" + rowData.currentPrice)
+                },
+                {
+                  title: 'Prediction',
+                  field: 'stockSignal',
+                  width: 150,
+                  cellStyle: { textAlign: "center", fontWeight: "600" },
+                  render: (rowData) => { if (rowData.stockSignal === "buy") return <span style={{ color: "green" }}>BUY</span>; else if (rowData.stockSignal === "sell") return <span style={{ color: "RED" }}>Sell</span>; else return <span style={{ color: "orange" }}>NEUTRAL</span>; }
+                },
+              ]}
+              data={data}
+              options={{
+                pageSize: 50,
+                maxBodyHeight: '80vh',
+                emptyRowsWhenPaging: false,
+                pageSizeOptions: [50, 100, 150, 200],
+                headerStyle: {
+                  fontSize: "1.1rem",
+                  fontWeight: "500",
+                  backgroundColor: "#D1D1D8",
+                  textAlign: "center",
+                },
+                searchFieldStyle: {
+                  backgroundColor: "#D1D1D8",
+                },
+                filtering: true,
+                // rowStyle: (rowData, index) => {
+                //      if(index%2 === 0 ) {
+                //        return {backgroundColor: '#c7ecee'};
+                //      }
+                //    return {backgroundColor: '#ecf0f1'};
+                //  }
+              }}
+            />
+        }
       </div>
       <ToastContainer
         position="top-right"

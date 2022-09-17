@@ -6,6 +6,7 @@ import CheckCircleOutlineRoundedIcon from '@material-ui/icons/CheckCircleOutline
 import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 import Table from '@material-ui/core/Table';
 import TableCell from '@material-ui/core/TableCell';
+import CircularProgress from "@material-ui/core/CircularProgress";
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Swal from "sweetalert2";
@@ -13,6 +14,7 @@ import Swal from "sweetalert2";
 import { getData, postData } from "../../service/service";
 import PayModal from "./PayModal";
 import ReferralModal from "./ReferralModal";
+import GroupDropDown from "../../logged_in/components/GroupDropDown";
 
 const useStyles = makeStyles((theme) => ({
     blogContentWrapper: {
@@ -41,6 +43,9 @@ function getModalStyle() {
 
 export default function MemberShip() {
 
+    const [groupId, setGroupId] = useState("");
+    const [userGroupId, setUserGroupId] = useState(true);
+    const [message, setMessage] = useState(false);
     const [modalStyle] = useState(getModalStyle);
     const [featurePlans, setFeaturePlans] = useState([]);
     const [plans, setPlans] = useState([]);
@@ -66,7 +71,7 @@ export default function MemberShip() {
         script.src = "https://checkout.razorpay.com/v1/checkout.js";
         script.async = true;
         document.body.appendChild(script);
-    }, [])
+    }, [message])
 
     const user = useSelector(state => state.user)
 
@@ -80,9 +85,11 @@ export default function MemberShip() {
         if (plans.success && featurePLans.success) {
             setPlans(plans.data)
             setFeaturePlans(featurePLans.data);
+            setMessage(1)
         }
         if (planCharges.success) {
             setPLanChargeList(planCharges.data);
+            setMessage(1)
         }
     }
 
@@ -117,12 +124,12 @@ export default function MemberShip() {
                 ppmSubscriptionPlanId: selectedPlan.id,
                 ppmSubscriptionMonthId: selectedMonth[0].id,
                 ppmSubscriptionMonthlyPlanChargeId: ppmSubscriptionMonthlyPlanChargeId,
-                ppmUserGroupId: Object.values(user)[0].userGroupId,
+                ppmUserGroupId: userGroupId,
                 MonthlyPlanDisplayPrice: displayPrice,
-                referToDiscountPercent : referToDiscount,
-                referToDiscountAmount : displayPrice - referToFinalPrice,
-                referByDiscountPercent : referByDiscount,
-                referByDiscountAmount : referByFinalPrice ? displayPrice - referByFinalPrice : 0
+                referToDiscountPercent: referToDiscount,
+                referToDiscountAmount: displayPrice - referToFinalPrice,
+                referByDiscountPercent: referByDiscount,
+                referByDiscountAmount: referByFinalPrice ? displayPrice - referByFinalPrice : 0
             }
             const data = await postData("plans/addUserSubscription", body);
             if (data.success) {
@@ -158,15 +165,15 @@ export default function MemberShip() {
         rzpl.open();
     }
 
-    const handleOpenModal = async(planCharge, month, index) => {
-        const data = await getData("plans/hasPlan");
-        if(data.success && data.data){
+    const handleOpenModal = async (planCharge, month, index) => {
+        const data = await getData("plans/hasPlan?ppmUserGroupId="+userGroupId);
+        if (data.success && data.data) {
             Swal.fire({
                 icon: 'info',
                 title: 'OOPS!!',
-                text: "You Already have an active " + data.data.ppm_subscription_plan.planName + "plan of " + data.data.ppm_subscription_month.monthValue + " months that is valid upto " + data.data.endDate.split(",")[0],
+                text: "You Already have an active " + data.data.ppm_subscription_plan.planName + " plan of " + data.data.ppm_subscription_month.monthValue + " months In " + data.data.ppm_userGroup.ppm_group.name + "-" +  data.data.ppm_userGroup.ppm_group.value + " that is valid upto " + data.data.endDate.split(",")[0],
             })
-        }else{
+        } else {
             setOpen(true)
             setMonth(month.monthValue);
             setDisplayPrice(planCharge.displayPrice)
@@ -194,63 +201,77 @@ export default function MemberShip() {
         display="flex"
         justifyContent="center"
     >
-        <div className={classes.blogContentWrapper}>
-            <div style={{ fontSize: 40, textAlign: "center" }}><u>MemberShip Levels</u></div>
-            <Table style={{ marginTop: 20 }}>
-                <TableHead>
-                    <TableRow>
-                        <TableCell style={{ fontSize: 18 }}>Feature Name</TableCell>
+        <div className={classes.blogContentWrapper + " animation-bottom-top"}>
+
+            <GroupDropDown
+                setMessage={setMessage}
+                groupId={groupId}
+                setGroupId={setGroupId}
+                userGroupId={userGroupId}
+                setUserGroupId={setUserGroupId}
+                heading="Membership"
+            />
+            {
+                !message ? <div className="ParentFlex">
+                    <CircularProgress color="secondary" className="preloader" />
+                </div>
+                    :
+                    <Table style={{ marginTop: 20 }}>
+                        <TableHead>
+                            <TableRow>
+                                <TableCell style={{ fontSize: 18 }}>Feature Name</TableCell>
+                                {
+                                    plans.map(function (plan) {
+                                        return <TableCell style={{ fontSize: 18, textAlign: "center" }}>{plan.planName}</TableCell>
+                                    })
+                                }
+                            </TableRow>
+                        </TableHead>
                         {
-                            plans.map(function (plan) {
-                                return <TableCell style={{ fontSize: 18, textAlign: "center" }}>{plan.planName}</TableCell>
+                            featurePlans.map(function (feature) {
+                                return <TableRow style={{ backgroundColor: "#ecf0f1" }} >
+                                    <TableCell style={{ fontSize: 18 }}>{feature.featureName}</TableCell>
+                                    {
+                                        feature.ppm_subscription_plan_features.map(function (planFeature) {
+                                            return <TableCell style={{ fontSize: 18, textAlign: "center" }}>
+                                                {
+                                                    planFeature.featureValue === "YES" ?
+                                                        <CheckCircleOutlineRoundedIcon className="tick-icon" /> :
+                                                        planFeature.featureValue === "NO" ?
+                                                            <CancelOutlinedIcon className="cross-icon" /> :
+                                                            <span style={{ color: "blue" }}>{planFeature.featureValueDisplay}</span>
+                                                }
+                                            </TableCell>
+                                        })
+                                    }
+                                </TableRow>
                             })
                         }
-                    </TableRow>
-                </TableHead>
-                {
-                    featurePlans.map(function (feature) {
-                        return <TableRow style={{ backgroundColor: "#ecf0f1" }} >
-                            <TableCell style={{ fontSize: 18 }}>{feature.featureName}</TableCell>
-                            {
-                                feature.ppm_subscription_plan_features.map(function (planFeature) {
-                                    return <TableCell style={{ fontSize: 18, textAlign: "center" }}>
-                                        {
-                                            planFeature.featureValue === "YES" ?
-                                                <CheckCircleOutlineRoundedIcon className="tick-icon" /> :
-                                                planFeature.featureValue === "NO" ?
-                                                    <CancelOutlinedIcon className="cross-icon" /> :
-                                                    <span style={{ color: "blue" }}>{planFeature.featureValueDisplay}</span>
-                                        }
-                                    </TableCell>
-                                })
-                            }
-                        </TableRow>
-                    })
-                }
-                <Divider style={{ width: "258%" }} /> <Divider style={{ width: "258%" }} />
-                {
-                    planChargeList.map(function (month) {
-                        return <TableRow >
-                            <TableCell style={{ fontSize: 18 }}>{month.monthValue} Months</TableCell>
-                            {
-                                month.ppm_subscription_monthly_plan_charges.map(function (planCharge, index) {
-                                    return <TableCell style={{ fontSize: 18 }}>
-                                        {
-                                            <div style={{ textAlign: "center" }}>
-                                                <span> <s style={{ color: "grey" }}> ₹{planCharge.strikePrice}/- </s></span>
-                                                <span>₹{planCharge.displayPrice}/-</span>
-                                                <span> (-{Math.round((planCharge.strikePrice - planCharge.displayPrice) * 100 / planCharge.strikePrice)} %)</span>
-                                                <br />
-                                                <Button variant="contained" color="secondary" onClick={() => handleOpenModal(planCharge, month, index)}>Buy Now</Button>
-                                            </div>
-                                        }
-                                    </TableCell>
-                                })
-                            }
-                        </TableRow>
-                    })
-                }
-            </Table>
+                        <Divider style={{ width: "258%" }} /> <Divider style={{ width: "258%" }} />
+                        {
+                            planChargeList.map(function (month) {
+                                return <TableRow >
+                                    <TableCell style={{ fontSize: 18 }}>{month.monthValue} Months</TableCell>
+                                    {
+                                        month.ppm_subscription_monthly_plan_charges.map(function (planCharge, index) {
+                                            return <TableCell style={{ fontSize: 18 }}>
+                                                {
+                                                    <div style={{ textAlign: "center" }}>
+                                                        <span> <s style={{ color: "grey" }}> ₹{planCharge.strikePrice}/- </s></span>
+                                                        <span>₹{planCharge.displayPrice}/-</span>
+                                                        <span> (-{Math.round((planCharge.strikePrice - planCharge.displayPrice) * 100 / planCharge.strikePrice)} %)</span>
+                                                        <br />
+                                                        <Button variant="contained" color="secondary" onClick={() => handleOpenModal(planCharge, month, index)}>Buy Now</Button>
+                                                    </div>
+                                                }
+                                            </TableCell>
+                                        })
+                                    }
+                                </TableRow>
+                            })
+                        }
+                    </Table>
+            }
 
         </div>
 
@@ -260,31 +281,31 @@ export default function MemberShip() {
             featurePlans={featurePlans}
             displayPrice={displayPrice}
             selectedPlan={selectedPlan}
-            modalStyle ={modalStyle}
-            month = {month}
+            modalStyle={modalStyle}
+            month={month}
             openTheReferralModal={openTheReferralModal}
-            openLoginModal = {openLoginModal}
-            setOpenLoginModal = {setOpenLoginModal}
+            openLoginModal={openLoginModal}
+            setOpenLoginModal={setOpenLoginModal}
             index={index}
             body={body}
             setBody={setBody}
         />
 
         <ReferralModal
-            openReferralModal = {openReferralModal}
+            openReferralModal={openReferralModal}
             setOpenReferralModal={setOpenReferralModal}
-            openPayModal = {openPayModal}
-            planChargeId = {planChargeId}
-            displayPrice = {displayPrice}
-            modalStyle = {modalStyle}
-            referByDiscount = {referByDiscount}
-            setReferByDiscount = {setReferByDiscount}
-            referToDiscount = {referToDiscount} 
-            setReferToDiscount = {setReferToDiscount}
-            referToFinalPrice = {referToFinalPrice}
-            setReferToFinalPrice = {setReferToFinalPrice}
-            referByFinalPrice = {referByFinalPrice}
-            setReferByFinalPrice = {setReferByFinalPrice}
+            openPayModal={openPayModal}
+            planChargeId={planChargeId}
+            displayPrice={displayPrice}
+            modalStyle={modalStyle}
+            referByDiscount={referByDiscount}
+            setReferByDiscount={setReferByDiscount}
+            referToDiscount={referToDiscount}
+            setReferToDiscount={setReferToDiscount}
+            referToFinalPrice={referToFinalPrice}
+            setReferToFinalPrice={setReferToFinalPrice}
+            referByFinalPrice={referByFinalPrice}
+            setReferByFinalPrice={setReferByFinalPrice}
         />
 
     </Box>)

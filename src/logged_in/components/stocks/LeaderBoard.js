@@ -91,7 +91,12 @@ export default function LeaderBoard() {
             justifyContent="center"
         >
             <div className={classes.blogContentWrapper + " animation-bottom-top"}>
-                <GroupDropDown groupId={groupId} setGroupId={setGroupId} heading="Leader Board" />
+                <GroupDropDown 
+                    setMessage={setMessage} 
+                    groupId={groupId} 
+                    setGroupId={setGroupId} 
+                    heading="Leader Board" 
+                />
                 {
                     !message ? <div className="ParentFlex">
                         <CircularProgress color="secondary" className="preloader" />

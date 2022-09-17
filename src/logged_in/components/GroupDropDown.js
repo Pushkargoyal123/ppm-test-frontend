@@ -14,7 +14,10 @@ export default function GroupDropDown(props) {
             const data = await getData("group/fetchALLGroupsByUserId");
             if (data) {
                 setListGroup(data.data);
-                props.setGroupId(data.data[0].ppm_group.id)
+                if (data.data.length) {
+                    props.setGroupId(data.data[0].ppm_group.id)
+                    if (props.userGroupId) props.setUserGroupId(data.data[0].id)
+                }
             }
         }
         groupList();
@@ -22,14 +25,21 @@ export default function GroupDropDown(props) {
     }, [])
 
     const handleSelectChange = (value) => {
+        props.setMessage(false);
         props.setGroupId(value)
+        if (props.userGroupId) {
+            const userGroupId = listGroup.filter(function (item) {
+                return item.ppm_group.id === value
+            })[0].id
+            props.setUserGroupId(userGroupId)
+        }
     }
 
     return <Grid container spacing={4}>
         <Grid item sm={4} style={{ marginLeft: 20 }}>
             {
-                listGroup.length === 1 ?
-                    <div>{listGroup[0].ppm_group.name + "-" + listGroup[0].ppm_group.value}</div>
+                listGroup[0] && listGroup.length === 1 ?
+                    <div style={{ fontSize: 20, fontWeight: "bold", textTransform: "uppercase" }}>{listGroup[0].ppm_group.name + "-" + listGroup[0].ppm_group.value}</div>
                     :
                     <FormControl style={{ width: 200 }}>
                         <InputLabel htmlFor="outlined-age-native-simple">Group</InputLabel>
@@ -59,8 +69,12 @@ export default function GroupDropDown(props) {
             }
         </Grid>
         <Grid item sm={4} style={{ fontSize: 40, textAlign: "center" }}>
-            <u>{props.heading}</u>
+            {
+                props.heading ? <u>{props.heading}</u> :
+                    <span style={{fontSize: 20}}>{props.current}</span>
+            }
         </Grid>
+
     </Grid>
 
 }
