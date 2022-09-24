@@ -23,6 +23,7 @@ import ShowChartIcon from '@material-ui/icons/ShowChart';
 import Stock from "../stocks/Stock";
 import CriticalAnalysis from "../stocks/CriticalAnalysis";
 import ProfileModal from "../Modals/ProfileModal";
+import ReferralModal from "../Modals/ReferralModal";
 import { loggedIn_menuItems } from "../../../config"
 import { useDispatch } from "react-redux";
 import { postData } from "../../../service/service";
@@ -241,12 +242,7 @@ function NavBar(props) {
                     >
                       <ProfileModal/>
 
-                      <StyledMenuItem >
-                        <ListItemIcon>
-                          <AssessmentIcon fontSize="small" />
-                        </ListItemIcon>
-                        <ListItemText primary="My Referrals" />
-                      </StyledMenuItem>
+                      <ReferralModal/>
 
                       <StyledMenuItem onClick={handleLogOut}>
                         <ListItemIcon>
