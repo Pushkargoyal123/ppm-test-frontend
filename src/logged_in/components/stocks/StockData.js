@@ -24,6 +24,7 @@ import Swal from "sweetalert2";
 import ToolTip from "../../../shared/components/ToolTip";
 import { useTheme } from '@material-ui/core/styles';
 import GroupDropDown from "../GroupDropDown";
+import MemberShip from "../../../shared/components/MemberShip";
 
 const useStyles = makeStyles((theme) => ({
   blogContentWrapper: {
@@ -113,7 +114,26 @@ export default function StockData(props) {
     }
     fetchCompanyData();
     checkTrading();
+    fetchActivePlan();
+    // eslint-disable-next-line
   }, [props.data, groupId])
+
+  const fetchActivePlan = async () => {
+    if (groupId !== "") {
+      const data = await getData("plans/hasActivePlan?ppmGroupId=" + groupId);
+      if (data.success && data.data.length) {
+
+      } else {
+        Swal.fire({
+          title: "Plan Status",
+          text: "Currently You don't have any active subscription plan. Please buy a play to continue",
+          icon: "info"
+        })
+        props.setComponent(<MemberShip setUnderlinedButton={props.setUnderlinedButton} setComponent={props.setComponent} />)
+        props.setUnderlinedButton("Membership");
+      }
+    }
+  }
 
   const dataFormater = (number) => {
     return (number);
@@ -143,7 +163,7 @@ export default function StockData(props) {
   }
 
   const fetchPortfolioStock = async () => {
-    let body = { 
+    let body = {
       companyName: props.data.CompanyName,
       ppmGroupId: groupId
     }
@@ -380,7 +400,7 @@ export default function StockData(props) {
             message={message}
             groupId={groupId}
             setGroupId={setGroupId}
-            current = {data[0] ? "Current Price : ₹" +  data[0].currentPrice : " "}
+            current={data[0] ? "Current Price : ₹" + data[0].currentPrice : " "}
           />
           <Dialog
             fullScreen={fullScreen}

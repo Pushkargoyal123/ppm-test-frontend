@@ -8,9 +8,11 @@ import {
 import MaterialTable from 'material-table';
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import Swal from "sweetalert2";
 
 import { getData, postData } from "../../../service/service";
 import GroupDropDown from "../GroupDropDown";
+import MemberShip from "../../../shared/components/MemberShip";
 
 const useStyles = makeStyles((theme) => ({
     blogContentWrapper: {
@@ -34,7 +36,8 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-export default function LeaderBoard() {
+export default function LeaderBoard(props) {
+
     const classes = useStyles();
 
     const [data, setData] = useState([]);
@@ -82,7 +85,27 @@ export default function LeaderBoard() {
         }
         if (groupId !== "")
             fetchUsers();
-    }, [user, groupId])
+
+        fetchActivePlan();
+        // eslint-disable-next-line
+    }, [user, groupId]);
+
+    const fetchActivePlan = async () => {
+        if (groupId !== "") {
+            const data = await getData("plans/hasActivePlan?ppmGroupId=" + groupId);
+            if (data.success && data.data.length) {
+
+            } else {
+                Swal.fire({
+                    title: "Plan Status",
+                    text: "Currently You don't have any active subscription plan. Please buy a play to continue",
+                    icon: "info"
+                })
+                props.setComponent(<MemberShip setUnderlinedButton={props.setUnderlinedButton} setComponent={props.setComponent} />)
+                props.setUnderlinedButton("Membership");
+            }
+        }
+    }
 
     return (
         <Box
@@ -91,11 +114,11 @@ export default function LeaderBoard() {
             justifyContent="center"
         >
             <div className={classes.blogContentWrapper + " animation-bottom-top"}>
-                <GroupDropDown 
-                    setMessage={setMessage} 
-                    groupId={groupId} 
-                    setGroupId={setGroupId} 
-                    heading="Leader Board" 
+                <GroupDropDown
+                    setMessage={setMessage}
+                    groupId={groupId}
+                    setGroupId={setGroupId}
+                    heading="Leader Board"
                 />
                 {
                     !message ? <div className="ParentFlex">

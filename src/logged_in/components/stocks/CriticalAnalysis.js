@@ -7,9 +7,11 @@ import {
 import MaterialTable from 'material-table';
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import Swal from "sweetalert2";
 
 import { getData } from "../../../service/service";
 import GroupDropDown from "../GroupDropDown";
+import MemberShip from "../../../shared/components/MemberShip";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -34,7 +36,8 @@ const useStyles = makeStyles((theme) => ({
     }
 }))
 
-export default function CriticalAnalysis() {
+export default function CriticalAnalysis(props) {
+
     const classes = useStyles();
 
     const [data, setData] = useState([]);
@@ -64,7 +67,27 @@ export default function CriticalAnalysis() {
             }
         }
         fetchAllHistory()
+
+        fetchActivePlan();
+        // eslint-disable-next-line
     }, [user, groupId])
+
+    const fetchActivePlan = async()=> {
+        if(groupId !== ""){
+            const data = await getData("plans/hasActivePlan?ppmGroupId="+groupId);
+            if(data.success && data.data.length){
+
+            }else{
+                Swal.fire({
+                    title: "Plan Status",
+                    text : "Currently You don't have any active subscription plan. Please buy a play to continue",
+                    icon : "info"
+                })
+                props.setComponent(<MemberShip setUnderlinedButton={props.setUnderlinedButton} setComponent={props.setComponent} />)
+                props.setUnderlinedButton("Membership");
+            }
+        }
+    }
 
     return <Box
         className={classNames("lg-p-top", classes.wrapper)}

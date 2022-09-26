@@ -15,7 +15,11 @@ export default function GroupDropDown(props) {
             if (data) {
                 setListGroup(data.data);
                 if (data.data.length) {
-                    props.setGroupId(data.data[0].ppm_group.id)
+                    if(!sessionStorage.getItem("groupId")){
+                        props.setGroupId(data.data[0].ppm_group.id)
+                    }else{
+                        props.setGroupId(sessionStorage.getItem("groupId"));
+                    }
                     if (props.userGroupId) props.setUserGroupId(data.data[0].id)
                 }
             }
@@ -27,6 +31,7 @@ export default function GroupDropDown(props) {
     const handleSelectChange = (value) => {
         props.setMessage(false);
         props.setGroupId(value)
+        sessionStorage.setItem("groupId", value);
         if (props.userGroupId) {
             const userGroupId = listGroup.filter(function (item) {
                 return item.ppm_group.id === value

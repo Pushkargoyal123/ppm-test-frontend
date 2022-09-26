@@ -329,25 +329,25 @@ function Main(props) {
 
   function SetComponent(link, element){
     if(link==="/aboutus"){
-      setComponent(<AboutUs/>)
+      setComponent(<AboutUs setComponent={setComponent} setUnderlinedButton = {setUnderlinedButton}/>)
     }
      else if(link==="/contactus"){
-      setComponent(<ContactUs/>)
+      setComponent(<ContactUs setComponent={setComponent} setUnderlinedButton = {setUnderlinedButton}/>)
     }
       else if(link==="/portfolio"){
       setComponent(<Portfolio setComponent={setComponent} setUnderlinedButton = {setUnderlinedButton}/>)
     }
      else if(link==="/post"){
-      setComponent(<Stock/>)
+      setComponent(<Stock setComponent={setComponent} setUnderlinedButton = {setUnderlinedButton}/>)
     }
     else if(link==="/leaderboard"){
-      setComponent(<LeaderBoard/>)
+      setComponent(<LeaderBoard setComponent={setComponent} setUnderlinedButton = {setUnderlinedButton}/>)
     }
     else if(link==="/membership"){
-      setComponent(<MemberShip/>)
+      setComponent(<MemberShip setComponent={setComponent} setUnderlinedButton = {setUnderlinedButton}/>)
     }
     else if(link==="/c/dashboard" || link==="/"){
-      setComponent(<Home/>)
+      setComponent(<Home setComponent={setComponent} setUnderlinedButton = {setUnderlinedButton}/>)
     }
     else if(link==="stock"){
       setComponent(<Stock setComponent={setComponent}/>)

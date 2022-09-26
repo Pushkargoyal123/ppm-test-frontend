@@ -69,6 +69,7 @@ const StyledMenuItem = withStyles((theme) => ({
 }))(MenuItem);
 
 export default function WatchList(props) {
+
     const classes = useStyles();
 
     useEffect(function () {

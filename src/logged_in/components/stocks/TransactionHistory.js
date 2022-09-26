@@ -32,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 export default function TransactionHistory(props) {
+
     const classes = useStyles();
 
     const [data, setData] = useState([]);

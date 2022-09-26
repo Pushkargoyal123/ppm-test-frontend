@@ -4,13 +4,16 @@ import { useEffect } from "react";
 import MaterialTable, { MTableBody } from 'material-table';
 import { useState } from "react";
 import { TableCell, TableFooter, TableRow } from "@material-ui/core";
-import TransactionHistory from "./TransactionHistory"
-import { getData } from "../../../service/service";
 import { useSelector } from "react-redux";
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Swal from "sweetalert2";
+
+import TransactionHistory from "./TransactionHistory"
+import { getData } from "../../../service/service";
 import CompanyDetail from "./CompanyDetail";
 import ToolTip from "../../../shared/components/ToolTip";
 import GroupDropDown from "../GroupDropDown";
+import Membership from "../../../shared/components/MemberShip";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -35,6 +38,7 @@ const useStyles = makeStyles((theme) => ({
 }))
 
 export default function Portfolio(props) {
+
     const classes = useStyles();
     const [data, setData] = useState([]);
     const [totalBuyPrice, setTotalBuyPrice] = useState(0);
@@ -53,7 +57,7 @@ export default function Portfolio(props) {
 
         const fetchPortfolioHistory = async () => {
 
-            const resultportfolio = await getData("stock/fetchportfoliohistory/" + userData.id + "?ppmGroupId="+groupId);
+            const resultportfolio = await getData("stock/fetchportfoliohistory/" + userData.id + "?ppmGroupId=" + groupId);
 
             if (resultportfolio.success) {
                 setMessage(1);
@@ -89,7 +93,27 @@ export default function Portfolio(props) {
                 setVirtualAmount(result.data.virtualAmount.toFixed(2));
         }
         fetchVirtualAmount();
-    }, [userData.id, groupId])
+
+        fetchActivePlan();
+        // eslint-disable-next-line
+    }, [userData.id, groupId]);
+
+    const fetchActivePlan = async () => {
+        if (groupId !== "") {
+            const data = await getData("plans/hasActivePlan?ppmGroupId=" + groupId);
+            if (data.success && data.data.length) {
+
+            } else {
+                Swal.fire({
+                    title: "Plan Status",
+                    text: "Currently You don't have any active subscription plan. Please buy a play to continue",
+                    icon: "info"
+                })
+                props.setComponent(<Membership setUnderlinedButton={props.setUnderlinedButton} setComponent={props.setComponent} />)
+                props.setUnderlinedButton("Membership");
+            }
+        }
+    }
 
     return (
         <Box
@@ -113,7 +137,7 @@ export default function Portfolio(props) {
                             title={<ToolTip title="Transaction History" component={() => <Button
                                 variant="contained"
                                 color="secondary"
-                                onClick={() => props.setComponent(<TransactionHistory setUnderlinedButton={props.setUnderlinedButton} setComponent={props.setComponent} />)}>
+                                onClick={() => props.setComponent(<TransactionHistory groupId={groupId} setGroupId={setGroupId} setUnderlinedButton={props.setUnderlinedButton} setComponent={props.setComponent} />)}>
                                 Transaction History
                             </Button>} />}
 

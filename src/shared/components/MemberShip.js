@@ -74,6 +74,7 @@ export default function MemberShip() {
     }, [message])
 
     const user = useSelector(state => state.user)
+    const userData = Object.values(user)[0];
 
     const fetchAllData = async () => {
         const plans = await getData("plans/planListForUser");
@@ -166,12 +167,12 @@ export default function MemberShip() {
     }
 
     const handleOpenModal = async (planCharge, month, index) => {
-        const data = await getData("plans/hasPlan?ppmUserGroupId="+userGroupId);
+        const data = await getData("plans/hasPlan?ppmUserGroupId=" + userGroupId);
         if (data.success && data.data) {
             Swal.fire({
                 icon: 'info',
                 title: 'OOPS!!',
-                text: "You Already have an active " + data.data.ppm_subscription_plan.planName + " plan of " + data.data.ppm_subscription_month.monthValue + " months In " + data.data.ppm_userGroup.ppm_group.name + "-" +  data.data.ppm_userGroup.ppm_group.value + " that is valid upto " + data.data.endDate.split(",")[0],
+                text: "You Already have an active " + data.data.ppm_subscription_plan.planName + " plan of " + data.data.ppm_subscription_month.monthValue + " months In " + data.data.ppm_userGroup.ppm_group.name + "-" + data.data.ppm_userGroup.ppm_group.value + " that is valid upto " + data.data.endDate.split(",")[0],
             })
         } else {
             setOpen(true)
@@ -202,15 +203,18 @@ export default function MemberShip() {
         justifyContent="center"
     >
         <div className={classes.blogContentWrapper + " animation-bottom-top"}>
-
-            <GroupDropDown
-                setMessage={setMessage}
-                groupId={groupId}
-                setGroupId={setGroupId}
-                userGroupId={userGroupId}
-                setUserGroupId={setUserGroupId}
-                heading="Membership"
-            />
+            {
+                userData ?
+                    <GroupDropDown
+                        setMessage={setMessage}
+                        groupId={groupId}
+                        setGroupId={setGroupId}
+                        userGroupId={userGroupId}
+                        setUserGroupId={setUserGroupId}
+                        heading="Membership"
+                    /> :
+                    <div></div>
+            }
             {
                 !message ? <div className="ParentFlex">
                     <CircularProgress color="secondary" className="preloader" />
