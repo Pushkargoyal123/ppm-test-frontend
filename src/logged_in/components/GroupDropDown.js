@@ -1,13 +1,15 @@
 import { FormControl, InputLabel, Select, Grid, MenuItem } from "@material-ui/core"
-import { useState } from "react";
-import { useEffect } from "react";
-
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 
 import { getData } from "../../service/service";
 
 export default function GroupDropDown(props) {
 
     const [listGroup, setListGroup] = useState([]);
+
+    const user = useSelector(state => state.user)
+    const userData = Object.values(user)[0];
 
     useEffect(function () {
         const groupList = async () => {
@@ -24,7 +26,9 @@ export default function GroupDropDown(props) {
                 }
             }
         }
-        groupList();
+        if(userData){
+            groupList();
+        }
         // eslint-disable-next-line
     }, [])
 

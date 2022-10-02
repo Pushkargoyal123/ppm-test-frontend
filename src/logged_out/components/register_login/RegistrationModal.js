@@ -19,6 +19,7 @@ import { toast } from 'react-toastify';
 import Swal from "sweetalert2";
 import { makeStyles } from '@material-ui/core/styles';
 import Select from '@material-ui/core/Select';
+import { useHistory } from 'react-router-dom';
 
 import { postData, getData } from "../../../service/service";
 import ToolTip from "../../../shared/components/ToolTip";
@@ -62,9 +63,10 @@ const error = {
 export default function RegistrationModal(props) {
 
   const classes = useStyles();
+  const history = useHistory();
 
   useEffect( function(){
-    fetchAllColleges()
+    fetchAllColleges();
   }, [])
 
   const [name, setName] = React.useState("");
@@ -91,6 +93,21 @@ export default function RegistrationModal(props) {
     if(result.success){
       setCollegeList(result.data);
     }
+  }
+
+  const checkReferral = async(referPersonEmail) => {
+      const isMail = history.location.pathname.split("/")
+      const verify = isMail[isMail.length - 2];
+      alert(verify);
+      if (verify === "referred"){
+        const userEmail = isMail[isMail.length - 1]
+        const body = {
+          email : userEmail,
+          referPersonEmail : referPersonEmail
+        }
+        const result = await postData("referral/refer", body);
+        console.log(result);
+      }
   }
 
   const handleSubmit = async () => {
@@ -178,6 +195,7 @@ export default function RegistrationModal(props) {
       if (response.success) {
         props.setGeneratedOTP(response.OTP);
         props.setOpen(false);
+        checkReferral(props.email);
         Swal.fire({
           icon: 'success',
           title: 'Registration Done',

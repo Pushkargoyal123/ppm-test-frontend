@@ -168,6 +168,7 @@ export default function MemberShip() {
 
     const handleOpenModal = async (planCharge, month, index) => {
         const data = await getData("plans/hasPlan?ppmUserGroupId=" + userGroupId);
+        console.log(data);
         if (data.success && data.data) {
             Swal.fire({
                 icon: 'info',
@@ -213,7 +214,9 @@ export default function MemberShip() {
                         setUserGroupId={setUserGroupId}
                         heading="Membership"
                     /> :
-                    <div></div>
+                    <div style={{ fontSize: 40, textAlign: "center" }}>
+                        <u>Membership</u>
+                    </div>
             }
             {
                 !message ? <div className="ParentFlex">

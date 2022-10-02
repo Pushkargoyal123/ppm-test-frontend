@@ -8,7 +8,8 @@ import {
     Typography,
     Card,
     CardContent,
-    Grid
+    Grid,
+    Button
 } from "@material-ui/core";
 import { Assessment } from "@material-ui/icons";
 import { useState, useEffect } from 'react';
@@ -16,6 +17,7 @@ import { useTheme, makeStyles } from '@material-ui/core/styles';
 import { useSelector } from "react-redux";
 
 import { getData } from "../../../service/service";
+import ReferralEmailModal from "./ReferralEmailModal";
 
 function getModalStyle() {
     return {
@@ -70,6 +72,7 @@ export default function ReferralModal() {
     const [open, setOpen] = useState(false);
     const [modalStyle] = useState(getModalStyle);
     const [myReferrals, setMyReferrals] = useState([]);
+    const [openReferralEmailModal, setOpenReferralEmailModal] = useState(false);
 
     const classes = useStyles();
 
@@ -84,10 +87,15 @@ export default function ReferralModal() {
     }, [])
 
     const fetchAllReferrals = async () => {
-        const data = await getData("user/fetchAllReferrals");
+        const data = await getData("referral/fetchAllReferrals");
         if (data.success) {
             setMyReferrals(data.data);
         }
+    }
+
+    const handleReferral = () => {
+        setOpen(false);
+        setOpenReferralEmailModal(true);
     }
 
     const handleOpenReferralModal = () => {
@@ -101,6 +109,14 @@ export default function ReferralModal() {
             </ListItemIcon>
             <ListItemText primary="My Referrals" onClick={() => handleOpenReferralModal()} />
         </StyledMenuItem>
+
+        <ReferralEmailModal
+            open = {openReferralEmailModal}
+            setOpen = {setOpenReferralEmailModal}
+            openReferralModal = {open}
+            setOpenReferralModal = {setOpen}
+        />
+
         <Dialog
             fullScreen={fullScreen}
             open={open}
@@ -118,7 +134,8 @@ export default function ReferralModal() {
                 <div style={{ margin: "0 10px" }}>
                     {
                         myReferrals.length ? <>
-                            <div style={{ fontSize: 20, color: "blue", marginBottom: 10 }}>You have referred {myReferrals.length} Person and for that you earned ₹{userData.referralWalletBalance}  </div>
+                            <div style={{ fontSize: 20, color: "blue" }}>You have referred {myReferrals.length} Person and for that you earned ₹{userData.referralWalletBalance}  </div>
+                            <Button style={{color:"blue", textDecoration:"underline"}} className="anchor" onClick={handleReferral}>Refer a new Person</Button>
                             <Grid container>
                                 {myReferrals.map(function (item) {
 
@@ -130,7 +147,7 @@ export default function ReferralModal() {
                                     }
 
                                     return <Grid style={{margin:"auto"}}>
-                                        <Card className={classes.root} variant="outlined">
+                                        <Card className={classes.root} variant="outlined" style={{border:"1px grey solid"}}>
                                             <CardContent>
                                                 <Typography className={classes.title} color="textSecondary" gutterBottom>
                                                     Bonus Money Earned : ₹{bonusMoney}
@@ -153,8 +170,8 @@ export default function ReferralModal() {
                                     </Grid>
                                 })}
                             </Grid>
-                        </> :
-                            <div style={{ fontSize: 20, color: "red", marginBottom: 20 }}>Sorry you haven't refer anyone. <br /> Refer anyone to earn money </div>
+                        </> :   
+                            <div style={{ fontSize: 20, color: "red", marginBottom: 20 }} onClick={handleReferral}>Sorry you haven't refer anyone. <br /> <Button style={{color:"blue", textDecoration:"underline"}} className="anchor"> Refer anyone </Button> to earn money </div>
                     }
                 </div>
             </div>

@@ -60,8 +60,8 @@ function Main(props) {
   const [isAccountActivated, setIsAccountActivated] = useState(false);
   const [isAddBalanceDialogOpen, setIsAddBalanceDialogOpen] = useState(false);
   const [pushMessageToSnackbar, setPushMessageToSnackbar] = useState(null);
-  const [component, setComponent]= React.useState(<Home/>)
-   const [underlinedButton, setUnderlinedButton]= useState("Home");
+  const [component, setComponent] = React.useState(<Home />)
+  const [underlinedButton, setUnderlinedButton] = useState("Home");
 
   const fetchRandomTargets = useCallback(() => {
     const targets = [];
@@ -162,7 +162,7 @@ function Main(props) {
     for (let i = 0; i < iterations; i += 1) {
       const randomTransactionTemplate =
         transactionTemplates[
-          Math.floor(Math.random() * transactionTemplates.length)
+        Math.floor(Math.random() * transactionTemplates.length)
         ];
       const transaction = {
         id: i,
@@ -327,36 +327,36 @@ function Main(props) {
     fetchRandomPosts,
   ]);
 
-  function SetComponent(link, element){
-    if(link==="/aboutus"){
-      setComponent(<AboutUs setComponent={setComponent} setUnderlinedButton = {setUnderlinedButton}/>)
+  function SetComponent(link, element) {
+    if (link === "/aboutus") {
+      setComponent(<AboutUs setComponent={setComponent} setUnderlinedButton={setUnderlinedButton} />)
     }
-     else if(link==="/contactus"){
-      setComponent(<ContactUs setComponent={setComponent} setUnderlinedButton = {setUnderlinedButton}/>)
+    else if (link === "/contactus") {
+      setComponent(<ContactUs setComponent={setComponent} setUnderlinedButton={setUnderlinedButton} />)
     }
-      else if(link==="/portfolio"){
-      setComponent(<Portfolio setComponent={setComponent} setUnderlinedButton = {setUnderlinedButton}/>)
+    else if (link === "/portfolio") {
+      setComponent(<Portfolio setComponent={setComponent} setUnderlinedButton={setUnderlinedButton} />)
     }
-     else if(link==="/post"){
-      setComponent(<Stock setComponent={setComponent} setUnderlinedButton = {setUnderlinedButton}/>)
+    else if (link === "/post") {
+      setComponent(<Stock setComponent={setComponent} setUnderlinedButton={setUnderlinedButton} />)
     }
-    else if(link==="/leaderboard"){
-      setComponent(<LeaderBoard setComponent={setComponent} setUnderlinedButton = {setUnderlinedButton}/>)
+    else if (link === "/leaderboard") {
+      setComponent(<LeaderBoard setComponent={setComponent} setUnderlinedButton={setUnderlinedButton} />)
     }
-    else if(link==="/membership"){
-      setComponent(<MemberShip setComponent={setComponent} setUnderlinedButton = {setUnderlinedButton}/>)
+    else if (link === "/membership") {
+      setComponent(<MemberShip setComponent={setComponent} setUnderlinedButton={setUnderlinedButton} />)
     }
-    else if(link==="/c/dashboard" || link==="/"){
-      setComponent(<Home setComponent={setComponent} setUnderlinedButton = {setUnderlinedButton}/>)
+    else if (link === "/c/dashboard" || link === "/") {
+      setComponent(<Home setComponent={setComponent} setUnderlinedButton={setUnderlinedButton} />)
     }
-    else if(link==="stock"){
-      setComponent(<Stock setComponent={setComponent}/>)
+    else if (link === "stock") {
+      setComponent(<Stock setComponent={setComponent} />)
     }
-    else if(link==="critical analysis"){
+    else if (link === "critical analysis") {
       setComponent(<CriticalAnalysis />)
     }
-    else if(link==="watch list"){
-      setComponent(<WatchList setComponent={setComponent} setUnderlinedButton = {setUnderlinedButton} />)
+    else if (link === "watch list") {
+      setComponent(<WatchList setComponent={setComponent} setUnderlinedButton={setUnderlinedButton} />)
     }
     setUnderlinedButton(element.name);
   }
@@ -373,10 +373,10 @@ function Main(props) {
         messages={messages}
         openAddBalanceDialog={openAddBalanceDialog}
         SetComponent={SetComponent}
-        component= {component}
-        underlinedButton= {underlinedButton}
-        setComponent= {setComponent}
-        setUnderlinedButton= {setUnderlinedButton}
+        component={component}
+        underlinedButton={underlinedButton}
+        setComponent={setComponent}
+        setUnderlinedButton={setUnderlinedButton}
       />
       <ConsecutiveSnackbarMessages
         getPushMessageFromChild={getPushMessageFromChild}
@@ -404,10 +404,10 @@ function Main(props) {
         />
       </main>
     </Fragment>
-      <Footer
-        SetComponent={SetComponent}
-      />
-    </>
+    <Footer
+      SetComponent={SetComponent}
+    />
+  </>
   );
 }
 

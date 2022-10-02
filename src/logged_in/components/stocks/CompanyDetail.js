@@ -112,7 +112,7 @@ export default function CompanyDetail(props) {
                                 title= <div> <ToolTip title="Back" component= {()=><KeyboardBackspaceRoundedIcon
                                             color="secondary"
                                             style={{ border: "1px blue solid", fontSize: "2rem", cursor: "pointer" }}
-                                            onClick={() => props.setComponent(<Portfolio setComponent={props.setComponent} />)}
+                                            onClick={() => props.setComponent(<Portfolio setComponent={props.setComponent} setUnderlinedButton={props.setUnderlinedButton}/>)}
                                         />} />
                                         <div style={{ color: "green", fontSize: "1.1rem" }}>
                                             Current Price <span style={{ fontWeight: "bold" }}> ₹ {props.data.currentPrice} </span>
