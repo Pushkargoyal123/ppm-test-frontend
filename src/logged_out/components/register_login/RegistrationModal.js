@@ -14,7 +14,7 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
 import DateFnsUtils from '@date-io/date-fns';
-import { IconButton, Button, TextField } from '@material-ui/core';
+import { IconButton, Button, TextField, Grid } from '@material-ui/core';
 import { toast } from 'react-toastify';
 import Swal from "sweetalert2";
 import { makeStyles } from '@material-ui/core/styles';
@@ -57,7 +57,7 @@ const error = {
   color: "red",
   opacity: "0.7",
   fontSize: "0.7rem",
-  marginTop : 3
+  marginTop: 3,
 }
 
 export default function RegistrationModal(props) {
@@ -65,7 +65,7 @@ export default function RegistrationModal(props) {
   const classes = useStyles();
   const history = useHistory();
 
-  useEffect( function(){
+  useEffect(function () {
     fetchAllColleges();
   }, [])
 
@@ -88,26 +88,25 @@ export default function RegistrationModal(props) {
   const [collegeList, setCollegeList] = useState([]);
   const [modalStyle] = React.useState(getModalStyle);
 
-  const fetchAllColleges = async()=>{
+  const fetchAllColleges = async () => {
     const result = await getData("college/getAllCollegeNames");
-    if(result.success){
+    if (result.success) {
       setCollegeList(result.data);
     }
   }
 
-  const checkReferral = async(referPersonEmail) => {
-      const isMail = history.location.pathname.split("/")
-      const verify = isMail[isMail.length - 2];
-      alert(verify);
-      if (verify === "referred"){
-        const userEmail = isMail[isMail.length - 1]
-        const body = {
-          email : userEmail,
-          referPersonEmail : referPersonEmail
-        }
-        const result = await postData("referral/refer", body);
-        console.log(result);
+  const checkReferral = async (referPersonEmail) => {
+    const isMail = history.location.pathname.split("/")
+    const verify = isMail[isMail.length - 2];
+    if (verify === "referred") {
+      const userEmail = isMail[isMail.length - 1]
+      const body = {
+        email: userEmail,
+        referPersonEmail: referPersonEmail
       }
+      const result = await postData("referral/refer", body);
+      console.log(result);
+    }
   }
 
   const handleSubmit = async () => {
@@ -189,7 +188,7 @@ export default function RegistrationModal(props) {
     const dob = birthDate.getDate() + "-" + (birthDate.getMonth() + 1) + "-" + birthDate.getFullYear();
 
     if (!err) {
-      var form = { userName: name, dob: dob, gender: gender, email: props.email, phone: whatsappNumber, registerType : registerWith, password: props.password };
+      var form = { userName: name, dob: dob, gender: gender, email: props.email, phone: whatsappNumber, registerType: registerWith, password: props.password };
       const response = await postData("user/registration", form);
 
       if (response.success) {
@@ -254,162 +253,176 @@ export default function RegistrationModal(props) {
 
   return (
     <div style={modalStyle} >
-      <div className="flexBox">
+      <div className="flexBox" style={{marginBottom:30}}>
         <span></span>
         <div style={{ fontSize: "30px", fontWeight: 500 }}>Registration Page</div>
         <i style={{ fontSize: 25, cursor: "pointer" }} onClick={() => props.setOpen(false)} class="fas fa-times"></i>
       </div>
-      <div style={{ margin: 10 }}>
-        <TextField
-          value={name}
-          error={nameError}
-          helperText={nameError}
-          onChange={(event) => setName(event.target.value)}
-          id="outlined-basic"
-          placeholder="ex. Pushkar Goyal"
-          label="Name"
-          variant="outlined"
-          style={{ width: 300 }}
-        />
-      </div>
-
-      <FormControl style={{ width: 300 }} component="fieldset">
-        <FormLabel style={{ textAlign: "left", color: genderError ? "red" : "grey" }} component="legend">Gender</FormLabel>
-        <RadioGroup row aria-label="gender" name="row-radio-buttons-group">
-          <FormControlLabel
-            onChange={(event) => { setGender(event.target.value) }}
-            value="female"
-            control={<Radio />}
-            label="Female"
-            checked={gender === "female"}
+      <Grid container style={{ margin: "10px 0px" }}>
+        <Grid sm={6}>
+          <TextField
+            value={name}
+            error={nameError}
+            helperText={nameError}
+            onChange={(event) => setName(event.target.value)}
+            id="outlined-basic"
+            placeholder="ex. Pushkar Goyal"
+            label="Name"
+            variant="outlined"
+            style={{ width: 300 }}
           />
-          <FormControlLabel
-            onChange={(event) => { setGender(event.target.value) }}
-            value="male"
-            control={<Radio />}
-            label="Male"
-            checked={gender === "male"}
+        </Grid>
+        <Grid sm={6}>
+          <TextField
+            value={props.email}
+            error={emailError}
+            helperText={emailError}
+            onChange={(event) => { props.setEmail(event.target.value) }}
+            placeholder="ex. pushkargoyal36@gmail.com"
+            id="outlined-ba"
+            label="Email"
+            type="email"
+            variant="outlined"
+            style={{ width: 300 }}
           />
-        </RadioGroup>
-        <div style={error}>{genderError}</div>
-      </FormControl>
+        </Grid>
+      </Grid>
 
-      <div style={{ margin: 10 }}>
-        <TextField
-          value={props.email}
-          error={emailError}
-          helperText={emailError}
-          onChange={(event) => { props.setEmail(event.target.value) }}
-          placeholder="ex. pushkargoyal36@gmail.com"
-          id="outlined-ba"
-          label="Email"
-          type="email"
-          variant="outlined"
-          style={{ width: 300 }}
-        />
-      </div>
-      <div style={{ margin: 10 }}>
-        <TextField
-          value={whatsappNumber}
-          error={whatsappNumberError}
-          helperText={whatsappNumberError}
-          onChange={(event) => { setWhatsappNumber(event.target.value) }}
-          placeholder="ex. 7024649556"
-          id="outlined-basi"
-          label="Whatsapp Number"
-          variant="outlined"
-          style={{ width: 300 }}
-        />
-      </div>
+      <Grid container style={{ margin: "10px 0px" }}>
+        <Grid sm={6}>
+          <FormControl style={{ width: 300 }} component="fieldset">
+            <FormLabel style={{ textAlign: "left", color: genderError ? "red" : "grey" }} component="legend">Gender</FormLabel>
+            <RadioGroup row aria-label="gender" name="row-radio-buttons-group">
+              <FormControlLabel
+                onChange={(event) => { setGender(event.target.value) }}
+                value="female"
+                control={<Radio />}
+                label="Female"
+                checked={gender === "female"}
+              />
+              <FormControlLabel
+                onChange={(event) => { setGender(event.target.value) }}
+                value="male"
+                control={<Radio />}
+                label="Male"
+                checked={gender === "male"}
+              />
+            </RadioGroup>
+            <div style={error}>{genderError}</div>
+          </FormControl>
+        </Grid>
+        <Grid sm={6}>
+          <TextField
+            value={whatsappNumber}
+            error={whatsappNumberError}
+            helperText={whatsappNumberError}
+            onChange={(event) => { setWhatsappNumber(event.target.value) }}
+            placeholder="ex. 7024649556"
+            id="outlined-basi"
+            label="Whatsapp Number"
+            variant="outlined"
+            style={{ width: 300 }}
+          />
+        </Grid>
+      </Grid>
 
-      <div style={{ margin: "0 10px" }}>
-        <FormControl style = {{width : 300, margin: 0}} variant="outlined" className={classes.formControl}>
-          <InputLabel style={{ color: registerWithError ? "red" : null}} htmlFor="outlined-age-native-simple">Register With</InputLabel>
-          <Select
-            native
-            value={registerWith}
-            onChange={handleSelectChange}
-            label="Register With"
-            helperText = {registerWithError}
-            error = {registerWithError}
-            placeholder = "Register With"
-            inputProps={{
-              name: 'Register With',
-              id: 'outlined-age-native-simple',
-            }}
-          >
-            <option aria-label="None" value=""></option>
-            <option value= "pgr">Praedico Global Research</option>
-            {
-              collegeList.map(function(item){
-                return <option key={item.shortName} value = {item.shortName}>{item.name}</option>
-              })
-            }
-          </Select>
-          <div style={error}>{registerWithError}</div>
-        </FormControl>
-      </div>
+      <Grid container style={{ margin: "10px 0px" }}>
+        <Grid sm={6}>
+          <FormControl style={{ width: 300 }} variant="outlined" className={classes.formControl}>
+            <InputLabel style={{ color: registerWithError ? "red" : null }} htmlFor="outlined-age-native-simple">Register With</InputLabel>
+            <Select
+              native
+              value={registerWith}
+              onChange={handleSelectChange}
+              label="Register With"
+              helperText={registerWithError}
+              error={registerWithError}
+              placeholder="Register With"
+              inputProps={{
+                name: 'Register With',
+                id: 'outlined-age-native-simple',
+              }}
+            >
+              <option aria-label="None" value=""></option>
+              <option value="pgr">Praedico Global Research</option>
+              {
+                collegeList.map(function (item) {
+                  return <option key={item.shortName} value={item.shortName}>{item.name}</option>
+                })
+              }
+            </Select>
+            <div style={error}>{registerWithError}</div>
+          </FormControl>
+        </Grid>
+        <Grid sm={6}>
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <KeyboardDatePicker
+              disableToolbar
+              variant="inline"
+              format="dd/MM/yyyy"
+              error={selectedDateError}
+              helperText={selectedDateError}
+              id="date-picker-inline"
+              label="Date of birth"
+              value={selectedDate}
+              style={{ width: 300 }}
+              onChange={(date) => setSelectedDate(date)}
+              KeyboardButtonProps={{
+                'aria-label': 'change date',
+              }}
+            />
+          </MuiPickersUtilsProvider>
+        </Grid>
+      </Grid>
 
-      <MuiPickersUtilsProvider style={{ margin: 10 }} utils={DateFnsUtils}>
-        <KeyboardDatePicker
-          disableToolbar
-          variant="inline"
-          format="dd/MM/yyyy"
-          error={selectedDateError}
-          helperText={selectedDateError}
-          id="date-picker-inline"
-          label="Date of birth"
-          value={selectedDate}
-          style={{ width: 300 }}
-          onChange={(date) => setSelectedDate(date)}
-          KeyboardButtonProps={{
-            'aria-label': 'change date',
-          }}
-        />
-      </MuiPickersUtilsProvider>
-      <FormControl style={{ width: 300 }}>
-        <InputLabel style={{ color: passwordError ? "red" : null }}>Password</InputLabel>
-        <Input
-          id="standard-adornment-password"
-          error={passwordError}
-          type={showPassword ? 'text' : 'password'}
-          onChange={(event) => { props.setPassword(event.target.value) }}
-          value={props.password}
-          endAdornment={
-            <InputAdornment position="end">
-              <IconButton
-                aria-label="toggle password visibility"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </InputAdornment>
-          }
-        />
-        <div style={error}>{passwordError}</div>
-      </FormControl>
-
-      <FormControl style={{ width: 300 }}>
-        <InputLabel style={{ color: confirmPasswordError ? "red" : null }}>Confirm Password</InputLabel>
-        <Input
-          id="standard-adornment-password"
-          error={confirmPasswordError}
-          type={showConfirmPassword ? 'text' : 'password'}
-          onChange={(event) => { setConfirmPassword(event.target.value) }}
-          value={confirmPassword}
-          endAdornment={
-            <InputAdornment position="end">
-              <IconButton
-                aria-label="toggle password visibility"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </InputAdornment>
-          }
-        />
-        <div style={error}>{confirmPasswordError}</div>
-      </FormControl>
+      <Grid container style={{ margin: "10px 0px" }}>
+        <Grid sm={6}>
+          <FormControl style={{ width: 300 }}>
+            <InputLabel style={{ color: passwordError ? "red" : null }}>Password</InputLabel>
+            <Input
+              id="standard-adornment-password"
+              error={passwordError}
+              type={showPassword ? 'text' : 'password'}
+              onChange={(event) => { props.setPassword(event.target.value) }}
+              value={props.password}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+            <div style={error}>{passwordError}</div>
+          </FormControl>
+        </Grid>
+        <Grid sm={6}>
+          <FormControl style={{ width: 300 }}>
+            <InputLabel style={{ color: confirmPasswordError ? "red" : null }}>Confirm Password</InputLabel>
+            <Input
+              id="standard-adornment-password"
+              error={confirmPasswordError}
+              type={showConfirmPassword ? 'text' : 'password'}
+              onChange={(event) => { setConfirmPassword(event.target.value) }}
+              value={confirmPassword}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+            <div style={error}>{confirmPasswordError}</div>
+          </FormControl>
+        </Grid>
+      </Grid>
 
       <ToolTip
         title="Open Login Page"

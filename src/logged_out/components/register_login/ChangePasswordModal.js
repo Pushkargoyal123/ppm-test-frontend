@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, FormControl, IconButton, Input, InputAdornment, InputLabel } from '@material-ui/core';
+import { Button, FormControl, IconButton, Input, InputAdornment, InputLabel, Grid } from '@material-ui/core';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import { postData } from "../../../service/service";
@@ -40,11 +40,11 @@ export default function ChangePasswordModal(props) {
         if (newPassword.trim() === "") {
             setNewPasswordError("*Please Provide us the password");
             err = true
-        }else if(newPassword.length < 8){
+        } else if (newPassword.length < 8) {
             err = true;
             setNewPasswordError("*Password length should be atleast 8 character long");
         }
-        else{
+        else {
             setNewPasswordError(false);
         }
 
@@ -63,7 +63,7 @@ export default function ChangePasswordModal(props) {
         if (!err) {
             const isMail = history.location.pathname.split("/");
             const resetEmail = isMail[isMail.length - 1];
-            const body = {email : resetEmail , password : newPassword};
+            const body = { email: resetEmail, password: newPassword };
             const result = await postData("user/changepassword", body);
             props.setOpen(false);
             if (result.success) {
@@ -82,50 +82,54 @@ export default function ChangePasswordModal(props) {
             <h2 id="simple-modal-title">RESET PASSWORD</h2>
             <i style={{ fontSize: 25, cursor: "pointer" }} onClick={() => props.setOpen(false)} class="fas fa-times"></i>
         </div>
-        <div style={{ margin: 20 }}>
-            <FormControl style={{ width: 300 }} variant="outlined">
-                <InputLabel style={{ color: newPasswordError ? "red" : null }}>New Password</InputLabel>
-                <Input
-                    id="standard-adornment-password"
-                    type={showPassword ? 'text' : 'password'}
-                    error={newPasswordError}
-                    value={newPassword}
-                    onChange={(event) => { setNewPassword(event.target.value) }}
-                    endAdornment={
-                        <InputAdornment position="end">
-                            <IconButton
-                                aria-label="toggle password visibility"
-                                onClick={() => setShowPassword(!showPassword)}
-                            >
-                                {showPassword ? <VisibilityOff /> : <Visibility />}
-                            </IconButton>
-                        </InputAdornment>
-                    }
-                />
-                <div style={error}> {newPasswordError}</div>
-            </FormControl>
-            <FormControl style={{ width: 300, marginTop: 15 }}>
-                <InputLabel style={{ color: confirmPasswordError ? "red" : null }}>Confirm Password</InputLabel>
-                <Input
-                    id="standard-adornment-password"
-                    error={confirmPasswordError}
-                    type={showConfirmPassword ? 'text' : 'password'}
-                    onChange={(event) => { setConfirmPassword(event.target.value) }}
-                    value={confirmPassword}
-                    endAdornment={
-                        <InputAdornment position="end">
-                            <IconButton
-                                aria-label="toggle password visibility"
-                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                            >
-                                {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
-                            </IconButton>
-                        </InputAdornment>
-                    }
-                />
-                  <div style={error}> {confirmPasswordError} </div>
-            </FormControl>
-        </div>
+        <Grid style={{ margin: "20px 0" }} container>
+            <Grid sm={6}>
+                <FormControl style={{ width: 300 }} variant="outlined">
+                    <InputLabel style={{ color: newPasswordError ? "red" : null }}>New Password</InputLabel>
+                    <Input
+                        id="standard-adornment-password"
+                        type={showPassword ? 'text' : 'password'}
+                        error={newPasswordError}
+                        value={newPassword}
+                        onChange={(event) => { setNewPassword(event.target.value) }}
+                        endAdornment={
+                            <InputAdornment position="end">
+                                <IconButton
+                                    aria-label="toggle password visibility"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                >
+                                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                            </InputAdornment>
+                        }
+                    />
+                    <div style={error}> {newPasswordError}</div>
+                </FormControl>
+            </Grid>
+            <Grid sm={6}>
+                <FormControl>
+                    <InputLabel style={{ color: confirmPasswordError ? "red" : null }}>Confirm Password</InputLabel>
+                    <Input
+                        id="standard-adornment-password"
+                        error={confirmPasswordError}
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        onChange={(event) => { setConfirmPassword(event.target.value) }}
+                        value={confirmPassword}
+                        endAdornment={
+                            <InputAdornment position="end">
+                                <IconButton
+                                    aria-label="toggle password visibility"
+                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                >
+                                    {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                            </InputAdornment>
+                        }
+                    />
+                    <div style={error}> {confirmPasswordError} </div>
+                </FormControl>
+            </Grid>
+        </Grid>
         <div>
             <Button onClick={handleResetPassword} color="secondary" style={{ width: 300, marginBottom: 20 }} variant="contained">Reset Now</Button>
         </div>

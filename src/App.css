@@ -112,6 +112,10 @@ body{
   font-weight: bold;
 }
 
+.MuiDialog-paperScrollPaper{
+  width:700px !important;
+}
+
 @media only screen and (max-width: 800px) {
   .planModal{
     display: block !important;
