@@ -60,12 +60,11 @@ export default function TransactionHistory(props) {
             justifyContent="center"
         >
             <div className={classes.blogContentWrapper + " animation-bottom-top"}>
-                <div style={{ fontSize: 40, textAlign: "center" }}><u>Transaction History</u></div>
                     <GroupDropDown
                         setMessage={setMessage}
                         groupId={groupId}
                         setGroupId={setGroupId}
-                        heading="Critical Analysis"
+                        heading="Transaction History"
                     />
                 {
                     !message ? <div className="ParentFlex">
