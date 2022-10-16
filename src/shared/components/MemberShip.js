@@ -168,12 +168,18 @@ export default function MemberShip() {
 
     const handleOpenModal = async (planCharge, month, index) => {
         const data = await getData("plans/hasPlan?ppmUserGroupId=" + userGroupId);
-        console.log(data);
+
         if (data.success && data.data) {
             Swal.fire({
                 icon: 'info',
                 title: 'OOPS!!',
                 text: "You Already have an active " + data.data.ppm_subscription_plan.planName + " plan of " + data.data.ppm_subscription_month.monthValue + " months In " + data.data.ppm_userGroup.ppm_group.name + "-" + data.data.ppm_userGroup.ppm_group.value + " that is valid upto " + data.data.endDate.split(",")[0],
+            })
+        }else if(groupId === ""){
+            Swal.fire({
+                icon: 'info',
+                title: 'OOPS!!',
+                text: "You can't buy any plan since you are not present in any group. Contact to administrator to put you in a group",
             })
         } else {
             setOpen(true)
