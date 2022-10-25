@@ -115,6 +115,12 @@ body{
 .MuiDialog-paperScrollPaper{
   width:700px !important;
 }
+.event-card{
+  box-shadow: -2px -2px 33px 0px rgba(0,0,0,0.75) !important;
+}
+.event-card:hover{
+  box-shadow: -2px -2px 100px 0px rgba(0,0,0,0.75) !important;
+}
 
 @media only screen and (max-width: 800px) {
   .planModal{
