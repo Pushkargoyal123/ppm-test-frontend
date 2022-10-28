@@ -3,6 +3,7 @@ import classNames from "classnames";
 import { Divider, Box, makeStyles, Button, CircularProgress, Typography, CardActions, Card, CardContent, Grid } from "@material-ui/core";
 import { useEffect, useState } from "react";
 import { Line } from 'rc-progress';
+import Parse from 'html-react-parser';
 
 // internal Dependecies
 import { postData } from "../../service/service";
@@ -150,8 +151,10 @@ export default function AboutUs() {
                                             </CardActions> :
                                                 <CardContent>
                                                     <div>
-                                                        <span style={{fontSize:16, fontWeight:600}}>{item.description}</span>
-                                                        <Button style={{ color: "blue", textDecoration: "underline" }} onClick={() => changeReadMore(false, index)}>...show less</Button>
+                                                        <span style={{fontSize:16}}>
+                                                            { Parse(item.description) } 
+                                                            <Button style={{ color: "blue", textDecoration: "underline" }} onClick={() => changeReadMore(false, index)}>...show less</Button>
+                                                        </span>
                                                     </div>
                                                 </CardContent>
                                         }
