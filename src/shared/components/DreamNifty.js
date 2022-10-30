@@ -7,6 +7,7 @@ import Parse from 'html-react-parser';
 
 // internal Dependecies
 import { postData } from "../../service/service";
+import ViewPrizeDistribution from "./ViewPrizeDistribution";
 
 const useStyles = makeStyles((theme) => ({
     blogContentWrapper: {
@@ -40,6 +41,8 @@ export default function AboutUs() {
 
     const [message, setMessage] = useState(false);
     const [eventList, setEventList] = useState([]);
+    const [clickedEvent, setClickedEvent] = useState({});
+    const [openPrizeDistribution, setOpenPrizeDistribution] = useState(false);
 
     useEffect(function () {
         fetchAllEvents()
@@ -76,6 +79,15 @@ export default function AboutUs() {
                 return item;
             })
         )
+    }
+
+    /**
+     * function to view prize distribution
+     * @param {eventId to get prize distribution of  clicked event} eventId 
+     */
+    const showPrizeDistribution = async(row) => {
+        setClickedEvent(row)
+        setOpenPrizeDistribution(true);
     }
 
     return (<Box
@@ -143,7 +155,13 @@ export default function AboutUs() {
                                                     <div style={{ fontWeight: 600, fontSize: 16 }}>₹{item.endDate.split("-").reverse().join("-")}</div>
                                                 </div>
                                             </div>
-                                            <Button style={{ marginTop: 10 }} color="secondary" variant="contained">Prize Distribution</Button>
+                                            <Button 
+                                                style={{ marginTop: 10 }} 
+                                                color="secondary" 
+                                                variant="contained"
+                                                onClick={()=>showPrizeDistribution(item)}
+                                                >Prize Distribution
+                                            </Button>
                                         </CardContent>
                                         {
                                             !item.readMore ? <CardActions>
@@ -165,5 +183,12 @@ export default function AboutUs() {
                     </Grid>
             }
         </div>
+
+        <ViewPrizeDistribution
+            open={openPrizeDistribution}
+            setOpen = {setOpenPrizeDistribution}
+            clickedEvent = {clickedEvent}
+        />
+
     </Box >)
 }
