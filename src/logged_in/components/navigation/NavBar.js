@@ -219,19 +219,21 @@ function NavBar(props) {
                 }
                 else if (element.profile) {
                   return (<>
-                  <button style={{border:"none"}}>
-                    <Avatar
-                      color="secondary"
-                      size="large"
-                      onClick={handleProfileClick}
-                      key={element.link}
-                      classes={{ text: classes.menuButtonText }}
-                      style={{
-                        textDecoration: props.underlinedButton === element.name ? "underline" : "", 
-                      }}
-                    >
-                      H
-                    </Avatar>
+                    <button style={{ border: "none" }}>
+                      <Avatar
+                        color="secondary"
+                        size="large"
+                        onClick={handleProfileClick}
+                        key={element.link}
+                        classes={{ text: classes.menuButtonText }}
+                        style={{
+                          textDecoration: props.underlinedButton === element.name ? "underline" : "",
+                          textTransform: "uppercase",
+                          cursor:"pointer"
+                        }}
+                      >
+                        {user ? user.email[0] : "H"}
+                      </Avatar>
                     </button>
                     <StyledMenu
                       id="customized-menu"
@@ -240,9 +242,9 @@ function NavBar(props) {
                       open={Boolean(anchorProfile)}
                       onClose={() => setAnchorProfile(null)}
                     >
-                      <ProfileModal/>
+                      <ProfileModal />
 
-                      <ReferralModal/>
+                      <ReferralModal />
 
                       <StyledMenuItem onClick={handleLogOut}>
                         <ListItemIcon>
@@ -251,7 +253,7 @@ function NavBar(props) {
                         <ListItemText primary="Log Out" />
                       </StyledMenuItem>
                     </StyledMenu>
-                    </>
+                  </>
                   );
                 }
                 return (

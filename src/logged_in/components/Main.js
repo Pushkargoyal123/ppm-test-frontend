@@ -18,6 +18,7 @@ import LeaderBoard from "./stocks/LeaderBoard";
 import CriticalAnalysis from "./stocks/CriticalAnalysis";
 import WatchList from "./stocks/WatchList";
 import MemberShip from "../../shared/components/MemberShip";
+import DreamNifty from "../../shared/components/DreamNifty";
 
 const styles = (theme) => ({
   main: {
@@ -345,6 +346,9 @@ function Main(props) {
     }
     else if (link === "/membership") {
       setComponent(<MemberShip setComponent={setComponent} setUnderlinedButton={setUnderlinedButton} />)
+    }
+    else if (link === "/dreamNifty") {
+      setComponent(<DreamNifty setComponent={setComponent} setUnderlinedButton={setUnderlinedButton} />)
     }
     else if (link === "/c/dashboard" || link === "/") {
       setComponent(<Home setComponent={setComponent} setUnderlinedButton={setUnderlinedButton} />)

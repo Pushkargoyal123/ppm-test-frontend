@@ -126,6 +126,11 @@ const loggedIn_menuItems = [
     icon: <PostAdd className="text-white" />
   },
   {
+    link: "/dreamNifty",
+    name: "DreamNifty",
+    icon: <PostAdd className="text-white" />
+  },
+  {
     link: "/aboutus",
     name: "About US",
     icon: <Info className="text-white" />
