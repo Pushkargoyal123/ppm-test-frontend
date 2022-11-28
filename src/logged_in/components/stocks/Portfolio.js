@@ -9,11 +9,11 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Swal from "sweetalert2";
 
 import TransactionHistory from "./TransactionHistory"
-import { getData } from "../../../service/service";
+import { getData, postData } from "../../../service/service";
 import CompanyDetail from "./CompanyDetail";
 import ToolTip from "../../../shared/components/ToolTip";
-import GroupDropDown from "../GroupDropDown";
 import Membership from "../../../shared/components/MemberShip";
+import DreamNiftyHeading from "../DreamNiftyHeading";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -47,17 +47,24 @@ export default function Portfolio(props) {
     const [count, setCount] = useState(0);
     const [virtualAmount, setVirtualAmount] = useState(0);
     const [totalPL, setTotalPL] = useState(0);
-    const [groupId, setGroupId] = useState("");
     const [message, setMessage] = useState(false);
 
-    const user = useSelector(state => state.user)
-    const userData = Object.values(user)[0];
+    let user = useSelector(state => state.user)
+    let userData = Object.values(user)[0];
+    let group = useSelector(state => state.group)
+    let groupId = Object.values(group)[0];
+    useSelector((state)=>state)
 
     useEffect(function () {
-
+        setMessage(false);
         const fetchPortfolioHistory = async () => {
-
-            const resultportfolio = await getData("stock/fetchportfoliohistory/" + userData.id + "?ppmGroupId=" + groupId);
+            let resultportfolio; 
+            if(eventInfo){
+                const body = { UserId: userData.id, ppmDreamNiftyId: eventInfo.id }
+                resultportfolio = await postData("dreamNifty/portfolio/fetchportfoliohistory", body);
+            }else{
+                resultportfolio = await getData("stock/fetchportfoliohistory/" + userData.id + "?ppmGroupId=" + groupId.group);
+            }
 
             if (resultportfolio.success) {
                 setMessage(1);
@@ -88,19 +95,28 @@ export default function Portfolio(props) {
 
         fetchPortfolioHistory();
         const fetchVirtualAmount = async () => {
-            const result = await getData("user/findvirtualamountyuserid?ppmGroupId=" + groupId);
+            let result;
+            if(eventInfo){
+                const body = {ppmDreamNiftyId : eventInfo.id}
+                result = await postData("dreamNifty/portfolio/findvirtualamountyuserid", body);
+            }else{
+                result = await getData("user/findvirtualamountyuserid?ppmGroupId=" + groupId.group);
+            }
             if (result.success)
                 setVirtualAmount(result.data.virtualAmount.toFixed(2));
         }
         fetchVirtualAmount();
-
-        fetchActivePlan();
+        if(!eventInfo){
+            fetchActivePlan();
+        }
         // eslint-disable-next-line
-    }, [userData.id, groupId]);
+    }, [userData.id, groupId.group]);
+
+    const eventInfo = JSON.parse(sessionStorage.getItem('clickedEvent'));
 
     const fetchActivePlan = async () => {
-        if (groupId !== "") {
-            const data = await getData("plans/hasActivePlan?ppmGroupId=" + groupId);
+        if (groupId.group !== "") {
+            const data = await getData("plans/hasActivePlan?ppmGroupId=" + groupId.group);
             if (data.success && data.data.length) {
 
             } else {
@@ -109,7 +125,7 @@ export default function Portfolio(props) {
                     text: "Currently You don't have any active subscription plan. Please buy a play to continue",
                     icon: "info"
                 })
-                props.setComponent(<Membership setUnderlinedButton={props.setUnderlinedButton} setComponent={props.setComponent} />)
+                props.setComponent(<Membership setUnderlinedButton={props.setUnderlinedButton} groupId={userData.groupId} setGroupId={props.setGroupId}  setComponent={props.setComponent} />)
                 props.setUnderlinedButton("Membership");
             }
         }
@@ -120,14 +136,12 @@ export default function Portfolio(props) {
             className={classNames("lg-p-top", classes.wrapper)}
             display="flex"
             justifyContent="center"
+            alignItems="center"
+            flexDirection="column"
         >
+            <DreamNiftyHeading />
             <div className={classes.blogContentWrapper + " animation-bottom-top"}>
-                <GroupDropDown
-                    setMessage={setMessage}
-                    groupId={groupId}
-                    setGroupId={setGroupId}
-                    heading="List of Companies"
-                />
+                <div style={{ fontSize: 40, textAlign: "center" }}><u>List of Companies</u></div>
                 {
                     !message ? <div className="ParentFlex">
                         <CircularProgress color="secondary" className="preloader" />
@@ -137,7 +151,7 @@ export default function Portfolio(props) {
                             title={<ToolTip title="Transaction History" component={() => <Button
                                 variant="contained"
                                 color="secondary"
-                                onClick={() => props.setComponent(<TransactionHistory groupId={groupId} setGroupId={setGroupId} setUnderlinedButton={props.setUnderlinedButton} setComponent={props.setComponent} />)}>
+                                onClick={() => props.setComponent(<TransactionHistory groupId={sessionStorage.getItem("groupId")} setGroupId={props.setGroupId} setUnderlinedButton={props.setUnderlinedButton} setComponent={props.setComponent} />)}>
                                 Transaction History
                             </Button>} />}
 

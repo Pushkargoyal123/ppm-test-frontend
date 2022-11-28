@@ -19,15 +19,16 @@ import ListItemText from '@material-ui/core/ListItemText';
 import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import ShowChartIcon from '@material-ui/icons/ShowChart';
+import { useDispatch } from "react-redux";
 
 import Stock from "../stocks/Stock";
 import CriticalAnalysis from "../stocks/CriticalAnalysis";
 import ProfileModal from "../Modals/ProfileModal";
 import ReferralModal from "../Modals/ReferralModal";
 import { loggedIn_menuItems } from "../../../config"
-import { useDispatch } from "react-redux";
 import { postData } from "../../../service/service";
 import WatchList from "../stocks/WatchList";
+import GroupDropDown from "../GroupDropDown";
 
 const styles = theme => ({
   appBar: {
@@ -92,7 +93,6 @@ function NavBar(props) {
     selectedTab
   } = props;
 
-
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorProfile, setAnchorProfile] = useState(null);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
@@ -127,7 +127,7 @@ function NavBar(props) {
     if (page === "stocks")
       props.setComponent(<Stock setComponent={props.setComponent} setUnderlinedButton={props.setUnderlinedButton} />)
     else if (page === "critical analysis")
-      props.setComponent(<CriticalAnalysis setComponent={props.setComponent} setUnderlinedButton={props.setUnderlinedButton} />)
+      props.setComponent(<CriticalAnalysis  setComponent={props.setComponent} setUnderlinedButton={props.setUnderlinedButton} />)
     else if (page === "watch list")
       props.setComponent(<WatchList setComponent={props.setComponent} setUnderlinedButton={props.setUnderlinedButton} />)
     props.setUnderlinedButton("Stocks");
@@ -145,8 +145,9 @@ function NavBar(props) {
     <div className={classes.root}>
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
-          <div>
+          <div style={{display:"flex"}}>
             <img style={{ width: "70px" }} src={`${process.env.PUBLIC_URL}/images/logged_out/pgr_logo.png`} alt="google map" />
+            <GroupDropDown/>
           </div>
           <div>
             <Hidden mdUp>
@@ -229,7 +230,7 @@ function NavBar(props) {
                         style={{
                           textDecoration: props.underlinedButton === element.name ? "underline" : "",
                           textTransform: "uppercase",
-                          cursor:"pointer"
+                          cursor: "pointer"
                         }}
                       >
                         {user ? user.email[0] : "H"}
@@ -272,7 +273,9 @@ function NavBar(props) {
           </div>
         </Toolbar>
       </AppBar>
-      <div>{props.component}</div>
+      <div>
+        {props.component}
+      </div>
       <NavigationDrawer
         menuItems={loggedIn_menuItems}
         anchor="right"

@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 
 import StockData from "./StockData";
 import { getData, postData } from "../../../service/service";
+import DreamNiftyHeading from "../DreamNiftyHeading";
 
 const useStyles = makeStyles((theme) => ({
     blogContentWrapper: {
@@ -124,7 +125,10 @@ export default function WatchList(props) {
             className={classNames("lg-p-top", classes.wrapper)}
             display="flex"
             justifyContent="center"
-        >
+            alignItems="center"
+            flexDirection="column"
+        >   
+            <DreamNiftyHeading/>
             <div className={classes.blogContentWrapper + " animation-bottom-top"}>
                 <div style={{ fontSize: 40, textAlign: "center" }}><u>Watch List</u></div>
                 <StyledMenu

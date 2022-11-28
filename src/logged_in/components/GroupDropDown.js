@@ -1,6 +1,6 @@
 import { FormControl, InputLabel, Select, Grid, MenuItem } from "@material-ui/core"
 import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
 import { getData } from "../../service/service";
 
@@ -8,8 +8,14 @@ export default function GroupDropDown(props) {
 
     const [listGroup, setListGroup] = useState([]);
 
+    var dispatch = useDispatch();
     const user = useSelector(state => state.user)
     const userData = Object.values(user)[0];
+    const group = useSelector(state => state.group)
+    const groupId = Object.values(group)[0];
+    const userGroup = useSelector(state => state.userGroup)
+    const userGroupId = Object.values(userGroup)[0];
+    useSelector(state => state);
 
     useEffect(function () {
         const groupList = async () => {
@@ -18,13 +24,11 @@ export default function GroupDropDown(props) {
                 if (data.data.length && data.data[0].ppm_group.value) {
                     setListGroup(data.data);
                     if (!sessionStorage.getItem("groupId") || sessionStorage.getItem("groupId") === "".trim()) {
-                        props.setGroupId(data.data[0].ppm_group.id)
+                        dispatch({ type: "SET_GROUP", payload: [data.data[0].ppm_group.id, {group: data.data[0].ppm_group.id}] })
                     } else {
-                        props.setGroupId(sessionStorage.getItem("groupId"));
+                        dispatch({ type: "SET_GROUP", payload: [sessionStorage.getItem("groupId"), {group: sessionStorage.getItem("groupId")}] })
                     }
-                    if (props.userGroupId){
-                        props.setUserGroupId(data.data[0].id)
-                    }
+                    dispatch({ type: "SET_USER_GROUP", payload: [data.data[0].id, {userGroup: data.data[0].id}] })
                 }
             }
         }
@@ -32,22 +36,22 @@ export default function GroupDropDown(props) {
             groupList();
         }
         // eslint-disable-next-line
-    }, [])
+    }, [userData])
 
     const handleSelectChange = (value) => {
-        props.setMessage(false);
-        props.setGroupId(value)
-        sessionStorage.setItem("groupId", value);
-        if (props.userGroupId) {
-            const userGroupId = listGroup.filter(function (item) {
+        dispatch({ type: "DEL_GROUP", payload: [groupId.group] })
+        dispatch({ type: "SET_GROUP", payload: [value, {group: value}] })
+        if (userGroupId) {
+            const userGrouplistId = listGroup.filter(function (item) {
                 return item.ppm_group.id === value
             })[0].id
-            props.setUserGroupId(userGroupId)
+            dispatch({ type: "DEL_USER_GROUP", payload: [userGroupId.userGroup] })
+            dispatch({ type: "SET_USER_GROUP", payload: [userGrouplistId, {userGroup: userGrouplistId}] })
         }
     }
 
-    return <Grid container spacing={4}>
-        <Grid item sm={4} style={{ marginLeft: 20 }}>
+    return <Grid container>
+        <Grid style={{ marginLeft: 20 }}>
             {
                 listGroup.length ?
                     listGroup[0] && listGroup.length === 1 ?
@@ -56,7 +60,7 @@ export default function GroupDropDown(props) {
                         <FormControl style={{ width: 200 }}>
                             <InputLabel htmlFor="outlined-age-native-simple">Group</InputLabel>
                             <Select
-                                value={props.groupId}
+                                value={groupId ? groupId.group : ""}
                                 onChange={(event) => handleSelectChange(event.target.value)}
                                 label="Group"
                                 style={{ textTransform: "uppercase" }}
@@ -82,13 +86,6 @@ export default function GroupDropDown(props) {
             <div></div>
             }
         </Grid>
-        <Grid item sm={4} style={{ fontSize: 40, textAlign: "center" }}>
-            {
-                props.heading ? <u>{props.heading}</u> :
-                    <span style={{ fontSize: 20 }}>{props.current}</span>
-            }
-        </Grid>
-
     </Grid>
 
 }

@@ -49,18 +49,13 @@ export default function ViewPrizeDistribution(props) {
                     render: (rowData) => <div> {rowData.tableData.id + 1} </div>
                 },
                 {
-                    title: 'Members (Ranks)',
-                    field: 'members',
-                    cellStyle: { textAlign: "center" },
-                },
-                {
-                    title: 'Total (Per Member) percentage',
+                    title: 'Prize Per Members',
                     field: 'percentage',
                     cellStyle: { textAlign: "center" },
                 },
                 {
-                    title: 'Priority',
-                    field: 'priority',
+                    title: 'Rank',
+                    field: 'members',
                     cellStyle: { textAlign: "center" },
                 },
             ]}

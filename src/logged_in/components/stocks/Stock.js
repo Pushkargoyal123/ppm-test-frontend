@@ -16,6 +16,8 @@ import { getData, postData } from "../../../service/service";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 
+import DreamNiftyHeading from "../DreamNiftyHeading";
+
 const StyledMenu = withStyles({
   paper: {
     border: '1px solid #d3d4d5',
@@ -57,7 +59,8 @@ const useStyles = makeStyles((theme) => ({
     },
     maxWidth: 1280,
     width: "100%",
-    boxShadow: "rgba(0, 0, 0, 0.56) 0px 22px 70px 4px"
+    boxShadow: "rgba(0, 0, 0, 0.56) 0px 22px 70px 4px",
+    paddingTop:0
   },
   wrapper: {
     minHeight: "60vh",
@@ -133,8 +136,12 @@ export default function Stock(props) {
       className={classNames("lg-p-top", classes.wrapper)}
       display="flex"
       justifyContent="center"
+      alignItems="center"
+      flexDirection="column"
     >
+      <DreamNiftyHeading/>
       <div className={classes.blogContentWrapper + " animation-bottom-top"}>
+      <div style={{ fontSize: 40, textAlign: "center" }}><u>Stocks</u></div>
         <StyledMenu
           id="customized-menu"
           anchorEl={anchorEl}

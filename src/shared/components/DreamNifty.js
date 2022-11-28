@@ -8,12 +8,11 @@ import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 
 // internal Dependecies
-import { postData, getData } from "../../service/service";
+import { postData } from "../../service/service";
 import ViewPrizeDistribution from "./ViewPrizeDistribution";
 import DreamNiftyInfo from "./DreamNiftyInfo";
 import CalledModal from "../../service/CalledModal";
-import GroupDropDown from "../../logged_in/components/GroupDropDown";
-import MemberShip from "./MemberShip";
+import Stock from "../../logged_in/components/stocks/Stock";
 
 const useStyles = makeStyles((theme) => ({
     blogContentWrapper: {
@@ -59,7 +58,7 @@ export default function DreamNifty(props) {
     const [loginEmail, setLoginEmail] = useState("");
     const [loginPassword, setLoginPassword] = useState("");
     const [generatedOTP, setGeneratedOTP] = useState("");
-    const [groupId, setGroupId] = useState("");
+    const [isMyEventsClicked, setIsMyEventsClicked] = useState(false);
 
     const user = useSelector(state => state.user)
     const userData = Object.values(user)[0];
@@ -70,27 +69,11 @@ export default function DreamNifty(props) {
         script.src = "https://checkout.razorpay.com/v1/checkout.js";
         script.async = true;
         document.body.appendChild(script);
+    }, [])
 
-        fetchActivePlan();
-        // eslint-disable-next-line
-    }, [groupId])
-
-    const fetchActivePlan = async () => {
-        if (groupId !== "") {
-            const data = await getData("plans/hasActivePlan?ppmGroupId=" + groupId);
-            if (data.success && data.data.length) {
-
-            } else {
-                Swal.fire({
-                    title: "Plan Status",
-                    text: "Currently You don't have any active subscription plan. Please buy a play to continue",
-                    icon: "info"
-                })
-                props.setComponent(<MemberShip setUnderlinedButton={props.setUnderlinedButton} setComponent={props.setComponent} />)
-                props.setUnderlinedButton("Membership");
-            }
-        }
-    }
+    useEffect(function(){
+        sessionStorage.removeItem("clickedEvent");
+    }, [])
 
     const options = {
         key: "rzp_test_GQ6XaPC6gMPNwH",
@@ -107,14 +90,14 @@ export default function DreamNifty(props) {
                 status: "active"
             }
             const data = await postData('dreamNifty/user/haveActiveEvent', body);
-            if(data.success){
+            if (data.success) {
                 setOpenDreamNiftyInfoModal(false);
                 Swal.fire({
                     icon: 'error',
                     title: 'OOPS!!',
                     text: `You are already present in this onGoing ${clickedEvent.title} that will ends on ${clickedEvent.endDate.split('-').reverse().join('-')}`,
                 });
-            }else{
+            } else {
                 let body = {
                     UserId: userData.id,
                     ppmDreamNiftyId: clickedEvent.id,
@@ -134,7 +117,7 @@ export default function DreamNifty(props) {
                         icon: 'error',
                         title: 'OOPS!!',
                         text: "Something went wrong",
-                    }).then(function(){
+                    }).then(function () {
                         setOpenDreamNiftyInfoModal(true);
                     })
                 }
@@ -158,6 +141,7 @@ export default function DreamNifty(props) {
      * function for fetching all events 
      */
     const fetchAllEvents = async () => {
+        setIsMyEventsClicked(false);
         const data = await postData("dreamNifty/eventList", { status: "active" });
         if (data.success) {
             setMessage(2);
@@ -211,24 +195,29 @@ export default function DreamNifty(props) {
         setOpenPrizeDistribution(true);
     }
 
-    const showMoneyToPay = async(row) => {
-        setClickedEvent(row);
-          // code for checking that the user participated in the event or not
-          const body = {
-            UserId: userData.id,
-            ppmDreamNiftyId: row.id,
-            status: "active"
-        }
-        const data = await postData('dreamNifty/user/haveActiveEvent', body);
-        if(data.success){
-            setOpenDreamNiftyInfoModal(false);
-            Swal.fire({
-                icon: 'error',
-                title: 'OOPS!!',
-                text: `You are already present in this onGoing ${row.title} that will ends on ${row.endDate.split('-').reverse().join('-')}`,
-            });
-        }else{
-            setOpenDreamNiftyInfoModal(true);
+    const showMoneyToPay = async (row) => {
+        if (userData) {
+            setClickedEvent(row);
+            // code for checking that the user participated in the event or not
+            const body = {
+                UserId: userData.id,
+                ppmDreamNiftyId: row.id,
+                status: "active"
+            }
+            const data = await postData('dreamNifty/user/haveActiveEvent', body);
+            if (data.success) {
+                setOpenDreamNiftyInfoModal(false);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'OOPS!!',
+                    text: `You are already present in this onGoing ${row.title} that will ends on ${row.endDate.split('-').reverse().join('-')}`,
+                });
+            } else {
+                setOpenDreamNiftyInfoModal(true);
+            }
+        } else {
+            setClickedEvent(row);
+            setOpenDreamNiftyInfoModal(true)
         }
     }
 
@@ -238,6 +227,7 @@ export default function DreamNifty(props) {
     }
 
     const handleMyEvents = async () => {
+        setIsMyEventsClicked(true);
         const body = { status: "active", showMyEvents: true };
         const data = await postData("dreamNifty/eventList", body);
         if (data.success) {
@@ -249,18 +239,28 @@ export default function DreamNifty(props) {
         }
     }
 
+    const handleViewEvent = (row) => {
+        setClickedEvent(row);
+        sessionStorage.setItem("clickedEvent", JSON.stringify(row));
+        Swal.fire(
+            "Congratulations", 
+            `You have participated in ${row.title} and now you can purchase these stocks to get the maximum prizes`,
+            "success"
+        )
+        props.setComponent(<Stock
+            setUnderlinedButton={props.setUnderlinedButton}
+            setComponent={props.setComponent}
+          />)
+          props.setUnderlinedButton("Stock");
+    }
+
     return (<Box
         className={classNames("lg-p-top", classes.wrapper)}
         display="flex"
         justifyContent="center"
     >
         <div className={classes.blogContentWrapper + " animation-bottom-top"}>
-            <GroupDropDown
-                setMessage={setMessage}
-                groupId={groupId}
-                setGroupId={setGroupId}
-                heading="Dream Nifty"
-            />
+            <div style={{ fontSize: 40, textAlign: "center" }}><u>DreamNifty</u></div>
             <Divider style={{ margin: 20 }} />
             {
                 userData ?
@@ -353,24 +353,35 @@ export default function DreamNifty(props) {
                                                         <div style={{ fontWeight: 600, fontSize: 16 }}>₹{item.endDate.split("-").reverse().join("-")}</div>
                                                     </div>
                                                 </div>
-                                                {
-                                                    getTodayDate() >= item.startDate ?
-                                                        <Button
-                                                            style={{ marginTop: 10 }}
-                                                            color="secondary"
-                                                            variant="contained"
-                                                            onClick={() => showPrizeDistribution(item)}
-                                                        >
-                                                            Prize Distribution
-                                                        </Button> :
-                                                        <Button
-                                                            style={{ marginTop: 10, background: color, color: "white" }}
-                                                            variant="contained"
-                                                            onClick={() => showMoneyToPay(item)}
-                                                        >
-                                                            Participate
-                                                        </Button>
-                                                }
+                                                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                                    <Button
+                                                        style={{ marginTop: 10 }}
+                                                        color="secondary"
+                                                        variant="contained"
+                                                        onClick={() => showPrizeDistribution(item)}
+                                                    >
+                                                        Prize Distribution
+                                                    </Button>
+                                                    {
+                                                        isMyEventsClicked ?
+                                                            <Button
+                                                                style={{ marginTop: 10, background: "green", color: "white", marginLeft: "auto" }}
+                                                                variant="contained"
+                                                                onClick = {()=> handleViewEvent(item)}
+                                                            >
+                                                                View
+                                                            </Button> :
+                                                            getTodayDate() >= item.startDate ?
+                                                                <div></div> :
+                                                                <Button
+                                                                    style={{ marginTop: 10, background: color, color: "white", marginLeft: "auto" }}
+                                                                    variant="contained"
+                                                                    onClick={() => showMoneyToPay(item)}
+                                                                >
+                                                                    Participate
+                                                                </Button>
+                                                    }
+                                                </div>
 
                                             </CardContent>
                                             {

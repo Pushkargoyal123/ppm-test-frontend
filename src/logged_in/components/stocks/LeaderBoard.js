@@ -11,8 +11,8 @@ import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 
 import { getData, postData } from "../../../service/service";
-import GroupDropDown from "../GroupDropDown";
 import MemberShip from "../../../shared/components/MemberShip";
+import DreamNiftyHeading from "../DreamNiftyHeading";
 
 const useStyles = makeStyles((theme) => ({
     blogContentWrapper: {
@@ -42,26 +42,33 @@ export default function LeaderBoard(props) {
 
     const [data, setData] = useState([]);
     const [message, setMessage] = useState(false);
-    const [groupId, setGroupId] = useState("");
 
     const user = useSelector(state => state.user)
-    const userId = Object.values(user)[0].id
+    const userId = Object.values(user)[0].id;
+    let group = useSelector(state => state.group)
+    let groupId = Object.values(group)[0];
+    useSelector(state=>state)
 
     useEffect(function () {
-
+        setMessage(false);
         const registerType = Object.values(user)[0].registerType
 
         async function fetchUsers() {
-
-            const usersList = await getData("leaderboard/fetchleaderboarddata/" + registerType + "?groupId=" + groupId);
+            let usersList;
+            if(eventInfo){
+                const body = {registerType: registerType, ppmDreamNiftyId: eventInfo.id}
+                usersList = await postData("dreamNifty/user/fetchleaderboarddata", body);
+            }else{
+                usersList = await getData("leaderboard/fetchleaderboarddata/" + registerType + "?groupId=" + groupId.group);
+            } 
 
             const stockData = await getData("stock/fetchallstockdata");
 
             if (usersList.success && stockData.success) {
                 setMessage(1)
                 usersList.data.forEach(async function (item) {
-                    item.virtualAmount = item.ppm_userGroups[0].virtualAmount;
-                    item.netAmount = (item.ppm_userGroups[0].virtualAmount + item.current_investment + item.totalCurrentPrice - item.current_investment)
+                    item.virtualAmount = item.ppm_userGroups ? item.ppm_userGroups[0].virtualAmount : item.ppm_dream_nifty_users[0].virtualAmount;
+                    item.netAmount = (item.ppm_userGroups ? item.ppm_userGroups[0].virtualAmount : item.ppm_dream_nifty_users[0].virtualAmount + item.current_investment + item.totalCurrentPrice - item.current_investment)
                     item.profitLoss = item.totalCurrentPrice - item.current_investment
                     var count = 1;
                     stockData.data.forEach(function (stockItem) {
@@ -73,7 +80,11 @@ export default function LeaderBoard(props) {
                         }
                     })
                     item.count = count
-                    await postData("user/setnetamount", { netAmount: item.netAmount, id: item.ppm_userGroups[0].id })
+                    if(eventInfo){
+                        await postData("dreamNifty/user/setnetamount", { netAmount: item.netAmount, id: item.ppm_dream_nifty_users[0].id })
+                    }else{
+                        await postData("user/setnetamount", { netAmount: item.netAmount, id: item.ppm_userGroups[0].id })
+                    }
                 })
                 usersList.data.sort(function (a, b) {
                     return a.profitLoss - b.profitLoss;
@@ -83,16 +94,20 @@ export default function LeaderBoard(props) {
                 setMessage(2);
             }
         }
-        if (groupId !== "")
+        if (groupId.group !== "")
             fetchUsers();
 
-        fetchActivePlan();
+        if(!eventInfo){
+            fetchActivePlan();
+        }
         // eslint-disable-next-line
-    }, [user, groupId]);
+    }, [user, groupId.group]);
+
+    const eventInfo = JSON.parse(sessionStorage.getItem('clickedEvent'));
 
     const fetchActivePlan = async () => {
-        if (groupId !== "") {
-            const data = await getData("plans/hasActivePlan?ppmGroupId=" + groupId);
+        if (groupId.group !== "") {
+            const data = await getData("plans/hasActivePlan?ppmGroupId=" + groupId.group);
             if (data.success && data.data.length) {
 
             } else {
@@ -101,7 +116,7 @@ export default function LeaderBoard(props) {
                     text: "Currently You don't have any active subscription plan. Please buy a play to continue",
                     icon: "info"
                 })
-                props.setComponent(<MemberShip setUnderlinedButton={props.setUnderlinedButton} setComponent={props.setComponent} />)
+                props.setComponent(<MemberShip groupId={groupId.group} setGroupId={props.setGroupId} setUnderlinedButton={props.setUnderlinedButton} setComponent={props.setComponent} />)
                 props.setUnderlinedButton("Membership");
             }
         }
@@ -112,14 +127,12 @@ export default function LeaderBoard(props) {
             className={classNames("lg-p-top", classes.wrapper)}
             display="flex"
             justifyContent="center"
+            alignItems="center"
+            flexDirection="column"
         >
+            <DreamNiftyHeading />
             <div className={classes.blogContentWrapper + " animation-bottom-top"}>
-                <GroupDropDown
-                    setMessage={setMessage}
-                    groupId={groupId}
-                    setGroupId={setGroupId}
-                    heading="Leader Board"
-                />
+                <div style={{ fontSize: 40, textAlign: "center" }}><u>Leader Board</u></div>
                 {
                     !message ? <div className="ParentFlex">
                         <CircularProgress color="secondary" className="preloader" />

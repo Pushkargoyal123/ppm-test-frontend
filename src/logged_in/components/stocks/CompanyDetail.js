@@ -12,9 +12,10 @@ import KeyboardBackspaceRoundedIcon from '@material-ui/icons/KeyboardBackspaceRo
 import InfoIcon from '@material-ui/icons/Info';
 
 import Portfolio from "./Portfolio";
-import { getData } from "../../../service/service";
+import { getData, postData } from "../../../service/service";
 import ToolTip from "../../../shared/components/ToolTip";
 import StockData from "./StockData";
+import DreamNiftyHeading from "../DreamNiftyHeading";
 
 const useStyles = makeStyles((theme) => ({
     blogContentWrapper: {
@@ -54,8 +55,15 @@ export default function CompanyDetail(props) {
     const [totalSellPrice, setTotalSellPrice]= useState(0);
 
     useEffect(() => {
+        setMessage(false);
         const fetchcompanyStockBuySell = async () => {
-            const result = await getData("stock/fetchcompanydetail?companyCode=" + props.data.companyCode);
+            let result;
+            if(eventInfo){
+                const body = {companyCode:props.data.companyCode}
+                result = await postData("dreamNifty/portfolio/fetchcompanydetail", body);
+            }else{
+                result = await getData("stock/fetchcompanydetail?companyCode=" + props.data.companyCode);
+            }
             let buyStockSum=0, sellStockSum=0, buyStockPriceSum=0, sellStockPriceSum=0;
             if (result.success) {
                 setMessage(1)
@@ -81,7 +89,10 @@ export default function CompanyDetail(props) {
             }
         }
         fetchcompanyStockBuySell();
+        // eslint-disable-next-line
     }, [props.data.companyCode])
+
+    const eventInfo = JSON.parse(sessionStorage.getItem('clickedEvent'));
 
     const handleBuySellStocks = ()=>{
         props.setComponent(<StockData 
@@ -97,7 +108,10 @@ export default function CompanyDetail(props) {
             className={classNames("lg-p-top", classes.wrapper)}
             display="flex"
             justifyContent="center"
+            alignItems="center"
+            flexDirection="column"
         >
+            <DreamNiftyHeading/>
             <div className={classes.blogContentWrapper  + " animation-bottom-top"}>
                 <div style={{ fontSize: 40, textAlign: "center" }}><u>{props.data.companyName}</u></div>
                 <div>

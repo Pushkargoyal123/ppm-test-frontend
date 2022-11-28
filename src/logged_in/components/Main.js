@@ -330,37 +330,68 @@ function Main(props) {
 
   function SetComponent(link, element) {
     if (link === "/aboutus") {
-      setComponent(<AboutUs setComponent={setComponent} setUnderlinedButton={setUnderlinedButton} />)
+      setComponent(<AboutUs 
+        setComponent={setComponent} 
+        setUnderlinedButton={setUnderlinedButton} 
+      />)
     }
     else if (link === "/contactus") {
-      setComponent(<ContactUs setComponent={setComponent} setUnderlinedButton={setUnderlinedButton} />)
+      setComponent(<ContactUs 
+        setComponent={setComponent} 
+        setUnderlinedButton={setUnderlinedButton} 
+      />)
     }
     else if (link === "/portfolio") {
-      setComponent(<Portfolio setComponent={setComponent} setUnderlinedButton={setUnderlinedButton} />)
+      setComponent(<Portfolio  
+        setComponent={setComponent} 
+        setUnderlinedButton={setUnderlinedButton} 
+      />)
     }
     else if (link === "/post") {
-      setComponent(<Stock setComponent={setComponent} setUnderlinedButton={setUnderlinedButton} />)
+      setComponent(<Stock  
+        setComponent={setComponent} 
+        setUnderlinedButton={setUnderlinedButton} 
+      />)
     }
     else if (link === "/leaderboard") {
-      setComponent(<LeaderBoard setComponent={setComponent} setUnderlinedButton={setUnderlinedButton} />)
+      setComponent(<LeaderBoard 
+        setComponent={setComponent} 
+        setUnderlinedButton={setUnderlinedButton} 
+        />)
     }
     else if (link === "/membership") {
-      setComponent(<MemberShip setComponent={setComponent} setUnderlinedButton={setUnderlinedButton} />)
+      setComponent(<MemberShip 
+        setComponent={setComponent} 
+        setUnderlinedButton={setUnderlinedButton}
+      />)
     }
     else if (link === "/dreamNifty") {
-      setComponent(<DreamNifty setComponent={setComponent} setUnderlinedButton={setUnderlinedButton} />)
+      setComponent(<DreamNifty 
+        setComponent={setComponent} 
+        setUnderlinedButton={setUnderlinedButton} 
+      />)
     }
     else if (link === "/c/dashboard" || link === "/") {
-      setComponent(<Home setComponent={setComponent} setUnderlinedButton={setUnderlinedButton} />)
+      setComponent(<Home 
+        setComponent={setComponent} 
+        setUnderlinedButton={setUnderlinedButton} 
+      />)
     }
     else if (link === "stock") {
-      setComponent(<Stock setComponent={setComponent} />)
+      setComponent(<Stock 
+        setComponent={setComponent} 
+      />)
     }
     else if (link === "critical analysis") {
-      setComponent(<CriticalAnalysis />)
+      setComponent(<CriticalAnalysis 
+        setComponent={setComponent} 
+      />)
     }
     else if (link === "watch list") {
-      setComponent(<WatchList setComponent={setComponent} setUnderlinedButton={setUnderlinedButton} />)
+      setComponent(<WatchList 
+        setComponent={setComponent} 
+        setUnderlinedButton={setUnderlinedButton} 
+      />)
     }
     setUnderlinedButton(element.name);
   }

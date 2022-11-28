@@ -14,7 +14,6 @@ import Swal from "sweetalert2";
 import { getData, postData } from "../../service/service";
 import PayModal from "./PayModal";
 import ReferralModal from "./ReferralModal";
-import GroupDropDown from "../../logged_in/components/GroupDropDown";
 
 const useStyles = makeStyles((theme) => ({
     blogContentWrapper: {
@@ -41,10 +40,8 @@ function getModalStyle() {
     };
 }
 
-export default function MemberShip() {
+export default function MemberShip(props) {
 
-    const [groupId, setGroupId] = useState("");
-    const [userGroupId, setUserGroupId] = useState(true);
     const [message, setMessage] = useState(false);
     const [modalStyle] = useState(getModalStyle);
     const [featurePlans, setFeaturePlans] = useState([]);
@@ -75,6 +72,11 @@ export default function MemberShip() {
 
     const user = useSelector(state => state.user)
     const userData = Object.values(user)[0];
+    let group = useSelector(state => state.group)
+    let groupId = Object.values(group)[0];
+    const userGroup = useSelector(state => state.userGroup)
+    const userGroupId = Object.values(userGroup)[0];
+    useSelector((state) => state)
 
     const fetchAllData = async () => {
         const plans = await getData("plans/planListForUser");
@@ -125,7 +127,7 @@ export default function MemberShip() {
                 ppmSubscriptionPlanId: selectedPlan.id,
                 ppmSubscriptionMonthId: selectedMonth[0].id,
                 ppmSubscriptionMonthlyPlanChargeId: ppmSubscriptionMonthlyPlanChargeId,
-                ppmUserGroupId: userGroupId,
+                ppmUserGroupId: userGroupId.userGroup,
                 MonthlyPlanDisplayPrice: displayPrice,
                 referToDiscountPercent: referToDiscount,
                 referToDiscountAmount: displayPrice - referToFinalPrice,
@@ -167,8 +169,7 @@ export default function MemberShip() {
     }
 
     const handleOpenModal = async (planCharge, month, index) => {
-        const data = await getData("plans/hasPlan?ppmUserGroupId=" + userGroupId);
-
+        const data = await getData("plans/hasPlan?ppmUserGroupId=" + userGroupId.userGroup);
         if (userData) {
             if (data.success && data.data) {
                 Swal.fire({
@@ -176,13 +177,13 @@ export default function MemberShip() {
                     title: 'OOPS!!',
                     text: "You Already have an active " + data.data.ppm_subscription_plan.planName + " plan of " + data.data.ppm_subscription_month.monthValue + " months In " + data.data.ppm_userGroup.ppm_group.name + "-" + data.data.ppm_userGroup.ppm_group.value + " that is valid upto " + data.data.endDate.split(",")[0],
                 })
-            } else if (groupId === "") {
+            } else if (groupId.group === "") {
                 Swal.fire({
                     icon: 'info',
                     title: 'OOPS!!',
                     text: "You can't buy any plan since you are not present in any group. Contact to administrator to put you in a group",
                 })
-            }
+            }   
         }
         else {
             setOpen(true)
@@ -214,15 +215,9 @@ export default function MemberShip() {
     >
         <div className={classes.blogContentWrapper + " animation-bottom-top"}>
             {
-                userData ?
-                    <GroupDropDown
-                        setMessage={setMessage}
-                        groupId={groupId}
-                        setGroupId={setGroupId}
-                        userGroupId={userGroupId}
-                        setUserGroupId={setUserGroupId}
-                        heading="Membership"
-                    /> :
+                userData ? <div>
+                    <div style={{ fontSize: 40, textAlign: "center" }}><u>MemberShip</u></div>
+                    </div> :
                     <div style={{ fontSize: 40, textAlign: "center" }}>
                         <u>Membership</u>
                     </div>

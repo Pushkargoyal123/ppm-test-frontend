@@ -1,8 +1,8 @@
 import classNames from "classnames";
 import { Divider, Box, makeStyles, Button } from "@material-ui/core";
-import Stock from "./Stock";
 import { useState, useEffect } from "react";
 import React from "react";
+import { useSelector } from "react-redux";
 import {
   LineChart,
   Line,
@@ -14,17 +14,19 @@ import {
 } from "recharts";
 import MaterialTable from 'material-table';
 import Dialog from '@material-ui/core/Dialog';
-import Portfolio from "./Portfolio";
-import { postData, getData } from "../../../service/service"
-import { timeDuration } from "../../../config";
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { toast, ToastContainer } from 'react-toastify';
 import Swal from "sweetalert2";
-import ToolTip from "../../../shared/components/ToolTip";
 import { useTheme } from '@material-ui/core/styles';
-import GroupDropDown from "../GroupDropDown";
+
+import Portfolio from "./Portfolio";
+import Stock from "./Stock";
+import { postData, getData } from "../../../service/service"
+import { timeDuration } from "../../../config";
+import ToolTip from "../../../shared/components/ToolTip";
 import MemberShip from "../../../shared/components/MemberShip";
+import DreamNiftyHeading from "../DreamNiftyHeading";
 
 const useStyles = makeStyles((theme) => ({
   blogContentWrapper: {
@@ -91,11 +93,12 @@ export default function StockData(props) {
   const [buttonColor, setButtonColor] = useState("ALL");
   const [minMax, setMinMax] = useState([]);
   const [isTrading, setIsTrading] = useState(false);
-  const [groupId, setGroupId] = useState("");
-  const [message, setMessage] = useState("");
 
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
+  let group = useSelector(state => state.group)
+  let groupId = Object.values(group)[0];
+  useSelector((state) => state)
 
   useEffect(function () {
     const fetchCompanyData = async () => {
@@ -114,13 +117,17 @@ export default function StockData(props) {
     }
     fetchCompanyData();
     checkTrading();
-    fetchActivePlan();
+    if (!eventInfo) {
+      fetchActivePlan();
+    }
     // eslint-disable-next-line
-  }, [props.data, groupId])
+  }, [props.data, groupId.group])
+
+  const eventInfo = JSON.parse(sessionStorage.getItem('clickedEvent'));
 
   const fetchActivePlan = async () => {
-    if (groupId !== "") {
-      const data = await getData("plans/hasActivePlan?ppmGroupId=" + groupId);
+    if (groupId.group !== "") {
+      const data = await getData("plans/hasActivePlan?ppmGroupId=" + groupId.group);
       if (data.success && data.data.length) {
 
       } else {
@@ -129,7 +136,7 @@ export default function StockData(props) {
           text: "Currently You don't have any active subscription plan. Please buy a play to continue",
           icon: "info"
         })
-        props.setComponent(<MemberShip setUnderlinedButton={props.setUnderlinedButton} setComponent={props.setComponent} />)
+        props.setComponent(<MemberShip groupId={groupId.group} setUserGroupId={props.setUserGroupId} setUnderlinedButton={props.setUnderlinedButton} setComponent={props.setComponent} />)
         props.setUnderlinedButton("Membership");
       }
     }
@@ -155,7 +162,13 @@ export default function StockData(props) {
   }
 
   const fetchVirtualAmountAndNetAmount = async () => {
-    const result = await getData("user/findvirtualamountyuserid?ppmGroupId=" + groupId);
+    let result;
+    if (eventInfo) {
+      const body = { ppmDreamNiftyId: eventInfo.id }
+      result = await postData("dreamNifty/portfolio/findvirtualamountyuserid", body);
+    } else {
+      result = await getData("user/findvirtualamountyuserid?ppmGroupId=" + groupId.group);
+    }
     if (result.success) {
       setVirtualAmount(result.data.virtualAmount.toFixed(2));
       setNetAmount(result.data.netAmount.toFixed(2));
@@ -163,12 +176,20 @@ export default function StockData(props) {
   }
 
   const fetchPortfolioStock = async () => {
-    let body = {
-      companyName: props.data.CompanyName,
-      ppmGroupId: groupId
+    let result;
+    if (eventInfo) {
+      let body = {
+        companyName: props.data.CompanyName,
+        ppmDreamNiftyId: eventInfo.id
+      }
+      result = await postData("dreamNifty/portfolio/fetchstockleft", body);
+    } else {
+      let body = {
+        companyName: props.data.CompanyName,
+        ppmGroupId: groupId.group
+      }
+      result = await postData("stock/fetchstockleft", body);
     }
-
-    const result = await postData("stock/fetchstockleft", body);
     if (result.status) {
       setStockAvailable(result.stockAvailable);
     }
@@ -230,20 +251,39 @@ export default function StockData(props) {
       });
     }
     else {
-      var body = {
-        companyCode: props.data.CompanyCode,
-        companyName: props.data.CompanyName,
-        currentPrice: data[0] ? data[0].currentPrice : 0,
-        buyStock: stockBuy,
-        totalBuyPrice: buyPrice,
-        sellStock: stockSell,
-        totalSellPrice: sellPrice,
-        comment: comment,
-        virtualAmount: virtualAmount,
-        netAmount: netAmount,
-        ppmGroupId: groupId
+
+      let result;
+      if (eventInfo) {
+        const body = {
+          companyCode: props.data.CompanyCode,
+          companyName: props.data.CompanyName,
+          currentPrice: data[0] ? data[0].currentPrice : 0,
+          buyStock: stockBuy,
+          totalBuyPrice: buyPrice,
+          sellStock: stockSell,
+          totalSellPrice: sellPrice,
+          comment: comment,
+          virtualAmount: virtualAmount,
+          netAmount: netAmount,
+          ppmDreamNiftyId: eventInfo.id
+        }
+        result = await postData("dreamNifty/portfolio/insertportfolio", body);
+      } else {
+        const body = {
+          companyCode: props.data.CompanyCode,
+          companyName: props.data.CompanyName,
+          currentPrice: data[0] ? data[0].currentPrice : 0,
+          buyStock: stockBuy,
+          totalBuyPrice: buyPrice,
+          sellStock: stockSell,
+          totalSellPrice: sellPrice,
+          comment: comment,
+          virtualAmount: virtualAmount,
+          netAmount: netAmount,
+          ppmGroupId: groupId.group
+        }
+        result = await postData("stock/insertportfolio", body);
       }
-      const result = await postData("stock/insertportfolio", body);
       if (result.success) {
         props.setComponent(<Portfolio
           setUnderlinedButton={props.setUnderlinedButton}
@@ -391,17 +431,20 @@ export default function StockData(props) {
       className={classNames("lg-p-top", classes.wrapper)}
       display="flex"
       justifyContent="center"
+      alignItems="center"
+      flexDirection="column"
     >
+      <DreamNiftyHeading />
+      <div style={{ fontSize: 40, textAlign: "center" }}><u>Stock Details</u></div>
       <div className={classes.blogContentWrapper + " animation-bottom-top"}>
         <div style={{ display: "flex", justifyContent: "space-evenly", alignItems: "center", flexWrap: "wrap" }}>
-          {/* <div style={{ textAlign: "left", fontWeight: "bold", fontSize: 22 }}>Current Price : ₹{data[0] ? data[0].currentPrice : " "}</div> */}
-          <GroupDropDown
-            setMessage={setMessage}
-            message={message}
-            groupId={groupId}
-            setGroupId={setGroupId}
-            current={data[0] ? "Current Price : ₹" + data[0].currentPrice : " "}
-          />
+          <Button
+            color="secondary"
+            variant="contained"
+            onClick={() => props.setComponent(<Stock setComponent={props.setComponent} />)}>
+            Go Back
+          </Button>
+          <div style={{ textAlign: "left", fontWeight: "bold", fontSize: 22 }}>Current Price : ₹{data[0] ? data[0].currentPrice : " "}</div>
           <Dialog
             fullScreen={fullScreen}
             open={open}
@@ -411,12 +454,6 @@ export default function StockData(props) {
           >
             {body ? sellModal : buyModal}
           </Dialog>
-          <Button
-            color="secondary"
-            variant="contained"
-            onClick={() => props.setComponent(<Stock setComponent={props.setComponent} />)}>
-            Go Back
-          </Button>
           <div className={isTrading ? "buy-sell-wrapper" : "buy-sell-wrapper-disabled"}>
             <ToolTip
               title={isTrading ? "BUY OR SELL STOCK" : "You cannot BUY/SELL stock in between 9:00 AM to 6:00 PM"}

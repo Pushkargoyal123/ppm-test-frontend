@@ -9,9 +9,9 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import Swal from "sweetalert2";
 
-import { getData } from "../../../service/service";
-import GroupDropDown from "../GroupDropDown";
+import { getData, postData } from "../../../service/service";
 import MemberShip from "../../../shared/components/MemberShip";
+import DreamNiftyHeading from "../DreamNiftyHeading";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -42,14 +42,22 @@ export default function CriticalAnalysis(props) {
 
     const [data, setData] = useState([]);
     const [message, setMessage] = useState(false);
-    const [groupId, setGroupId] = useState("");
 
-    const user = useSelector(state => state.user)
+    const user = useSelector(state => state.user);
+    let group = useSelector(state => state.group)
+    let groupId = Object.values(group)[0];
+    useSelector(state=>state);
 
     useEffect(function () {
-
+        setMessage(false);
         const fetchAllHistory = async () => {
-            const resultHistory = await getData("criticalanalysis/criticalanalysisdata/" + groupId);
+            let resultHistory;
+            if(eventInfo){
+                const body = {ppmDreamNiftyId:eventInfo.id}
+                resultHistory = await postData("dreamNifty/criticalanalysis/criticalanalysisdata", body);
+            }else{
+                resultHistory = await getData("criticalanalysis/criticalanalysisdata/" + groupId.group);
+            }
             if (resultHistory.success) {
                 setMessage(1)
                 const finalData = resultHistory.data.map(function (rowData, index) {
@@ -68,20 +76,24 @@ export default function CriticalAnalysis(props) {
         }
         fetchAllHistory()
 
-        fetchActivePlan();
+        if(!eventInfo){
+            fetchActivePlan();
+        }
         // eslint-disable-next-line
-    }, [user, groupId])
+    }, [user, groupId.group])
 
-    const fetchActivePlan = async()=> {
-        if(groupId !== ""){
-            const data = await getData("plans/hasActivePlan?ppmGroupId="+groupId);
-            if(data.success && data.data.length){
+    const eventInfo = JSON.parse(sessionStorage.getItem('clickedEvent'));
 
-            }else{
+    const fetchActivePlan = async () => {
+        if (groupId.group !== "") {
+            const data = await getData("plans/hasActivePlan?ppmGroupId=" + groupId.group);
+            if (data.success && data.data.length) {
+
+            } else {
                 Swal.fire({
                     title: "Plan Status",
-                    text : "Currently You don't have any active subscription plan. Please buy a play to continue",
-                    icon : "info"
+                    text: "Currently You don't have any active subscription plan. Please buy a play to continue",
+                    icon: "info"
                 })
                 props.setComponent(<MemberShip setUnderlinedButton={props.setUnderlinedButton} setComponent={props.setComponent} />)
                 props.setUnderlinedButton("Membership");
@@ -93,14 +105,12 @@ export default function CriticalAnalysis(props) {
         className={classNames("lg-p-top", classes.wrapper)}
         display="flex"
         justifyContent="center"
+        alignItems="center"
+        flexDirection="column"
     >
+        <DreamNiftyHeading />
         <div className={classes.blogContentWrapper + " animation-bottom-top"}>
-            <GroupDropDown
-                setMessage={setMessage}
-                groupId={groupId}
-                setGroupId={setGroupId}
-                heading="Critical Analysis"
-            />
+            <div style={{ fontSize: 40, textAlign: "center" }}><u>Critical Analysis</u></div>
 
             {
                 !message ? <div className="ParentFlex">
