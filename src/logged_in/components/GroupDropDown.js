@@ -51,11 +51,11 @@ export default function GroupDropDown(props) {
     }
 
     return <Grid container>
-        <Grid style={{ marginLeft: 20 }}>
+        <Grid style={{ marginLeft: 20, display:"flex", alignItems:"center" }}>
             {
                 listGroup.length ?
                     listGroup[0] && listGroup.length === 1 ?
-                        <div style={{ fontSize: 20, fontWeight: "bold", textTransform: "uppercase" }}>{listGroup[0].ppm_group.name + "-" + listGroup[0].ppm_group.value}</div>
+                        <div style={{ fontSize: 20, fontWeight: "bold", textTransform: "uppercase", color:"black" }}>{listGroup[0].ppm_group.name + "-" + listGroup[0].ppm_group.value}</div>
                         :
                         <FormControl style={{ width: 200 }}>
                             <InputLabel htmlFor="outlined-age-native-simple">Group</InputLabel>

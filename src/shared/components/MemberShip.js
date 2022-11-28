@@ -184,6 +184,15 @@ export default function MemberShip(props) {
                     text: "You can't buy any plan since you are not present in any group. Contact to administrator to put you in a group",
                 })
             }   
+            else{
+                setOpen(true)
+                setMonth(month.monthValue);
+                setDisplayPrice(planCharge.displayPrice)
+                setReferToFinalPrice(planCharge.displayPrice)
+                setPlanChargeId(planCharge.id);
+                setSelectedPlan(plans[index]);
+                setIndex(index);
+            }
         }
         else {
             setOpen(true)
