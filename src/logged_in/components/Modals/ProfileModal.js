@@ -1,4 +1,4 @@
-import ShowChartIcon from '@material-ui/icons/ShowChart';
+import PersonIcon from '@material-ui/icons/Person';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import {
@@ -16,16 +16,11 @@ import {
 import { useSelector } from 'react-redux';
 import { useState } from 'react';
 import { useTheme } from '@material-ui/core/styles';
-import DateFnsUtils from '@date-io/date-fns';
-import {
-    MuiPickersUtilsProvider,
-    KeyboardDatePicker,
-} from '@material-ui/pickers';
 import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
 import { useDispatch } from "react-redux";
 
-import {postData} from "../../../service/service";
+import { postData } from "../../../service/service";
 
 function getModalStyle() {
     return {
@@ -132,9 +127,8 @@ export default function ProfileModal() {
         else {
             setWhatsappNumberError(null)
         }
-        const birthDate = new Date(selectedDate)
-        const dob = birthDate.getDate() + "-" + (birthDate.getMonth() + 1) + "-" + birthDate.getFullYear();
-        console.log(err);
+
+        const dob = selectedDate;
         if (!err) {
             var form = { userName: userName, dob: dob, gender: gender, email: email, phone: whatsappNumber, id: userData.id };
             const response = await postData("user/updateUserProfile", form);
@@ -181,10 +175,16 @@ export default function ProfileModal() {
         }
     }
 
+    const getMaxDate = () => {
+        let date = new Date();
+        date.setFullYear(date.getFullYear() - 18);
+        return date.toISOString().split('T')[0];
+    }
+
     return <>
         <StyledMenuItem onClick={handleOpenProfileModal}>
             <ListItemIcon>
-                <ShowChartIcon fontSize="small" />
+                <PersonIcon fontSize="small" />
             </ListItemIcon>
             <ListItemText primary="Profile" />
         </StyledMenuItem>
@@ -217,7 +217,18 @@ export default function ProfileModal() {
                             />
                         </Grid>
                         <Grid item sm={6}>
-                            <MuiPickersUtilsProvider style={{ margin: 10 }} utils={DateFnsUtils}>
+                            <TextField
+                                value={selectedDate}
+                                onChange={(e) => setSelectedDate(e.target.value)}
+                                type='date'
+                                InputLabelProps={{ shrink: true }}
+                                InputProps={{ inputProps: { max: getMaxDate() } }}
+                                id="outlined-basic"
+                                label="Date of Birth"
+                                variant="outlined"
+                                style={{ width: 300 }}
+                            />
+                            {/* <MuiPickersUtilsProvider style={{ margin: 10 }} utils={DateFnsUtils}>
                                 <KeyboardDatePicker
                                     disableToolbar
                                     variant="inline"
@@ -231,7 +242,7 @@ export default function ProfileModal() {
                                         'aria-label': 'change date',
                                     }}
                                 />
-                            </MuiPickersUtilsProvider>
+                            </MuiPickersUtilsProvider> */}
                         </Grid>
                         <Grid item sm={12}>
                             <div style={{ width: "100%", display: "flex", justifyContent: "space-around", alignItems: "center", margin: "10px 0px" }}>

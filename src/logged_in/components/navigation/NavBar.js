@@ -1,3 +1,4 @@
+// external dependecies
 import React, { memo, useState, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import {
@@ -17,14 +18,19 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import PlaylistAddCheckIcon from '@material-ui/icons/PlaylistAddCheck';
+import LockOpenIcon from '@material-ui/icons/LockOpen';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import ShowChartIcon from '@material-ui/icons/ShowChart';
+import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
 import { useDispatch } from "react-redux";
 
+// internal dependecies
 import Stock from "../stocks/Stock";
 import CriticalAnalysis from "../stocks/CriticalAnalysis";
 import ProfileModal from "../Modals/ProfileModal";
 import ReferralModal from "../Modals/ReferralModal";
+import UploadProfilePicModal from "../Modals/UploadProfilePicModal";
+import ChangePasswordModal from "../Modals/ChangePasswordModal";
 import { loggedIn_menuItems } from "../../../config"
 import { postData } from "../../../service/service";
 import WatchList from "../stocks/WatchList";
@@ -97,6 +103,8 @@ function NavBar(props) {
   const [anchorProfile, setAnchorProfile] = useState(null);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [user, setUser] = useState(null);
+  const [openProfilePicModal, setOpenProfilePicModal] = useState(false);
+  const [openChangePasswordModal, setOpenChangePasswordModal] = useState(false);
 
   const history = useHistory();
   var dispatch = useDispatch();
@@ -127,7 +135,7 @@ function NavBar(props) {
     if (page === "stocks")
       props.setComponent(<Stock setComponent={props.setComponent} setUnderlinedButton={props.setUnderlinedButton} />)
     else if (page === "critical analysis")
-      props.setComponent(<CriticalAnalysis  setComponent={props.setComponent} setUnderlinedButton={props.setUnderlinedButton} />)
+      props.setComponent(<CriticalAnalysis setComponent={props.setComponent} setUnderlinedButton={props.setUnderlinedButton} />)
     else if (page === "watch list")
       props.setComponent(<WatchList setComponent={props.setComponent} setUnderlinedButton={props.setUnderlinedButton} />)
     props.setUnderlinedButton("Stocks");
@@ -145,9 +153,9 @@ function NavBar(props) {
     <div className={classes.root}>
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar className={classes.toolbar}>
-          <div style={{display:"flex"}}>
+          <div style={{ display: "flex" }}>
             <img style={{ width: "70px" }} src={`${process.env.PUBLIC_URL}/images/logged_out/pgr_logo.png`} alt="google map" />
-            <GroupDropDown/>
+            <GroupDropDown />
           </div>
           <div>
             <Hidden mdUp>
@@ -245,8 +253,23 @@ function NavBar(props) {
                     >
                       <ProfileModal />
 
+                      <StyledMenuItem onClick={() => setOpenProfilePicModal(true)}>
+                        <ListItemIcon>
+                          <PhotoLibraryIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText primary="Upload/Change Pic" />
+                      </StyledMenuItem>
+
                       <ReferralModal />
 
+                      <StyledMenuItem onClick={() => setOpenChangePasswordModal(true)}>
+                        <ListItemIcon>
+                          <LockOpenIcon fontSize="small" />
+                        </ListItemIcon>
+                        <ListItemText primary="Change Password" />
+                      </StyledMenuItem>
+
+                      <hr />
                       <StyledMenuItem onClick={handleLogOut}>
                         <ListItemIcon>
                           <PlaylistAddCheckIcon fontSize="small" />
@@ -285,6 +308,17 @@ function NavBar(props) {
         setComponent={props.SetComponent}
         handleLogOut={handleLogOut}
       />
+
+      <UploadProfilePicModal
+        open={openProfilePicModal}
+        setOpen={setOpenProfilePicModal}
+      />
+
+      <ChangePasswordModal 
+        open={openChangePasswordModal}
+        setOpen={setOpenChangePasswordModal}
+      />
+
     </div>
   );
 }

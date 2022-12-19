@@ -110,13 +110,6 @@ export default function ReferralModal() {
             <ListItemText primary="My Referrals" onClick={() => handleOpenReferralModal()} />
         </StyledMenuItem>
 
-        <ReferralEmailModal
-            open = {openReferralEmailModal}
-            setOpen = {setOpenReferralEmailModal}
-            openReferralModal = {open}
-            setOpenReferralModal = {setOpen}
-        />
-
         <Dialog
             fullScreen={fullScreen}
             open={open}
@@ -176,5 +169,12 @@ export default function ReferralModal() {
                 </div>
             </div>
         </Dialog>
+
+        <ReferralEmailModal
+            open = {openReferralEmailModal}
+            setOpen = {setOpenReferralEmailModal}
+            openReferralModal = {open}
+            setOpenReferralModal = {setOpen}
+        />
     </>
 }

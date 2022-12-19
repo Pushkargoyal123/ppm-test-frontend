@@ -4,16 +4,11 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from '@material-ui/pickers';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Input from '@material-ui/core/Input';
 import InputLabel from '@material-ui/core/InputLabel';
-import DateFnsUtils from '@date-io/date-fns';
 import { IconButton, Button, TextField, Grid } from '@material-ui/core';
 import { toast } from 'react-toastify';
 import Swal from "sweetalert2";
@@ -95,6 +90,12 @@ export default function RegistrationModal(props) {
     }
   }
 
+  const getMaxDate = () => {
+    let date = new Date();
+    date.setFullYear(date.getFullYear() - 18);
+    return date.toISOString().split('T')[0];
+  }
+
   const checkReferral = async (referPersonEmail) => {
     const isMail = history.location.pathname.split("/")
     const verify = isMail[isMail.length - 2];
@@ -104,8 +105,7 @@ export default function RegistrationModal(props) {
         email: userEmail,
         referPersonEmail: referPersonEmail
       }
-      const result = await postData("referral/refer", body);
-      console.log(result);
+      await postData("referral/refer", body);
     }
   }
 
@@ -328,7 +328,7 @@ export default function RegistrationModal(props) {
 
       <Grid container style={{ margin: "10px 0px" }}>
         <Grid sm={6}>
-          <FormControl style={{ width: 300 }} variant="outlined" className={classes.formControl}>
+          <FormControl style={{ width: 300, margin:0 }} variant="outlined" className={classes.formControl}>
             <InputLabel style={{ color: registerWithError ? "red" : null }} htmlFor="outlined-age-native-simple">Register With</InputLabel>
             <Select
               native
@@ -355,7 +355,20 @@ export default function RegistrationModal(props) {
           </FormControl>
         </Grid>
         <Grid sm={6}>
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <TextField 
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            type='date' 
+            id="outlined-basic" 
+            label="Date of Birth" 
+            variant="outlined" 
+            InputLabelProps={{ shrink: true }}
+            InputProps={{inputProps: { max: getMaxDate()} }}
+            error={selectedDateError}
+            helperText={selectedDateError}
+            style={{ width: 300 }}
+          />
+          {/* <MuiPickersUtilsProvider utils={DateFnsUtils}>
             <KeyboardDatePicker
               disableToolbar
               variant="inline"
@@ -371,7 +384,7 @@ export default function RegistrationModal(props) {
                 'aria-label': 'change date',
               }}
             />
-          </MuiPickersUtilsProvider>
+          </MuiPickersUtilsProvider> */}
         </Grid>
       </Grid>
 

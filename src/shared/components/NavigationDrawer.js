@@ -189,8 +189,8 @@ function NavigationDrawer(props) {
       </div>
       <div style={{ margin: 20 }}><TextField autoComplete="off" onChange={(event) => { setSerialNumber(event.target.value) }} placeholder="ex. 12345678" id="outlined-ba" label="Serial Number" variant="outlined" style={{ width: 350 }} /></div>
       <div style={{ display: "flex", justifyContent: "space-around" }}>
-        <Button onClick={() => alert("You entered " + serialNumber)} color="primary" style={{ margin: 20 }} variant="contained">Submit</Button>
-        <Button onClick={() => setOpenModal(false)} color="primary" style={{ margin: 20 }} variant="contained">Cancel</Button>
+        <Button onClick={() => alert("You entered " + serialNumber)} color="secondary" style={{ margin: 20 }} variant="contained">Submit</Button>
+        <Button onClick={() => setOpenModal(false)} color="secondary" style={{ margin: 20 }} variant="contained">Cancel</Button>
       </div>
     </div>
   )
@@ -225,7 +225,7 @@ function NavigationDrawer(props) {
         >
           <ListItemIcon className={classes.closeIcon}>
             <IconButton onClick={onClose} aria-label="Close Navigation">
-              <CloseIcon color="primary" />
+              <CloseIcon color="secondary" />
             </IconButton>
           </ListItemIcon>
         </ListItem>
