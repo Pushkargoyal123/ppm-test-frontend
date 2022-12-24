@@ -143,6 +143,7 @@ export default function ProfileModal() {
                 temporaryUserData.phone = whatsappNumber;
                 dispatch({ type: "DEL_USER", payload: [userData.email] })
                 dispatch({ type: "ADD_USER", payload: [email, temporaryUserData] })
+                localStorage.setItem('data', JSON.stringify(temporaryUserData));
                 Swal.fire({
                     icon: 'success',
                     title: 'Updated',
