@@ -23,6 +23,7 @@ import AssessmentIcon from '@material-ui/icons/Assessment';
 import ShowChartIcon from '@material-ui/icons/ShowChart';
 import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
 import { useDispatch } from "react-redux";
+import Swal from "sweetalert2";
 
 // internal dependecies
 import Stock from "../stocks/Stock";
@@ -110,8 +111,29 @@ function NavBar(props) {
   var dispatch = useDispatch();
 
   useEffect(function () {
-    setUser(JSON.parse(sessionStorage.getItem("data")));
-    dispatch({ type: "ADD_USER", payload: [JSON.parse(sessionStorage.getItem("data")).email, JSON.parse(sessionStorage.getItem("data"))] })
+    const userData = JSON.parse(localStorage.getItem("data"));
+    if (userData) {
+      setUser(userData);
+      dispatch({ type: "ADD_USER", payload: [userData.email, userData] })
+      const clickedEvent = JSON.parse(localStorage.getItem('clickedEvent'));
+      if (clickedEvent) {
+        sessionStorage.setItem("clickedEvent", JSON.stringify(clickedEvent));
+        localStorage.removeItem('clickedEvent');
+        Swal.fire(
+          "Congratulations",
+          `You have participated in ${clickedEvent.title} and now you can purchase these stocks to get the maximum prizes`,
+          "success"
+        )
+        props.setComponent(<Stock
+          setUnderlinedButton={props.setUnderlinedButton}
+          setComponent={props.setComponent}
+        />)
+        props.setUnderlinedButton("Stock");
+      }
+    }else{
+      history.replace('/')
+    }
+    // eslint-disable-next-line
   }, [dispatch])
 
   const handleLogOut = async () => {
@@ -119,6 +141,7 @@ function NavBar(props) {
     await postData("user/userlogout", form);
     dispatch({ type: "DEL_USER", payload: [user.email] })
     localStorage.removeItem("token");
+    localStorage.removeItem('data');
     history.replace({ pathname: "/" });
   }
 
@@ -314,7 +337,7 @@ function NavBar(props) {
         setOpen={setOpenProfilePicModal}
       />
 
-      <ChangePasswordModal 
+      <ChangePasswordModal
         open={openChangePasswordModal}
         setOpen={setOpenChangePasswordModal}
       />

@@ -169,8 +169,8 @@ export default function MemberShip(props) {
     }
 
     const handleOpenModal = async (planCharge, month, index) => {
-        const data = await getData("plans/hasPlan?ppmUserGroupId=" + userGroupId.userGroup);
         if (userData) {
+            const data = await getData("plans/hasPlan?ppmUserGroupId=" + userGroupId.userGroup);
             if (data.success && data.data) {
                 Swal.fire({
                     icon: 'info',
@@ -241,19 +241,19 @@ export default function MemberShip(props) {
                             <TableRow>
                                 <TableCell style={{ fontSize: 18 }}>Feature Name</TableCell>
                                 {
-                                    plans.map(function (plan) {
-                                        return <TableCell style={{ fontSize: 18, textAlign: "center" }}>{plan.planName}</TableCell>
+                                    plans.map(function (plan, index) {
+                                        return <TableCell key={index} style={{ fontSize: 18, textAlign: "center" }}>{plan.planName}</TableCell>
                                     })
                                 }
                             </TableRow>
                         </TableHead>
                         {
-                            featurePlans.map(function (feature) {
-                                return <TableRow style={{ backgroundColor: "#ecf0f1" }} >
+                            featurePlans.map(function (feature, index) {
+                                return <TableRow key={index} style={{ backgroundColor: "#ecf0f1" }} >
                                     <TableCell style={{ fontSize: 18 }}>{feature.featureName}</TableCell>
                                     {
-                                        feature.ppm_subscription_plan_features.map(function (planFeature) {
-                                            return <TableCell style={{ fontSize: 18, textAlign: "center" }}>
+                                        feature.ppm_subscription_plan_features.map(function (planFeature, index) {
+                                            return <TableCell key={index} style={{ fontSize: 18, textAlign: "center" }}>
                                                 {
                                                     planFeature.featureValue === "YES" ?
                                                         <CheckCircleOutlineRoundedIcon className="tick-icon" /> :
@@ -269,12 +269,12 @@ export default function MemberShip(props) {
                         }
                         <Divider style={{ width: "258%" }} /> <Divider style={{ width: "258%" }} />
                         {
-                            planChargeList.map(function (month) {
-                                return <TableRow >
+                            planChargeList.map(function (month, index) {
+                                return <TableRow key={index}>
                                     <TableCell style={{ fontSize: 18 }}>{month.monthValue} Months</TableCell>
                                     {
                                         month.ppm_subscription_monthly_plan_charges.map(function (planCharge, index) {
-                                            return <TableCell style={{ fontSize: 18 }}>
+                                            return <TableCell key={index} style={{ fontSize: 18 }}>
                                                 {
                                                     <div style={{ textAlign: "center" }}>
                                                         <span> <s style={{ color: "grey" }}> ₹{planCharge.strikePrice}/- </s></span>

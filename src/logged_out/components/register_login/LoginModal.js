@@ -120,9 +120,8 @@ export default function LoginModal(props) {
                     text: 'Login Successfully',
                 })
                 dispatch({ type: "ADD_USER", payload: [props.loginEmail, data.data] })
-                sessionStorage.removeItem("groupId")
                 localStorage.setItem("token", data.data.token);
-                sessionStorage.setItem("data", JSON.stringify(data.data));
+                localStorage.setItem("data", JSON.stringify(data.data));
                 history.replace({ pathname: "/c/dashboard" }, { data });
             }
             else {

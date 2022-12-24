@@ -12,7 +12,6 @@ import { postData } from "../../service/service";
 import ViewPrizeDistribution from "./ViewPrizeDistribution";
 import DreamNiftyInfo from "./DreamNiftyInfo";
 import CalledModal from "../../service/CalledModal";
-import Stock from "../../logged_in/components/stocks/Stock";
 
 const useStyles = makeStyles((theme) => ({
     blogContentWrapper: {
@@ -69,10 +68,6 @@ export default function DreamNifty(props) {
         script.src = "https://checkout.razorpay.com/v1/checkout.js";
         script.async = true;
         document.body.appendChild(script);
-    }, [])
-
-    useEffect(function(){
-        sessionStorage.removeItem("clickedEvent");
     }, [])
 
     const options = {
@@ -240,18 +235,9 @@ export default function DreamNifty(props) {
     }
 
     const handleViewEvent = (row) => {
+        window.open(window.location.href, '_blank');
+        localStorage.setItem('clickedEvent', JSON.stringify(row));
         setClickedEvent(row);
-        sessionStorage.setItem("clickedEvent", JSON.stringify(row));
-        Swal.fire(
-            "Congratulations", 
-            `You have participated in ${row.title} and now you can purchase these stocks to get the maximum prizes`,
-            "success"
-        )
-        props.setComponent(<Stock
-            setUnderlinedButton={props.setUnderlinedButton}
-            setComponent={props.setComponent}
-          />)
-          props.setUnderlinedButton("Stock");
     }
 
     return (<Box

@@ -21,7 +21,7 @@ export default function GroupDropDown(props) {
         const groupList = async () => {
             const data = await getData("group/fetchALLGroupsByUserId");
             if (data) {
-                if (data.data.length && data.data[0].ppm_group.value) {
+                if (data.data && data.data.length && data.data[0].ppm_group.value) {
                     setListGroup(data.data);
                     if (!sessionStorage.getItem("groupId") || sessionStorage.getItem("groupId") === "".trim()) {
                         dispatch({ type: "SET_GROUP", payload: [data.data[0].ppm_group.id, {group: data.data[0].ppm_group.id}] })
@@ -50,10 +50,12 @@ export default function GroupDropDown(props) {
         }
     }
 
+    const eventInfo = JSON.parse(sessionStorage.getItem('clickedEvent'));
+
     return <Grid container>
         <Grid style={{ marginLeft: 20, display:"flex", alignItems:"center" }}>
             {
-                listGroup.length ?
+                listGroup.length && !eventInfo ?
                     listGroup[0] && listGroup.length === 1 ?
                         <div style={{ fontSize: 20, fontWeight: "bold", textTransform: "uppercase", color:"black" }}>{listGroup[0].ppm_group.name + "-" + listGroup[0].ppm_group.value}</div>
                         :
