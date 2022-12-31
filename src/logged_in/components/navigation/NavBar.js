@@ -139,11 +139,11 @@ function NavBar(props) {
   const handleLogOut = async () => {
     const form = { email: user.email, UserId: user.id };
     await postData("user/userlogout", form);
+    history.replace({ pathname: "/" });
     dispatch({ type: "DEL_USER", payload: [user.email] })
     localStorage.removeItem("token");
     localStorage.removeItem('data');
-    history.replace({ pathname: "/" });
-  }
+  } 
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);

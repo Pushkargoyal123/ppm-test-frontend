@@ -44,7 +44,7 @@ export default function LeaderBoard(props) {
     const [message, setMessage] = useState(false);
 
     const user = useSelector(state => state.user)
-    const userId = Object.values(user)[0].id;
+    const userId = Object.values(user)[0];
     let group = useSelector(state => state.group)
     let groupId = Object.values(group)[0];
     useSelector(state=>state)
@@ -213,7 +213,7 @@ export default function LeaderBoard(props) {
                             }}
                             options={{
                                 rowStyle: (rowData) => {
-                                    if (rowData.id === userId)
+                                    if (rowData.id === userId.id)
                                         return {
                                             fontWeight: 900,
                                             backgroundColor: "#c8d6e5"

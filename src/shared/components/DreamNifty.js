@@ -357,7 +357,7 @@ export default function DreamNifty(props) {
                                                             >
                                                                 View
                                                             </Button> :
-                                                            getTodayDate() >= item.startDate ?
+                                                            getTodayDate() >= item.startDate && userData ? 
                                                                 <div></div> :
                                                                 <Button
                                                                     style={{ marginTop: 10, background: color, color: "white", marginLeft: "auto" }}
