@@ -10,6 +10,7 @@ import {
 } from "@material-ui/core";
 import KeyboardBackspaceRoundedIcon from '@material-ui/icons/KeyboardBackspaceRounded';
 import InfoIcon from '@material-ui/icons/Info';
+import { useSelector } from "react-redux";
 
 import Portfolio from "./Portfolio";
 import { getData, postData } from "../../../service/service";
@@ -54,15 +55,21 @@ export default function CompanyDetail(props) {
     const [totalBuyPrice, setTotalBuyPrice]= useState(0);
     const [totalSellPrice, setTotalSellPrice]= useState(0);
 
+    let group = useSelector(state => state.group)
+    let groupId = Object.values(group)[0];
+    useSelector((state)=>state);
+
+    const eventInfo = JSON.parse(sessionStorage.getItem('clickedEvent'));
+
     useEffect(() => {
         setMessage(false);
         const fetchcompanyStockBuySell = async () => {
             let result;
             if(eventInfo){
-                const body = {companyCode:props.data.companyCode}
+                const body = {companyCode:props.data.companyCode, ppmDreamNiftyId: eventInfo.id};
                 result = await postData("dreamNifty/portfolio/fetchcompanydetail", body);
             }else{
-                result = await getData("stock/fetchcompanydetail?companyCode=" + props.data.companyCode);
+                result = await getData("stock/fetchcompanydetail?companyCode=" + props.data.companyCode + "&ppmGroupId=" + groupId.group);
             }
             let buyStockSum=0, sellStockSum=0, buyStockPriceSum=0, sellStockPriceSum=0;
             if (result.success) {
@@ -90,9 +97,7 @@ export default function CompanyDetail(props) {
         }
         fetchcompanyStockBuySell();
         // eslint-disable-next-line
-    }, [props.data.companyCode])
-
-    const eventInfo = JSON.parse(sessionStorage.getItem('clickedEvent'));
+    }, [props.data.companyCode, groupId.group])
 
     const handleBuySellStocks = ()=>{
         props.setComponent(<StockData 
