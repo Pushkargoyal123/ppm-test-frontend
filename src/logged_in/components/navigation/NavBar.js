@@ -32,7 +32,7 @@ import ProfileModal from "../Modals/ProfileModal";
 import ReferralModal from "../Modals/ReferralModal";
 import UploadProfilePicModal from "../Modals/UploadProfilePicModal";
 import ChangePasswordModal from "../Modals/ChangePasswordModal";
-import { loggedIn_menuItems } from "../../../config"
+import { loggedIn_menuItems, ServerURL } from "../../../config"
 import { postData } from "../../../service/service";
 import WatchList from "../stocks/WatchList";
 import GroupDropDown from "../GroupDropDown";
@@ -106,6 +106,7 @@ function NavBar(props) {
   const [user, setUser] = useState(null);
   const [openProfilePicModal, setOpenProfilePicModal] = useState(false);
   const [openChangePasswordModal, setOpenChangePasswordModal] = useState(false);
+  const [image, setImage] = useState("");
 
   const history = useHistory();
   var dispatch = useDispatch();
@@ -113,6 +114,7 @@ function NavBar(props) {
   useEffect(function () {
     const userData = JSON.parse(localStorage.getItem("data"));
     if (userData) {
+      fetchUserImage();
       setUser(userData);
       dispatch({ type: "ADD_USER", payload: [userData.email, userData] })
       const clickedEvent = JSON.parse(localStorage.getItem('clickedEvent'));
@@ -135,6 +137,13 @@ function NavBar(props) {
     }
     // eslint-disable-next-line
   }, [dispatch])
+
+  const fetchUserImage = async () => {
+    const data = await postData('user/fetchUserImage', {});
+    if (data.success) {
+        setImage(data.data.profilePhoto);
+    }
+}
 
   const handleLogOut = async () => {
     const form = { email: user.email, UserId: user.id };
@@ -251,20 +260,19 @@ function NavBar(props) {
                 }
                 else if (element.profile) {
                   return (<>
-                    <button style={{ border: "none" }}>
+                    <button style={{ border: "none", verticalAlign:'middle' }}>
                       <Avatar
                         color="secondary"
                         size="large"
                         onClick={handleProfileClick}
-                        key={element.link}
-                        classes={{ text: classes.menuButtonText }}
+                        // classes={{ text: classes.menuButtonText }}
                         style={{
                           textDecoration: props.underlinedButton === element.name ? "underline" : "",
                           textTransform: "uppercase",
                           cursor: "pointer"
                         }}
+                        src={user ?  `${ServerURL}/images/${image}` : "/images/logged_in/samplePic.jpg"}
                       >
-                        {user ? user.email[0] : "H"}
                       </Avatar>
                     </button>
                     <StyledMenu

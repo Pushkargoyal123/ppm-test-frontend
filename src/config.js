@@ -14,6 +14,8 @@ import {
   BrandingWatermark
 } from "@material-ui/icons";
 
+const ServerURL = 'http://localhost:7080';
+
 
 const timeDuration = [
   {
@@ -150,5 +152,6 @@ const loggedIn_menuItems = [
 export {
   timeDuration,
   loggedOut_menuItems,
-  loggedIn_menuItems
+  loggedIn_menuItems,
+  ServerURL
 }

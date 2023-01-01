@@ -1,7 +1,12 @@
 // external dependecies
 import { Dialog, Grid, Button, useMediaQuery } from "@material-ui/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTheme } from '@material-ui/core/styles';
+import Swal from "sweetalert2";
+
+// internal dependecies
+import { postData, postDataAndImage } from "../../../service/service";
+import {ServerURL} from '../../../config';
 
 function getModalStyle() {
     return {
@@ -27,6 +32,49 @@ export default function UploadProfilePicModal(props) {
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     const [modalStyle] = useState(getModalStyle);
+    const [picture, setPicture] = useState({ fileName: "", bytes: "" });
+    const [image, setImage] = useState('');
+
+    useEffect(function () {
+        fetchUserImage();
+    }, [props.open])
+
+    const fetchUserImage = async () => {
+        const data = await postData('user/fetchUserImage', {});
+        if (data.success) {
+            setImage(data.data.profilePhoto);
+        }
+    }
+
+    function handlePicture(event) {
+        if (event.target.files[0]) {
+            setPicture({
+                fileName: URL.createObjectURL(event.target.files[0]),
+                bytes: event.target.files[0]
+            });
+        }
+    }
+
+    const uploadPicture = async () => {
+        var formData = new FormData();
+        formData.append("fileName", picture.fileName);
+        formData.append("profilePhoto", picture.bytes);
+        const data = await postDataAndImage('user/uploadPicture', formData);
+        props.setOpen(false);
+        if (data.success) {
+            Swal.fire({
+                title: 'success',
+                text: 'Profile Pic uploaded successfully',
+                icon: 'success'
+            })
+        } else {
+            Swal.fire({
+                title: 'error',
+                text: 'OOPS! something went wrong',
+                icon: 'error'
+            })
+        }
+    }
 
     return <Dialog
         fullScreen={fullScreen}
@@ -45,15 +93,39 @@ export default function UploadProfilePicModal(props) {
             <div style={{ margin: "0 10px" }}>
                 <Grid container>
                     <Grid item sm={6}>
-                        <img src="/images/logged_in/samplePic.jpg" alt="sample-profile-pic" height='250' />
+                        <img src={image && image !== '' ?
+                            picture.fileName && picture.fileName !== '' ?
+                                picture.fileName :
+                                `${ServerURL}/images/${image}` :
+                            "/images/logged_in/samplePic.jpg"
+                        }
+                            alt="sample-profile-pic"
+                            height='250'
+                        />
                     </Grid>
-                    <Grid item sm={6}>
-                        <input accept="image/*" style={{ display: 'none' }} id="icon-button-file" type="file" />
+                    <Grid item sm={6} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+                        <input
+                            accept="image/*"
+                            style={{ display: 'none' }}
+                            id="icon-button-file"
+                            type="file"
+                            onChange={handlePicture}
+                        />
                         <label htmlFor="icon-button-file">
-                            <Button variant="contained" color="secondary" component="span">
+                            <Button color="primary" variant="contained" component="span">
                                 Upload
                             </Button>
                         </label>
+                        <div style={{ marginTop: 20 }}>
+                            <Button
+                                color="secondary"
+                                disabled={picture.fileName !== '' ? false : true}
+                                variant="contained"
+                                onClick={uploadPicture}
+                            >
+                                Submit
+                            </Button>
+                        </div>
                     </Grid>
                 </Grid>
             </div>

@@ -1,6 +1,7 @@
 
 // const ServerURL="http://localhost:7080/api/";
 // const ServerURL="https://test.praedicofinance.com/api/"
+const axios = require('axios');
 
 async function postData(url, body){
     try{
@@ -16,6 +17,26 @@ async function postData(url, body){
             }
         );
         const result = await response.json();
+        return result;
+    }
+    catch(err){
+        console.log(err);
+        return(err);
+    }
+}
+
+async function postDataAndImage(url, body){
+    try{
+        const response = await axios.post(process.env.React_App_SERVERURL + url ,
+            body, 
+            {
+                headers: { 
+                    "Content-Type": "multipart/form-data",
+                    "Authorization" : "Bearer "+localStorage.getItem("token")
+                }, 
+            }
+        );
+        const result = await response.data;
         return result;
     }
     catch(err){
@@ -43,4 +64,4 @@ async function getData(url){
 }
 
 
-export { postData , getData};
+export { postData , getData, postDataAndImage};
