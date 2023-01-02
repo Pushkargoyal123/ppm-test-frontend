@@ -5,7 +5,7 @@ import { useTheme } from '@material-ui/core/styles';
 import Swal from "sweetalert2";
 
 // internal dependecies
-import { postData, postDataAndImage } from "../../../service/service";
+import { postDataAndImage } from "../../../service/service";
 import {ServerURL} from '../../../config';
 
 function getModalStyle() {
@@ -33,18 +33,10 @@ export default function UploadProfilePicModal(props) {
 
     const [modalStyle] = useState(getModalStyle);
     const [picture, setPicture] = useState({ fileName: "", bytes: "" });
-    const [image, setImage] = useState('');
 
     useEffect(function () {
-        fetchUserImage();
-    }, [props.open])
-
-    const fetchUserImage = async () => {
-        const data = await postData('user/fetchUserImage', {});
-        if (data.success) {
-            setImage(data.data.profilePhoto);
-        }
-    }
+        props.fetchUserImage();
+    }, [props.open, props]);
 
     function handlePicture(event) {
         if (event.target.files[0]) {
@@ -66,7 +58,8 @@ export default function UploadProfilePicModal(props) {
                 title: 'success',
                 text: 'Profile Pic uploaded successfully',
                 icon: 'success'
-            })
+            });
+            props.fetchUserImage();
         } else {
             Swal.fire({
                 title: 'error',
@@ -93,10 +86,10 @@ export default function UploadProfilePicModal(props) {
             <div style={{ margin: "0 10px" }}>
                 <Grid container>
                     <Grid item sm={6}>
-                        <img src={image && image !== '' ?
+                        <img src={props.image && props.image !== '' ?
                             picture.fileName && picture.fileName !== '' ?
                                 picture.fileName :
-                                `${ServerURL}/images/${image}` :
+                                `${ServerURL}/images/${props.image}` :
                             "/images/logged_in/samplePic.jpg"
                         }
                             alt="sample-profile-pic"

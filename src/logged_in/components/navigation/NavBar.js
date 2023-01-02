@@ -343,6 +343,9 @@ function NavBar(props) {
       <UploadProfilePicModal
         open={openProfilePicModal}
         setOpen={setOpenProfilePicModal}
+        fetchUserImage={fetchUserImage}
+        image={image}
+        setImage={setImage}
       />
 
       <ChangePasswordModal
