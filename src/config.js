@@ -14,7 +14,8 @@ import {
   BrandingWatermark
 } from "@material-ui/icons";
 
-const ServerURL = 'http://localhost:7080';
+// const ServerURL = 'http://localhost:7080';
+const ServerURL = 'https://test.praedicofinance.com';
 
 
 const timeDuration = [
