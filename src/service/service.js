@@ -5,7 +5,7 @@ const axios = require('axios');
 
 async function postData(url, body){
     try{
-        const response = await fetch(process.env.React_App_SERVERURL + url , 
+        const response = await fetch(process.env.React_App_SERVERURL + '/api/' + url , 
             {   
                 method: "POST", 
                 mode: "cors", 
@@ -27,7 +27,7 @@ async function postData(url, body){
 
 async function postDataAndImage(url, body){
     try{
-        const response = await axios.post(process.env.React_App_SERVERURL + url ,
+        const response = await axios.post(process.env.React_App_SERVERURL + '/api/' + url ,
             body, 
             {
                 headers: { 
@@ -47,7 +47,7 @@ async function postDataAndImage(url, body){
 
 async function getData(url){
     try{
-        const response = await fetch(process.env.React_App_SERVERURL + url , 
+        const response = await fetch(process.env.React_App_SERVERURL + '/api/' + url , 
             {   
                 headers: { 
                     "Authorization" : "Bearer "+localStorage.getItem("token")

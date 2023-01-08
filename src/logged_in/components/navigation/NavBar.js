@@ -32,7 +32,7 @@ import ProfileModal from "../Modals/ProfileModal";
 import ReferralModal from "../Modals/ReferralModal";
 import UploadProfilePicModal from "../Modals/UploadProfilePicModal";
 import ChangePasswordModal from "../Modals/ChangePasswordModal";
-import { loggedIn_menuItems, ServerURL } from "../../../config"
+import { loggedIn_menuItems } from "../../../config"
 import { postData } from "../../../service/service";
 import WatchList from "../stocks/WatchList";
 import GroupDropDown from "../GroupDropDown";
@@ -271,7 +271,7 @@ function NavBar(props) {
                           textTransform: "uppercase",
                           cursor: "pointer"
                         }}
-                        src={user ?  `${ServerURL}/images/${image}` : "/images/logged_in/samplePic.jpg"}
+                        src={user ?  `${process.env.React_App_SERVERURL}/images/${image}` : "/images/logged_in/samplePic.jpg"}
                       >
                       </Avatar>
                     </button>

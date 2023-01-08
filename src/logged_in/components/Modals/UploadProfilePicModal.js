@@ -6,7 +6,6 @@ import Swal from "sweetalert2";
 
 // internal dependecies
 import { postDataAndImage } from "../../../service/service";
-import {ServerURL} from '../../../config';
 
 function getModalStyle() {
     return {
@@ -89,7 +88,7 @@ export default function UploadProfilePicModal(props) {
                         <img src={props.image && props.image !== '' ?
                             picture.fileName && picture.fileName !== '' ?
                                 picture.fileName :
-                                `${ServerURL}/images/${props.image}` :
+                                `${process.env.React_App_SERVERURL}/images/${props.image}` :
                             "/images/logged_in/samplePic.jpg"
                         }
                             alt="sample-profile-pic"

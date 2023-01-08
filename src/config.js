@@ -14,10 +14,6 @@ import {
   BrandingWatermark
 } from "@material-ui/icons";
 
-// const ServerURL = 'http://localhost:7080';
-const ServerURL = 'https://test.praedicofinance.com';
-
-
 const timeDuration = [
   {
     uniq: "D",
@@ -153,6 +149,5 @@ const loggedIn_menuItems = [
 export {
   timeDuration,
   loggedOut_menuItems,
-  loggedIn_menuItems,
-  ServerURL
+  loggedIn_menuItems
 }
