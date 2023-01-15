@@ -23,7 +23,6 @@ import AssessmentIcon from '@material-ui/icons/Assessment';
 import ShowChartIcon from '@material-ui/icons/ShowChart';
 import PhotoLibraryIcon from '@material-ui/icons/PhotoLibrary';
 import { useDispatch } from "react-redux";
-import Swal from "sweetalert2";
 
 // internal dependecies
 import Stock from "../stocks/Stock";
@@ -121,18 +120,13 @@ function NavBar(props) {
       if (clickedEvent) {
         sessionStorage.setItem("clickedEvent", JSON.stringify(clickedEvent));
         localStorage.removeItem('clickedEvent');
-        Swal.fire(
-          "Congratulations",
-          `You have participated in ${clickedEvent.title} and now you can purchase these stocks to get the maximum prizes`,
-          "success"
-        )
         props.setComponent(<Stock
           setUnderlinedButton={props.setUnderlinedButton}
           setComponent={props.setComponent}
         />)
         props.setUnderlinedButton("Stock");
       }
-    }else{
+    } else {
       history.replace('/')
     }
     // eslint-disable-next-line
@@ -141,18 +135,18 @@ function NavBar(props) {
   const fetchUserImage = async () => {
     const data = await postData('user/fetchUserImage', {});
     if (data.success) {
-        setImage(data.data.profilePhoto);
+      setImage(data.data.profilePhoto);
     }
-}
+  }
 
   const handleLogOut = async () => {
     const form = { email: user.email, UserId: user.id };
     await postData("user/userlogout", form);
     history.replace({ pathname: "/" });
-    dispatch({ type: "DEL_USER", payload: [user.email] })
-    localStorage.removeItem("token");
+    dispatch({ type: "DEL_USER", payload: [user.email] });
     localStorage.removeItem('data');
-  } 
+    sessionStorage.removeItem("clickedEvent");
+  }
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -260,7 +254,7 @@ function NavBar(props) {
                 }
                 else if (element.profile) {
                   return (<>
-                    <button style={{ border: "none", verticalAlign:'middle' }}>
+                    <button style={{ border: "none", verticalAlign: 'middle' }}>
                       <Avatar
                         color="secondary"
                         size="large"
@@ -271,7 +265,7 @@ function NavBar(props) {
                           textTransform: "uppercase",
                           cursor: "pointer"
                         }}
-                        src={user ?  `${process.env.React_App_SERVERURL}/images/${image}` : "/images/logged_in/samplePic.jpg"}
+                        src={user ? `${process.env.React_App_SERVERURL}/images/${image}` : "/images/logged_in/samplePic.jpg"}
                       >
                       </Avatar>
                     </button>

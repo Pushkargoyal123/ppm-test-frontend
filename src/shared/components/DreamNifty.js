@@ -68,7 +68,7 @@ export default function DreamNifty(props) {
         script.src = "https://checkout.razorpay.com/v1/checkout.js";
         script.async = true;
         document.body.appendChild(script);
-    }, [])
+    }, [userData])
 
     const options = {
         key: "rzp_test_GQ6XaPC6gMPNwH",
@@ -252,16 +252,17 @@ export default function DreamNifty(props) {
                 userData ?
                     <div style={{ textAlign: "center" }}>
                         <Button
-                            color="secondary"
                             variant="contained"
-                            style={{ margin: "0px 10px 15px 0px" }}
+                            style={{ margin: "0px 10px 15px 0px",background: '#4829B2', color: 'white', opacity: !isMyEventsClicked ? 0.7 : 1 }}
+                            disabled = {!isMyEventsClicked}
                             onClick={fetchAllEvents}
                         >All Events
                         </Button>
                         <Button
                             variant="contained"
-                            style={{ margin: "0px 0px 15px 10px", background: color, color: "white" }}
+                            style={{ margin: "0px 0px 15px 10px", background: color, color: "white", opacity: !isMyEventsClicked ? 1 : 0.7 }}
                             onClick={handleMyEvents}
+                            disabled={isMyEventsClicked}
                         >My Events
                         </Button>
                     </div> :
@@ -277,7 +278,7 @@ export default function DreamNifty(props) {
                         {
                             eventList.length ?
                                 eventList.map(function (item, index) {
-                                    return <Grid key={index} item sm={4} style={{ margin: "auto", padding: 15, minWidth: 300 }}>
+                                    return <Grid key={index} item sm={4} style={{ margin: "auto", padding: 15, minWidth: 400 }}>
                                         <Card className="event-card">
                                             <CardContent>
                                                 <Typography

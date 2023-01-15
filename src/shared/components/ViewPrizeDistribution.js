@@ -20,7 +20,17 @@ export default function ViewPrizeDistribution(props) {
             const body = { ppmDreamNiftyId: props.clickedEvent.id };
             const data = await postData("dreamNifty/prize/prizeDistribution", body);
             if (data.success) {
-                setPrizeList(data.data);
+                let sum = 0;
+                const finalData = data.data.map(function (item, index) {
+                    sum += item.participant;
+                    if (index)
+                        item.members = (sum - item.participant) + " - " + sum;
+                    else
+                        item.members = " 1 - " + sum;
+                    item.prizePerMember = '₹' + Math.round(props.clickedEvent.totalRewardPrice * item.percentDistribution / 100 / item.participant);
+                    return item;
+                })
+                setPrizeList(finalData);
             }
         }
     }
@@ -50,7 +60,7 @@ export default function ViewPrizeDistribution(props) {
                 },
                 {
                     title: 'Prize Per Members',
-                    field: 'percentage',
+                    field: 'prizePerMember',
                     cellStyle: { textAlign: "center" },
                 },
                 {
@@ -70,7 +80,7 @@ export default function ViewPrizeDistribution(props) {
                     backgroundColor: "#D1D1D8",
                     textAlign: "center"
                 },
-                rowStyle: {height:50, fontWeight:600, fontSize:18, color:"green"}
+                rowStyle: { height: 50, fontWeight: 600, fontSize: 18 }
             }}
         />
 

@@ -3,6 +3,13 @@
 // const ServerURL="https://test.praedicofinance.com/api/"
 const axios = require('axios');
 
+const handleLogOut = () => {
+    localStorage.removeItem('data');
+    sessionStorage.removeItem("clickedEvent");
+    localStorage.removeItem('token');
+    window.location = '/';
+}
+
 async function postData(url, body){
     try{
         const response = await fetch(process.env.React_App_SERVERURL + '/api/' + url , 
@@ -16,11 +23,14 @@ async function postData(url, body){
                 body:JSON.stringify(body)
             }
         );
+        if(response.statusText === 'Unauthorized'){
+            handleLogOut();
+        }
         const result = await response.json();
         return result;
     }
     catch(err){
-        console.log(err);
+        console.log('errror',err);
         return(err);
     }
 }
@@ -36,11 +46,14 @@ async function postDataAndImage(url, body){
                 }, 
             }
         );
+        if(response.statusText === 'Unauthorized'){
+            handleLogOut();
+        }
         const result = await response.data;
         return result;
     }
     catch(err){
-        console.log(err);
+        console.log('errror',err);
         return(err);
     }
 }
@@ -54,11 +67,14 @@ async function getData(url){
                 }, 
             }
         );
+        if(response.statusText === 'Unauthorized'){
+            handleLogOut();
+        }
         const result = await response.json();
         return result;
     }
     catch(err){
-        console.log(err);
+        console.log('errror',err);
         return(err);
     }
 }
