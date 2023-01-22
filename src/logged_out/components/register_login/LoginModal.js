@@ -75,7 +75,7 @@ export default function LoginModal(props) {
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
     const fetchAllColleges = async () => {
-        const result = await getData("college/getAllCollegeNames");
+        const result = await getData("college/get/names");
         if (result.success) {
             setCollegeList(result.data);
         }

@@ -84,7 +84,7 @@ export default function RegistrationModal(props) {
   const [modalStyle] = React.useState(getModalStyle);
 
   const fetchAllColleges = async () => {
-    const result = await getData("college/getAllCollegeNames");
+    const result = await getData("college/get/names");
     if (result.success) {
       setCollegeList(result.data);
     }
