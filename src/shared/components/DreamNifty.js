@@ -358,7 +358,7 @@ export default function DreamNifty(props) {
                                                             >
                                                                 View
                                                             </Button> :
-                                                            getTodayDate() >= item.startDate && userData ? 
+                                                            getTodayDate() >= item.startDate && userData && item.ppm_dream_nifty_users.length >= item.maxParticipant ? 
                                                                 <div></div> :
                                                                 <Button
                                                                     style={{ marginTop: 10, background: color, color: "white", marginLeft: "auto" }}
