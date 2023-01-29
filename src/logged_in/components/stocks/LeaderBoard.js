@@ -46,7 +46,7 @@ export default function LeaderBoard(props) {
     const user = useSelector(state => state.user)
     const userId = Object.values(user)[0];
     let group = useSelector(state => state.group)
-    let groupId = Object.values(group)[0];
+    let groupId = Object.values(group)[0] ? Object.values(group)[0] : {};
     useSelector(state=>state)
 
     useEffect(function () {

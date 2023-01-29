@@ -40,7 +40,7 @@ export default function TransactionHistory(props) {
     const [message, setMessage] = useState(false);
 
     let group = useSelector(state => state.group)
-    let groupId = Object.values(group)[0];
+    let groupId = Object.values(group)[0] ? Object.values(group)[0] : {};
     useSelector((state) => state)
 
     useEffect(function () {

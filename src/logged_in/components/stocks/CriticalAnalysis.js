@@ -45,7 +45,7 @@ export default function CriticalAnalysis(props) {
 
     const user = useSelector(state => state.user);
     let group = useSelector(state => state.group)
-    let groupId = Object.values(group)[0];
+    let groupId = Object.values(group)[0] ? Object.values(group)[0] : {};
     useSelector(state=>state);
 
     useEffect(function () {
