@@ -97,7 +97,7 @@ export default function StockData(props) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   let group = useSelector(state => state.group)
-  let groupId = Object.values(group)[0];
+  let groupId = Object.values(group)[0] ? Object.values(group)[0] : {};
   useSelector((state) => state)
 
   useEffect(function () {
@@ -126,7 +126,7 @@ export default function StockData(props) {
   const eventInfo = JSON.parse(sessionStorage.getItem('clickedEvent'));
 
   const fetchActivePlan = async () => {
-    if (groupId.group !== "") {
+    if (groupId.group !== "" && groupId.group) {
       const data = await getData("plans/hasActivePlan?ppmGroupId=" + groupId.group);
       if (data.success && data.data.length) {
 
@@ -139,6 +139,14 @@ export default function StockData(props) {
         props.setComponent(<MemberShip groupId={groupId.group} setUserGroupId={props.setUserGroupId} setUnderlinedButton={props.setUnderlinedButton} setComponent={props.setComponent} />)
         props.setUnderlinedButton("Membership");
       }
+    } else {
+      Swal.fire({
+        title: "Group Status",
+        text: "Currently you are not present in any group please contact to administrator",
+        icon: "info"
+      })
+      props.setComponent(<MemberShip groupId={groupId.group} setUserGroupId={props.setUserGroupId} setUnderlinedButton={props.setUnderlinedButton} setComponent={props.setComponent} />)
+      props.setUnderlinedButton("Membership");
     }
   }
 

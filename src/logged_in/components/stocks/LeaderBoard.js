@@ -106,7 +106,7 @@ export default function LeaderBoard(props) {
     const eventInfo = JSON.parse(sessionStorage.getItem('clickedEvent'));
 
     const fetchActivePlan = async () => {
-        if (groupId.group !== "") {
+        if (groupId.group !== "" && groupId.group) {
             const data = await getData("plans/hasActivePlan?ppmGroupId=" + groupId.group);
             if (data.success && data.data.length) {
 
@@ -119,6 +119,12 @@ export default function LeaderBoard(props) {
                 props.setComponent(<MemberShip groupId={groupId.group} setGroupId={props.setGroupId} setUnderlinedButton={props.setUnderlinedButton} setComponent={props.setComponent} />)
                 props.setUnderlinedButton("Membership");
             }
+        }else{
+            Swal.fire({
+                title: "Group Status",
+                text: "Currently you are not present in any group please contact to administrator",
+                icon: "info"
+            })
         }
     }
 
