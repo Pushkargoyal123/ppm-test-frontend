@@ -40,7 +40,7 @@ export default function TransactionHistory(props) {
     const [message, setMessage] = useState(false);
 
     let group = useSelector(state => state.group)
-    let groupId = Object.values(group)[0];
+    let groupId = Object.values(group)[0] ? Object.values(group)[0] : {};
     useSelector((state) => state)
 
     useEffect(function () {
@@ -49,9 +49,9 @@ export default function TransactionHistory(props) {
             let resultportfolio;
             if (eventInfo) {
                 const body = { ppmDreamNiftyId: eventInfo.id }
-                resultportfolio = await postData("dreamNifty/portfolio/fetchusertransactionhistory", body)
+                resultportfolio = await postData("dreamNifty/portfolio/userTransactionHistory", body)
             } else {
-                resultportfolio = await getData("stock/fetchusertransactionhistory?ppmGroupId=" + groupId.group)
+                resultportfolio = await getData("stock/portfolio/history?ppmGroupId=" + groupId.group)
             }
             if (resultportfolio.success) {
                 setMessage(1)

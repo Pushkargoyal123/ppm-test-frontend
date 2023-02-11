@@ -97,14 +97,14 @@ export default function StockData(props) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
   let group = useSelector(state => state.group)
-  let groupId = Object.values(group)[0];
+  let groupId = Object.values(group)[0] ? Object.values(group)[0] : {};
   useSelector((state) => state)
 
   useEffect(function () {
     const fetchCompanyData = async () => {
 
       const body = { CompanyCode: props.data.CompanyCode }
-      const result = await postData("stock/getallcompanystockdetails", body);
+      const result = await postData("stock/company/details", body);
 
       if (!result.success) {
         result.reverse();
@@ -126,8 +126,8 @@ export default function StockData(props) {
   const eventInfo = JSON.parse(sessionStorage.getItem('clickedEvent'));
 
   const fetchActivePlan = async () => {
-    if (groupId.group !== "") {
-      const data = await getData("plans/hasActivePlan?ppmGroupId=" + groupId.group);
+    if (groupId.group !== "" && groupId.group) {
+      const data = await getData("subscription/user/hasActivePlan?ppmGroupId=" + groupId.group);
       if (data.success && data.data.length) {
 
       } else {
@@ -139,6 +139,14 @@ export default function StockData(props) {
         props.setComponent(<MemberShip groupId={groupId.group} setUserGroupId={props.setUserGroupId} setUnderlinedButton={props.setUnderlinedButton} setComponent={props.setComponent} />)
         props.setUnderlinedButton("Membership");
       }
+    } else {
+      Swal.fire({
+        title: "Group Status",
+        text: "Currently you are not present in any group please contact to administrator",
+        icon: "info"
+      })
+      props.setComponent(<MemberShip groupId={groupId.group} setUserGroupId={props.setUserGroupId} setUnderlinedButton={props.setUnderlinedButton} setComponent={props.setComponent} />)
+      props.setUnderlinedButton("Membership");
     }
   }
 
@@ -165,9 +173,9 @@ export default function StockData(props) {
     let result;
     if (eventInfo) {
       const body = { ppmDreamNiftyId: eventInfo.id }
-      result = await postData("dreamNifty/portfolio/findvirtualamountyuserid", body);
+      result = await postData("dreamNifty/portfolio/virtualAmountListByUserid", body);
     } else {
-      result = await getData("user/findvirtualamountyuserid?ppmGroupId=" + groupId.group);
+      result = await getData("user/VirtualAmountyUserid?ppmGroupId=" + groupId.group);
     }
     if (result.success) {
       setVirtualAmount(result.data.virtualAmount.toFixed(2));
@@ -188,7 +196,7 @@ export default function StockData(props) {
         companyName: props.data.CompanyName,
         ppmGroupId: groupId.group
       }
-      result = await postData("stock/fetchstockleft", body);
+      result = await postData("stock/portfolio/stockleft", body);
     }
     if (result.status) {
       setStockAvailable(result.stockAvailable);
@@ -267,7 +275,7 @@ export default function StockData(props) {
           netAmount: netAmount,
           ppmDreamNiftyId: eventInfo.id
         }
-        result = await postData("dreamNifty/portfolio/insertportfolio", body);
+        result = await postData("dreamNifty/portfolio/insert", body);
       } else {
         const body = {
           companyCode: props.data.CompanyCode,
@@ -282,7 +290,7 @@ export default function StockData(props) {
           netAmount: netAmount,
           ppmGroupId: groupId.group
         }
-        result = await postData("stock/insertportfolio", body);
+        result = await postData("stock/portfolio/add", body);
       }
       if (result.success) {
         props.setComponent(<Portfolio

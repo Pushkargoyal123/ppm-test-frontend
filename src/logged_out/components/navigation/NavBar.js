@@ -97,7 +97,7 @@ function NavBar(props) {
       const verify = isMail[isMail.length - 2];
       if (verify === "true") {
         const userEmail = isMail[isMail.length - 1]
-        const result = await getData("/user/fetchuserverificationdetails?email=" + userEmail);
+        const result = await getData("/user/Verification?email=" + userEmail);
         if (result.success && result.data) {
           setGeneratedOTP(result.data.verificationOtp)
           setBody(3);

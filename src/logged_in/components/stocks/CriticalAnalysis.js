@@ -45,18 +45,18 @@ export default function CriticalAnalysis(props) {
 
     const user = useSelector(state => state.user);
     let group = useSelector(state => state.group)
-    let groupId = Object.values(group)[0];
-    useSelector(state=>state);
+    let groupId = Object.values(group)[0] ? Object.values(group)[0] : {};
+    useSelector(state => state);
 
     useEffect(function () {
         setMessage(false);
         const fetchAllHistory = async () => {
             let resultHistory;
-            if(eventInfo){
-                const body = {ppmDreamNiftyId:eventInfo.id}
-                resultHistory = await postData("dreamNifty/criticalanalysis/criticalanalysisdata", body);
-            }else{
-                resultHistory = await getData("criticalanalysis/criticalanalysisdata/" + groupId.group);
+            if (eventInfo) {
+                const body = { ppmDreamNiftyId: eventInfo.id }
+                resultHistory = await postData("dreamNifty/criticalanalysis/List", body);
+            } else {
+                resultHistory = await getData("criticalanalysis/Data/" + groupId.group);
             }
             if (resultHistory.success) {
                 setMessage(1)
@@ -76,7 +76,7 @@ export default function CriticalAnalysis(props) {
         }
         fetchAllHistory()
 
-        if(!eventInfo){
+        if (!eventInfo) {
             fetchActivePlan();
         }
         // eslint-disable-next-line
@@ -85,8 +85,8 @@ export default function CriticalAnalysis(props) {
     const eventInfo = JSON.parse(sessionStorage.getItem('clickedEvent'));
 
     const fetchActivePlan = async () => {
-        if (groupId.group !== "") {
-            const data = await getData("plans/hasActivePlan?ppmGroupId=" + groupId.group);
+        if (groupId.group !== "" && groupId.group) {
+            const data = await getData("subscription/user/hasActivePlan?ppmGroupId=" + groupId.group);
             if (data.success && data.data.length) {
 
             } else {
@@ -98,6 +98,12 @@ export default function CriticalAnalysis(props) {
                 props.setComponent(<MemberShip setUnderlinedButton={props.setUnderlinedButton} setComponent={props.setComponent} />)
                 props.setUnderlinedButton("Membership");
             }
+        } else {
+            Swal.fire({
+                title: "Group Status",
+                text: "Currently you are not present in any group please contact to administrator",
+                icon: "info"
+            })
         }
     }
 

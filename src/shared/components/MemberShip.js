@@ -79,11 +79,11 @@ export default function MemberShip(props) {
     useSelector((state) => state)
 
     const fetchAllData = async () => {
-        const plans = await getData("plans/planListForUser");
+        const plans = await getData("subscription/plan/ListForUser");
 
-        const featurePLans = await getData("plans/getFeaturePlans");
+        const featurePLans = await getData("subscription/plan/featureList");
 
-        const planCharges = await getData("plans/getMonthlyPlansList");
+        const planCharges = await getData("subscription/getMonthlyPlansList");
 
         if (plans.success && featurePLans.success) {
             setPlans(plans.data)
@@ -134,7 +134,7 @@ export default function MemberShip(props) {
                 referByDiscountPercent: referByDiscount,
                 referByDiscountAmount: referByFinalPrice ? displayPrice - referByFinalPrice : 0
             }
-            const data = await postData("plans/addUserSubscription", body);
+            const data = await postData("subscription/user/add", body);
             if (data.success) {
                 Swal.fire({
                     icon: 'success',
@@ -170,28 +170,36 @@ export default function MemberShip(props) {
 
     const handleOpenModal = async (planCharge, month, index) => {
         if (userData) {
-            const data = await getData("plans/hasPlan?ppmUserGroupId=" + userGroupId.userGroup);
-            if (data.success && data.data) {
-                Swal.fire({
-                    icon: 'info',
-                    title: 'OOPS!!',
-                    text: "You Already have an active " + data.data.ppm_subscription_plan.planName + " plan of " + data.data.ppm_subscription_month.monthValue + " months In " + data.data.ppm_userGroup.ppm_group.name + "-" + data.data.ppm_userGroup.ppm_group.value + " that is valid upto " + data.data.endDate.split(",")[0],
-                })
-            } else if (groupId.group === "") {
+            if (userGroupId) {
+                const data = await getData("subscription/user/hasPlan?ppmUserGroupId=" + userGroupId.userGroup);
+                if (data.success && data.data) {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'OOPS!!',
+                        text: "You Already have an active " + data.data.ppm_subscription_plan.planName + " plan of " + data.data.ppm_subscription_month.monthValue + " months In " + data.data.ppm_userGroup.ppm_group.name + "-" + data.data.ppm_userGroup.ppm_group.value + " that is valid upto " + data.data.endDate.split(",")[0],
+                    })
+                } else if (groupId.group === "") {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'OOPS!!',
+                        text: "You can't buy any plan since you are not present in any group. Contact to administrator to put you in a group",
+                    })
+                }
+                else {
+                    setOpen(true)
+                    setMonth(month.monthValue);
+                    setDisplayPrice(planCharge.displayPrice)
+                    setReferToFinalPrice(planCharge.displayPrice)
+                    setPlanChargeId(planCharge.id);
+                    setSelectedPlan(plans[index]);
+                    setIndex(index);
+                }
+            } else {
                 Swal.fire({
                     icon: 'info',
                     title: 'OOPS!!',
                     text: "You can't buy any plan since you are not present in any group. Contact to administrator to put you in a group",
                 })
-            }   
-            else{
-                setOpen(true)
-                setMonth(month.monthValue);
-                setDisplayPrice(planCharge.displayPrice)
-                setReferToFinalPrice(planCharge.displayPrice)
-                setPlanChargeId(planCharge.id);
-                setSelectedPlan(plans[index]);
-                setIndex(index);
             }
         }
         else {
@@ -226,7 +234,7 @@ export default function MemberShip(props) {
             {
                 userData ? <div>
                     <div style={{ fontSize: 40, textAlign: "center" }}><u>MemberShip</u></div>
-                    </div> :
+                </div> :
                     <div style={{ fontSize: 40, textAlign: "center" }}>
                         <u>Membership</u>
                     </div>

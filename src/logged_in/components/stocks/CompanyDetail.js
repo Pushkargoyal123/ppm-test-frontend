@@ -50,14 +50,14 @@ export default function CompanyDetail(props) {
 
     const [message, setMessage] = useState(false)
     const [data, setData] = useState([]);
-    const [totalBuyStock, setTotalBuyStock]= useState("");
-    const [totalSellStock, setTotalSellStock]= useState("");
-    const [totalBuyPrice, setTotalBuyPrice]= useState(0);
-    const [totalSellPrice, setTotalSellPrice]= useState(0);
+    const [totalBuyStock, setTotalBuyStock] = useState("");
+    const [totalSellStock, setTotalSellStock] = useState("");
+    const [totalBuyPrice, setTotalBuyPrice] = useState(0);
+    const [totalSellPrice, setTotalSellPrice] = useState(0);
 
     let group = useSelector(state => state.group)
     let groupId = Object.values(group)[0];
-    useSelector((state)=>state);
+    useSelector((state) => state);
 
     const eventInfo = JSON.parse(sessionStorage.getItem('clickedEvent'));
 
@@ -65,21 +65,21 @@ export default function CompanyDetail(props) {
         setMessage(false);
         const fetchcompanyStockBuySell = async () => {
             let result;
-            if(eventInfo){
-                const body = {companyCode:props.data.companyCode, ppmDreamNiftyId: eventInfo.id};
-                result = await postData("dreamNifty/portfolio/fetchcompanydetail", body);
-            }else{
-                result = await getData("stock/fetchcompanydetail?companyCode=" + props.data.companyCode + "&ppmGroupId=" + groupId.group);
+            if (eventInfo) {
+                const body = { companyCode: props.data.companyCode, ppmDreamNiftyId: eventInfo.id };
+                result = await postData("dreamNifty/portfolio/companyDetailList", body);
+            } else {
+                result = await getData("stock/portfolio/detail?companyCode=" + props.data.companyCode + "&ppmGroupId=" + groupId.group);
             }
-            let buyStockSum=0, sellStockSum=0, buyStockPriceSum=0, sellStockPriceSum=0;
+            let buyStockSum = 0, sellStockSum = 0, buyStockPriceSum = 0, sellStockPriceSum = 0;
             if (result.success) {
                 setMessage(1)
-                result.data.forEach((item)=>{
-                    if(item.stocks > 0){
+                result.data.forEach((item) => {
+                    if (item.stocks > 0) {
                         buyStockSum += item.stocks;
                         buyStockPriceSum += item.totalStockPrice;
                     }
-                    else{
+                    else {
                         sellStockSum += item.stocks;
                         sellStockPriceSum += item.totalStockPrice;
                     }
@@ -91,7 +91,7 @@ export default function CompanyDetail(props) {
 
                 setData(result.data);
             }
-            else{
+            else {
                 setMessage(2)
             }
         }
@@ -99,11 +99,11 @@ export default function CompanyDetail(props) {
         // eslint-disable-next-line
     }, [props.data.companyCode, groupId.group])
 
-    const handleBuySellStocks = ()=>{
-        props.setComponent(<StockData 
-            data= {{CompanyCode : props.data.companyCode, CompanyName: props.data.companyName }} 
-            setComponent= {props.setComponent}
-            setUnderlinedButton = {props.setUnderlinedButton}
+    const handleBuySellStocks = () => {
+        props.setComponent(<StockData
+            data={{ CompanyCode: props.data.companyCode, CompanyName: props.data.companyName }}
+            setComponent={props.setComponent}
+            setUnderlinedButton={props.setUnderlinedButton}
         />);
         props.setUnderlinedButton("Stocks");
     }
@@ -116,8 +116,8 @@ export default function CompanyDetail(props) {
             alignItems="center"
             flexDirection="column"
         >
-            <DreamNiftyHeading/>
-            <div className={classes.blogContentWrapper  + " animation-bottom-top"}>
+            <DreamNiftyHeading />
+            <div className={classes.blogContentWrapper + " animation-bottom-top"}>
                 <div style={{ fontSize: 40, textAlign: "center" }}><u>{props.data.companyName}</u></div>
                 <div>
                     {
@@ -128,15 +128,15 @@ export default function CompanyDetail(props) {
 
                             <MaterialTable
                                 style={{ minWidth: "70%", textAlign: "center", fontWeight: 500 }}
-                                title= <div> <ToolTip title="Back" component= {()=><KeyboardBackspaceRoundedIcon
-                                            color="secondary"
-                                            style={{ border: "1px blue solid", fontSize: "2rem", cursor: "pointer" }}
-                                            onClick={() => props.setComponent(<Portfolio setComponent={props.setComponent} setUnderlinedButton={props.setUnderlinedButton}/>)}
-                                        />} />
-                                        <div style={{ color: "green", fontSize: "1.1rem" }}>
-                                            Current Price <span style={{ fontWeight: "bold" }}> ₹ {props.data.currentPrice} </span>
-                                        </div>
+                                title=<div> <ToolTip title="Back" component={() => <KeyboardBackspaceRoundedIcon
+                                    color="secondary"
+                                    style={{ border: "1px blue solid", fontSize: "2rem", cursor: "pointer" }}
+                                    onClick={() => props.setComponent(<Portfolio setComponent={props.setComponent} setUnderlinedButton={props.setUnderlinedButton} />)}
+                                />} />
+                                    <div style={{ color: "green", fontSize: "1.1rem" }}>
+                                        Current Price <span style={{ fontWeight: "bold" }}> ₹ {props.data.currentPrice} </span>
                                     </div>
+                                </div>
 
                                 columns={[
                                     {
@@ -164,8 +164,8 @@ export default function CompanyDetail(props) {
                                     {
                                         title: 'Status',
                                         render: rowData => rowData.totalStockPrice > 0 ?
-                                            <Button style={{color:"green", fontWeight: "bold"}}>Buy</Button> :
-                                            <Button style={{color: "red", fontWeight: "bold"}}>Sell</Button>
+                                            <Button style={{ color: "green", fontWeight: "bold" }}>Buy</Button> :
+                                            <Button style={{ color: "red", fontWeight: "bold" }}>Sell</Button>
                                     },
                                     {
                                         title: 'Date',
@@ -179,7 +179,7 @@ export default function CompanyDetail(props) {
                                     },
                                     {
                                         title: "info",
-                                        render: rowData => <ToolTip title= {rowData.comment} component= {()=> <InfoIcon style={{color: rowData.totalStockPrice > 0 ? "green" : "red"}}/>}/>
+                                        render: rowData => <ToolTip title={rowData.comment} component={() => <InfoIcon style={{ color: rowData.totalStockPrice > 0 ? "green" : "red" }} />} />
                                     }
                                 ]
                                 }
@@ -199,31 +199,31 @@ export default function CompanyDetail(props) {
                                         },
                                 }}
 
-                                components = {{
-                                    Body : (prop) => <>
+                                components={{
+                                    Body: (prop) => <>
                                         <MTableBody {...prop} />
                                         <TableFooter>
-                                            <TableRow style={{backgroundColor: "#74b9ff"}}>
+                                            <TableRow style={{ backgroundColor: "#74b9ff" }}>
                                                 <TableCell className="tablecell" colSpan={3}> Total Stock Buy : {totalBuyStock} </TableCell>
                                                 <TableCell colSpan={2} className="tablecell">Total Buying Price : {totalBuyPrice.toFixed(2)}</TableCell>
-                                                <TableCell colSpan={3} className="tablecell"> 
-                                                    <ToolTip 
-                                                        title = {"Buy some stock of "+ props.data.companyName} 
-                                                        component= {()=><Button onClick={()=>handleBuySellStocks()} style={{backgroundColor: "green", color: "white"}}>BUY</Button> }
+                                                <TableCell colSpan={3} className="tablecell">
+                                                    <ToolTip
+                                                        title={"Buy some stock of " + props.data.companyName}
+                                                        component={() => <Button onClick={() => handleBuySellStocks()} style={{ backgroundColor: "green", color: "white" }}>BUY</Button>}
                                                     />
                                                 </TableCell>
                                             </TableRow>
-                                            <TableRow style={{backgroundColor : "#81ecec"}}>
+                                            <TableRow style={{ backgroundColor: "#81ecec" }}>
                                                 <TableCell colSpan={3} className="tablecell"> Total Stock Sell : {Math.abs(totalSellStock)} </TableCell>
                                                 <TableCell colSpan={2} className="tablecell">Total Selling Price :  {Math.abs(totalSellPrice).toFixed(2)}</TableCell>
-                                                <TableCell className="tablecell" colSpan={3}> 
-                                                    <ToolTip 
-                                                        title = {"Sell some stock of "+ props.data.companyName} 
-                                                        component={()=><Button onClick={()=>handleBuySellStocks()} style={{backgroundColor: "red", color: "white"}}>SELL</Button> }
+                                                <TableCell className="tablecell" colSpan={3}>
+                                                    <ToolTip
+                                                        title={"Sell some stock of " + props.data.companyName}
+                                                        component={() => <Button onClick={() => handleBuySellStocks()} style={{ backgroundColor: "red", color: "white" }}>SELL</Button>}
                                                     />
                                                 </TableCell>
                                             </TableRow>
-                                            <TableRow style={{backgroundColor: "#2f3542"}}>
+                                            <TableRow style={{ backgroundColor: "#2f3542" }}>
                                                 <TableCell colSpan={3} className="tablecell white"> Total Stock Left : {totalBuyStock + totalSellStock} </TableCell>
                                                 <TableCell colSpan={2} className="tablecell white">Total Amount Invested : {(totalBuyPrice + totalSellPrice).toFixed(2)} </TableCell>
                                                 <TableCell className="tablecell" colSpan={3}> </TableCell>

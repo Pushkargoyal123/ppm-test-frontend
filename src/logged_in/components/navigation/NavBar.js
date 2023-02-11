@@ -133,7 +133,7 @@ function NavBar(props) {
   }, [dispatch])
 
   const fetchUserImage = async () => {
-    const data = await postData('user/fetchUserImage', {});
+    const data = await postData('user/Image', {});
     if (data.success) {
       setImage(data.data.profilePhoto);
     }
@@ -141,7 +141,7 @@ function NavBar(props) {
 
   const handleLogOut = async () => {
     const form = { email: user.email, UserId: user.id };
-    await postData("user/userlogout", form);
+    await postData("user/Logout", form);
     history.replace({ pathname: "/" });
     dispatch({ type: "DEL_USER", payload: [user.email] });
     localStorage.removeItem('data');

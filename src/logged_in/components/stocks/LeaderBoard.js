@@ -46,8 +46,8 @@ export default function LeaderBoard(props) {
     const user = useSelector(state => state.user)
     const userId = Object.values(user)[0];
     let group = useSelector(state => state.group)
-    let groupId = Object.values(group)[0];
-    useSelector(state=>state)
+    let groupId = Object.values(group)[0] ? Object.values(group)[0] : {};
+    useSelector(state => state)
 
     useEffect(function () {
         setMessage(false);
@@ -55,14 +55,14 @@ export default function LeaderBoard(props) {
 
         async function fetchUsers() {
             let usersList;
-            if(eventInfo){
-                const body = {registerType: registerType, ppmDreamNiftyId: eventInfo.id}
-                usersList = await postData("dreamNifty/user/fetchleaderboarddata", body);
-            }else{
-                usersList = await getData("leaderboard/fetchleaderboarddata/" + registerType + "?groupId=" + groupId.group);
-            } 
+            if (eventInfo) {
+                const body = { registerType: registerType, ppmDreamNiftyId: eventInfo.id }
+                usersList = await postData("dreamNifty/user/LeaderBoard", body);
+            } else {
+                usersList = await getData("leaderboard/list/" + registerType + "?groupId=" + groupId.group);
+            }
 
-            const stockData = await getData("stock/fetchallstockdata");
+            const stockData = await getData("stock/company/list");
 
             if (usersList.success && stockData.success) {
                 setMessage(1)
@@ -80,9 +80,9 @@ export default function LeaderBoard(props) {
                         }
                     })
                     item.count = count
-                    if(eventInfo){
-                        await postData("dreamNifty/user/setnetamount", { netAmount: item.netAmount, id: item.ppm_dream_nifty_users[0].id })
-                    }else{
+                    if (eventInfo) {
+                        await postData("dreamNifty/user/setNetAmount", { netAmount: item.netAmount, id: item.ppm_dream_nifty_users[0].id })
+                    } else {
                         await postData("user/setnetamount", { netAmount: item.netAmount, id: item.ppm_userGroups[0].id })
                     }
                 })
@@ -97,7 +97,7 @@ export default function LeaderBoard(props) {
         if (groupId.group !== "")
             fetchUsers();
 
-        if(!eventInfo){
+        if (!eventInfo) {
             fetchActivePlan();
         }
         // eslint-disable-next-line
@@ -106,8 +106,8 @@ export default function LeaderBoard(props) {
     const eventInfo = JSON.parse(sessionStorage.getItem('clickedEvent'));
 
     const fetchActivePlan = async () => {
-        if (groupId.group !== "") {
-            const data = await getData("plans/hasActivePlan?ppmGroupId=" + groupId.group);
+        if (groupId.group !== "" && groupId.group) {
+            const data = await getData("subscription/user/hasActivePlan?ppmGroupId=" + groupId.group);
             if (data.success && data.data.length) {
 
             } else {
@@ -119,6 +119,12 @@ export default function LeaderBoard(props) {
                 props.setComponent(<MemberShip groupId={groupId.group} setGroupId={props.setGroupId} setUnderlinedButton={props.setUnderlinedButton} setComponent={props.setComponent} />)
                 props.setUnderlinedButton("Membership");
             }
+        } else {
+            Swal.fire({
+                title: "Group Status",
+                text: "Currently you are not present in any group please contact to administrator",
+                icon: "info"
+            })
         }
     }
 

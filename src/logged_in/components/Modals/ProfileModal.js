@@ -131,7 +131,7 @@ export default function ProfileModal() {
         const dob = selectedDate;
         if (!err) {
             var form = { userName: userName, dob: dob, gender: gender, email: email, phone: whatsappNumber, id: userData.id };
-            const response = await postData("user/updateUserProfile", form);
+            const response = await postData("user/update", form);
 
             if (response.success) {
                 setOpen(false);

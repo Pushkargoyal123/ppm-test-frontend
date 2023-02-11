@@ -53,7 +53,7 @@ export default function Stock() {
   const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 
   const fetchAllStocks = async () => {
-    const result = await getData("stock/getallstockdetails");
+    const result = await getData("stock/niftyStoks/list");
     if (result.length) {
       setMessage(1)
       setStockEvaluation(result);

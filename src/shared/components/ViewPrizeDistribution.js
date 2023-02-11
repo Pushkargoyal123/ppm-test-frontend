@@ -18,7 +18,7 @@ export default function ViewPrizeDistribution(props) {
     const viewPrizes = async () => {
         if (props.clickedEvent) {
             const body = { ppmDreamNiftyId: props.clickedEvent.id };
-            const data = await postData("dreamNifty/prize/prizeDistribution", body);
+            const data = await postData("dreamNifty/prize/Distribution", body);
             if (data.success) {
                 let sum = 0;
                 const finalData = data.data.map(function (item, index) {

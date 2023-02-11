@@ -13,21 +13,21 @@ function OurStats(props) {
 
   useEffect(function () {
     const getUsersCount = async () => {
-      const data = await getData("user/countUser");
+      const data = await getData("user/count");
       if (data.success) {
         setUserCount(data.data);
       }
     }
 
     const getTransactionCount = async () => {
-      const data = await getData("stock/countTotalTransactions");
+      const data = await getData("stock/portfolio/countTransactions");
       if (data.success) {
         setTransactionCount(data.data);
       }
     }
 
     const getGroupsCount = async () => {
-      const data = await getData("group/countTotalGroups");
+      const data = await getData("group/count");
       if (data.success) {
         setGroupCount(data.data);
       }

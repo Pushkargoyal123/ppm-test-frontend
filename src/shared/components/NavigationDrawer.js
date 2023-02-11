@@ -139,7 +139,7 @@ function NavigationDrawer(props) {
       const verify = isMail[isMail.length - 2];
       if (verify === "true") {
         const userEmail = isMail[isMail.length - 1]
-        const result = await getData("/user/fetchuserverificationdetails?email=" + userEmail);
+        const result = await getData("/user/Verification?email=" + userEmail);
         if (result.success && result.data) {
           setGeneratedOTP(result.data.verificationOtp)
           setOpen(true)
@@ -354,19 +354,19 @@ function NavigationDrawer(props) {
           }
           else if (element.profile) {
             return (<>
-            <button style={{border:"none"}}>
-              <Avatar
-                color="secondary"
-                size="large"
-                onClick={handleProfileClick}
-                key={element.link}
-                classes={{ text: classes.menuButtonText }}
-                style={{
-                  textDecoration: props.underlinedButton === element.name ? "underline" : "", 
-                }}
-              >
-                H
-              </Avatar>
+              <button style={{ border: "none" }}>
+                <Avatar
+                  color="secondary"
+                  size="large"
+                  onClick={handleProfileClick}
+                  key={element.link}
+                  classes={{ text: classes.menuButtonText }}
+                  style={{
+                    textDecoration: props.underlinedButton === element.name ? "underline" : "",
+                  }}
+                >
+                  H
+                </Avatar>
               </button>
               <StyledMenu
                 id="customized-menu"
@@ -375,7 +375,7 @@ function NavigationDrawer(props) {
                 open={Boolean(anchorProfile)}
                 onClose={() => setAnchorProfile(null)}
               >
-                <ProfileModal/>
+                <ProfileModal />
 
                 <StyledMenuItem >
                   <ListItemIcon>
@@ -391,7 +391,7 @@ function NavigationDrawer(props) {
                   <ListItemText primary="Log Out" />
                 </StyledMenuItem>
               </StyledMenu>
-              </>
+            </>
             );
           }
           return (<span key={element.name}>

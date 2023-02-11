@@ -19,16 +19,16 @@ export default function GroupDropDown(props) {
 
     useEffect(function () {
         const groupList = async () => {
-            const data = await getData("group/fetchALLGroupsByUserId");
+            const data = await getData("group/userGroup/list");
             if (data) {
                 if (data.data && data.data.length && data.data[0].ppm_group.value) {
                     setListGroup(data.data);
                     if (!sessionStorage.getItem("groupId") || sessionStorage.getItem("groupId") === "".trim()) {
-                        dispatch({ type: "SET_GROUP", payload: [data.data[0].ppm_group.id, {group: data.data[0].ppm_group.id}] })
+                        dispatch({ type: "SET_GROUP", payload: [data.data[0].ppm_group.id, { group: data.data[0].ppm_group.id }] })
                     } else {
-                        dispatch({ type: "SET_GROUP", payload: [sessionStorage.getItem("groupId"), {group: sessionStorage.getItem("groupId")}] })
+                        dispatch({ type: "SET_GROUP", payload: [sessionStorage.getItem("groupId"), { group: sessionStorage.getItem("groupId") }] })
                     }
-                    dispatch({ type: "SET_USER_GROUP", payload: [data.data[0].id, {userGroup: data.data[0].id}] })
+                    dispatch({ type: "SET_USER_GROUP", payload: [data.data[0].id, { userGroup: data.data[0].id }] })
                 }
             }
         }
@@ -40,24 +40,24 @@ export default function GroupDropDown(props) {
 
     const handleSelectChange = (value) => {
         dispatch({ type: "DEL_GROUP", payload: [groupId.group] })
-        dispatch({ type: "SET_GROUP", payload: [value, {group: value}] })
+        dispatch({ type: "SET_GROUP", payload: [value, { group: value }] })
         if (userGroupId) {
             const userGrouplistId = listGroup.filter(function (item) {
                 return item.ppm_group.id === value
             })[0].id
             dispatch({ type: "DEL_USER_GROUP", payload: [userGroupId.userGroup] })
-            dispatch({ type: "SET_USER_GROUP", payload: [userGrouplistId, {userGroup: userGrouplistId}] })
+            dispatch({ type: "SET_USER_GROUP", payload: [userGrouplistId, { userGroup: userGrouplistId }] })
         }
     }
 
     const eventInfo = JSON.parse(sessionStorage.getItem('clickedEvent'));
 
     return <Grid container>
-        <Grid style={{ marginLeft: 20, display:"flex", alignItems:"center" }}>
+        <Grid style={{ marginLeft: 20, display: "flex", alignItems: "center" }}>
             {
                 listGroup.length && !eventInfo ?
                     listGroup[0] && listGroup.length === 1 ?
-                        <div style={{ fontSize: 20, fontWeight: "bold", textTransform: "uppercase", color:"black" }}>{listGroup[0].ppm_group.name + "-" + listGroup[0].ppm_group.value}</div>
+                        <div style={{ fontSize: 20, fontWeight: "bold", textTransform: "uppercase", color: "black" }}>{listGroup[0].ppm_group.name + "-" + listGroup[0].ppm_group.value}</div>
                         :
                         <FormControl style={{ width: 200 }}>
                             <InputLabel htmlFor="outlined-age-native-simple">Group</InputLabel>
@@ -84,8 +84,8 @@ export default function GroupDropDown(props) {
                                 }
                             </Select>
                         </FormControl>
-                 :
-            <div></div>
+                    :
+                    <div></div>
             }
         </Grid>
     </Grid>

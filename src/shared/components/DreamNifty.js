@@ -137,7 +137,7 @@ export default function DreamNifty(props) {
      */
     const fetchAllEvents = async () => {
         setIsMyEventsClicked(false);
-        const data = await postData("dreamNifty/eventList", { status: "active" });
+        const data = await postData("dreamNifty/event/List", { status: "active" });
         if (data.success) {
             setMessage(2);
             const finalData = data.data.map(function (item) {
@@ -224,7 +224,7 @@ export default function DreamNifty(props) {
     const handleMyEvents = async () => {
         setIsMyEventsClicked(true);
         const body = { status: "active", showMyEvents: true };
-        const data = await postData("dreamNifty/eventList", body);
+        const data = await postData("dreamNifty/event/List", body);
         if (data.success) {
             const finalData = data.data.map(function (item) {
                 item.readMore = false;
@@ -253,8 +253,8 @@ export default function DreamNifty(props) {
                     <div style={{ textAlign: "center" }}>
                         <Button
                             variant="contained"
-                            style={{ margin: "0px 10px 15px 0px",background: '#4829B2', color: 'white', opacity: !isMyEventsClicked ? 0.7 : 1 }}
-                            disabled = {!isMyEventsClicked}
+                            style={{ margin: "0px 10px 15px 0px", background: '#4829B2', color: 'white', opacity: !isMyEventsClicked ? 0.7 : 1 }}
+                            disabled={!isMyEventsClicked}
                             onClick={fetchAllEvents}
                         >All Events
                         </Button>
@@ -354,11 +354,11 @@ export default function DreamNifty(props) {
                                                             <Button
                                                                 style={{ marginTop: 10, background: "green", color: "white", marginLeft: "auto" }}
                                                                 variant="contained"
-                                                                onClick = {()=> handleViewEvent(item)}
+                                                                onClick={() => handleViewEvent(item)}
                                                             >
                                                                 View
                                                             </Button> :
-                                                            getTodayDate() >= item.startDate && userData && item.ppm_dream_nifty_users.length >= item.maxParticipant ? 
+                                                            getTodayDate() >= item.startDate && userData && item.ppm_dream_nifty_users.length >= item.maxParticipant ?
                                                                 <div></div> :
                                                                 <Button
                                                                     style={{ marginTop: 10, background: color, color: "white", marginLeft: "auto" }}

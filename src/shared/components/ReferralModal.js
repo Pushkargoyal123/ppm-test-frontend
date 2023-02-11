@@ -30,7 +30,7 @@ export default function ReferralModal(props) {
             email: referralId,
             planChargeId: props.planChargeId
         }
-        const data = await postData("referral/getReferral", body);
+        const data = await postData("referral/verify", body);
         if (data.success) {
             setOpen(true)
             setIsShow(false)

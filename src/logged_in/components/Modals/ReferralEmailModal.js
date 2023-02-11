@@ -7,7 +7,7 @@ import {
 import { useState } from 'react';
 import { useTheme } from '@material-ui/core/styles';
 
-import {getData} from "../../../service/service"
+import { getData } from "../../../service/service"
 import Swal from "sweetalert2";
 
 function getModalStyle() {
@@ -42,43 +42,43 @@ export default function ReferralEmailModal(props) {
         props.setOpenReferralModal(true)
     }
 
-    const handleSubmit = async() => {
+    const handleSubmit = async () => {
         let err = false;
-        if(referralEmail.trim() === ""){
+        if (referralEmail.trim() === "") {
             setReferralEmailError(true);
-            err= true
+            err = true
         }
-        if(!err){
-            const result = await getData("referral/sendReferMail?email="+referralEmail);
-            if(result.success){
+        if (!err) {
+            const result = await getData("referral/mail?email=" + referralEmail);
+            if (result.success) {
                 Swal.fire({
                     title: "email successfully send",
-                    text : "The Referral process will complete when user registered through given url in the mail",
+                    text: "The Referral process will complete when user registered through given url in the mail",
                     icon: "success"
                 })
-            }else{
-                if(result.error.details){
+            } else {
+                if (result.error.details) {
                     Swal.fire({
                         title: "Invalid Email",
-                        text : "email should be valid",
+                        text: "email should be valid",
                         icon: "error"
-                    }).then(function(){
+                    }).then(function () {
                         props.setOpen(true);
                     })
-                }else if(result.error.error){
+                } else if (result.error.error) {
                     Swal.fire({
                         title: "OOP's",
-                        text : result.error.error,
+                        text: result.error.error,
                         icon: "error"
-                    }).then(function(){
+                    }).then(function () {
                         props.setOpen(true);
                     })
-                }else{
+                } else {
                     Swal.fire({
                         title: "OOP's",
-                        text : "Server Error",
+                        text: "Server Error",
                         icon: "error"
-                    }).then(function(){
+                    }).then(function () {
                         props.setOpen(true);
                     })
                 }
@@ -105,8 +105,8 @@ export default function ReferralEmailModal(props) {
             <div style={{ margin: 20 }}>
                 <TextField
                     value={referralEmail}
-                    error={referralEmailError} 
-                    helperText={ referralEmailError ? "*Email must be provided" : ""} 
+                    error={referralEmailError}
+                    helperText={referralEmailError ? "*Email must be provided" : ""}
                     onChange={(event) => { setReferralEmail(event.target.value) }}
                     id="outlined-ba"
                     label="Referral Email"

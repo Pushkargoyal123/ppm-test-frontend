@@ -75,7 +75,7 @@ export default function WatchList(props) {
 
     useEffect(function () {
         const fetchUsersWatchList = async () => {
-            const result = await getData("watchlist/fetchuserwatchlist");
+            const result = await getData("watchlist/list");
             if (result.success) {
                 setMessage(1)
                 setData(result.data);
@@ -103,9 +103,9 @@ export default function WatchList(props) {
 
     const handleRemove = async () => {
         const body = { companyCode: stockOfCompany.companyCode }
-        const result = await postData("watchlist/removefromwatchlist", body);
+        const result = await postData("watchlist/remove", body);
         if (result.success) {
-            const result = await getData("watchlist/fetchuserwatchlist");
+            const result = await getData("watchlist/list");
             handleClose();
             toast.success('🦄  Stock removed from your Watch List', {
                 position: "top-right",
@@ -127,8 +127,8 @@ export default function WatchList(props) {
             justifyContent="center"
             alignItems="center"
             flexDirection="column"
-        >   
-            <DreamNiftyHeading/>
+        >
+            <DreamNiftyHeading />
             <div className={classes.blogContentWrapper + " animation-bottom-top"}>
                 <div style={{ fontSize: 40, textAlign: "center" }}><u>Watch List</u></div>
                 <StyledMenu
@@ -180,15 +180,15 @@ export default function WatchList(props) {
                                 },
                                 {
                                     title: 'BUY/SELL',
-                                    render: rowData => <Button 
+                                    render: rowData => <Button
                                         style={{ backgroundColor: "#44bd32", color: "white", fontWeight: "bold", fontSize: "0.9rem" }}
-                                        onClick = {()=>props.setComponent( <StockData 
-                                            data = { {CompanyCode : rowData.companyCode, CompanyName : rowData.companyname} }
-                                            setComponent = {props.setComponent}
-                                            setUnderlinedButton = {props.setUnderlinedButton}
-                                        /> ) }
-                                    > 
-                                        BUY/SELL 
+                                        onClick={() => props.setComponent(<StockData
+                                            data={{ CompanyCode: rowData.companyCode, CompanyName: rowData.companyname }}
+                                            setComponent={props.setComponent}
+                                            setUnderlinedButton={props.setUnderlinedButton}
+                                        />)}
+                                    >
+                                        BUY/SELL
                                     </Button>
                                 },
                             ]}

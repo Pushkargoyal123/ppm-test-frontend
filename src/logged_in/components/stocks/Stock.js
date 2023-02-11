@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: 1280,
     width: "100%",
     boxShadow: "rgba(0, 0, 0, 0.56) 0px 22px 70px 4px",
-    paddingTop:0
+    paddingTop: 0
   },
   wrapper: {
     minHeight: "60vh",
@@ -92,7 +92,7 @@ export default function Stock(props) {
   };
 
   const fetchAllStocks = async () => {
-    const result = await getData("stock/getallstockdetailswithwatchlist");
+    const result = await getData("stock/niftyStoks/WatchList");
     if (result.length) {
       setMessage(1)
       setStockEvaluation(result);
@@ -103,7 +103,7 @@ export default function Stock(props) {
   const handleAddToWatchList = async (companyData) => {
     if (!companyData.isPresent) {
       const body = { companyCode: companyData.CompanyCode }
-      const result = await postData("watchlist/addstocktowatchlist", body)
+      const result = await postData("watchlist/add", body)
       if (result.success) {
         toast.success('🦄  Stock added to your watch list', {
           position: "top-right",
@@ -117,7 +117,7 @@ export default function Stock(props) {
         fetchAllStocks();
       }
     }
-    else{
+    else {
       toast.info('🦄 Already exist in your watch list', {
         position: "top-right",
         autoClose: 5000,
@@ -139,9 +139,9 @@ export default function Stock(props) {
       alignItems="center"
       flexDirection="column"
     >
-      <DreamNiftyHeading/>
+      <DreamNiftyHeading />
       <div className={classes.blogContentWrapper + " animation-bottom-top"}>
-      <div style={{ fontSize: 40, textAlign: "center" }}><u>Stocks</u></div>
+        <div style={{ fontSize: 40, textAlign: "center" }}><u>Stocks</u></div>
         <StyledMenu
           id="customized-menu"
           anchorEl={anchorEl}
@@ -149,17 +149,17 @@ export default function Stock(props) {
           open={Boolean(anchorEl)}
           onClose={handleClose}
         >
-          <StyledMenuItem style={{backgroundColor : "#3f50b5", color: "white"}} onClick={() => props.setComponent(<StockData data={companyData} setComponent={props.setComponent} setUnderlinedButton={props.setUnderlinedButton} />)}>
+          <StyledMenuItem style={{ backgroundColor: "#3f50b5", color: "white" }} onClick={() => props.setComponent(<StockData data={companyData} setComponent={props.setComponent} setUnderlinedButton={props.setUnderlinedButton} />)}>
             <ListItemIcon>
-              <BusinessCenterIcon style={{color: "white"}} fontSize="small" />
+              <BusinessCenterIcon style={{ color: "white" }} fontSize="small" />
             </ListItemIcon>
             <ListItemText primary="Add To Portfolio" />
           </StyledMenuItem>
-          <StyledMenuItem style={{backgroundColor : companyData.isPresent ? "#FFC312" : "green", color: "white"}} onClick={() => handleAddToWatchList(companyData)}>
+          <StyledMenuItem style={{ backgroundColor: companyData.isPresent ? "#FFC312" : "green", color: "white" }} onClick={() => handleAddToWatchList(companyData)}>
             <ListItemIcon>
-              <WatchLaterIcon style={{color: "white"}} fontSize="small" />
+              <WatchLaterIcon style={{ color: "white" }} fontSize="small" />
             </ListItemIcon>
-            <ListItemText primary= {companyData.isPresent ? "Added in Watch List" : "Add to Watch List"} />
+            <ListItemText primary={companyData.isPresent ? "Added in Watch List" : "Add to Watch List"} />
           </StyledMenuItem>
         </StyledMenu>
 

@@ -28,7 +28,7 @@ export default function VerifyModal(props) {
     const [inputOTP, setInputOTP] = useState("");
 
     const changeVerify = async (body) => {
-        const result = await postData("user/changeVerify", body);
+        const result = await postData("user/Verify", body);
         if (result.success) {
             props.setOpen(false);
             Swal.fire({

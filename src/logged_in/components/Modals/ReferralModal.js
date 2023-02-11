@@ -87,7 +87,7 @@ export default function ReferralModal() {
     }, [])
 
     const fetchAllReferrals = async () => {
-        const data = await getData("referral/fetchAllReferrals");
+        const data = await getData("referrals/list");
         if (data.success) {
             setMyReferrals(data.data);
         }
@@ -128,19 +128,19 @@ export default function ReferralModal() {
                     {
                         myReferrals.length ? <>
                             <div style={{ fontSize: 20, color: "blue" }}>You have referred {myReferrals.length} Person and for that you earned ₹{userData.referralWalletBalance}  </div>
-                            <Button style={{color:"blue", textDecoration:"underline"}} className="anchor" onClick={handleReferral}>Refer a new Person</Button>
+                            <Button style={{ color: "blue", textDecoration: "underline" }} className="anchor" onClick={handleReferral}>Refer a new Person</Button>
                             <Grid container>
                                 {myReferrals.map(function (item) {
 
                                     let bonusMoney = 0;
-                                    if(item.ppm_subscription_users.length){
-                                        item.ppm_subscription_users.forEach(function(plans){
+                                    if (item.ppm_subscription_users.length) {
+                                        item.ppm_subscription_users.forEach(function (plans) {
                                             bonusMoney += plans.referToDiscountAmount;
                                         })
                                     }
 
-                                    return <Grid style={{margin:"auto"}}>
-                                        <Card className={classes.root} variant="outlined" style={{border:"1px grey solid"}}>
+                                    return <Grid style={{ margin: "auto" }}>
+                                        <Card className={classes.root} variant="outlined" style={{ border: "1px grey solid" }}>
                                             <CardContent>
                                                 <Typography className={classes.title} color="textSecondary" gutterBottom>
                                                     Bonus Money Earned : ₹{bonusMoney}
@@ -149,8 +149,8 @@ export default function ReferralModal() {
                                                     {item.userName}
                                                 </Typography>
                                                 <Typography className={classes.pos} color="textSecondary">
-                                                    Date of Registration : {item.dateOfRegistration} 
-                                                    <br/>
+                                                    Date of Registration : {item.dateOfRegistration}
+                                                    <br />
                                                     Date of Plan buyed : {item.ppm_subscription_users.length ? item.ppm_subscription_users[0].startDate.split(",")[0] : "No Plan Buyed"}
                                                 </Typography>
                                                 <Typography variant="body2" component="p">
@@ -163,18 +163,18 @@ export default function ReferralModal() {
                                     </Grid>
                                 })}
                             </Grid>
-                        </> :   
-                            <div style={{ fontSize: 20, color: "red", marginBottom: 20 }} onClick={handleReferral}>Sorry you haven't refer anyone. <br /> <Button style={{color:"blue", textDecoration:"underline"}} className="anchor"> Refer anyone </Button> to earn money </div>
+                        </> :
+                            <div style={{ fontSize: 20, color: "red", marginBottom: 20 }} onClick={handleReferral}>Sorry you haven't refer anyone. <br /> <Button style={{ color: "blue", textDecoration: "underline" }} className="anchor"> Refer anyone </Button> to earn money </div>
                     }
                 </div>
             </div>
         </Dialog>
 
         <ReferralEmailModal
-            open = {openReferralEmailModal}
-            setOpen = {setOpenReferralEmailModal}
-            openReferralModal = {open}
-            setOpenReferralModal = {setOpen}
+            open={openReferralEmailModal}
+            setOpen={setOpenReferralEmailModal}
+            openReferralModal={open}
+            setOpenReferralModal={setOpen}
         />
     </>
 }
